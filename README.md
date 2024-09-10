@@ -13,7 +13,7 @@ Submitted as a single PDF from the team leader:
 - **Peer Evaluation (turned in separately) (5 points)**
 
 **Related Chapters/Lectures**: Modules 1-3  
-**Due Date and Time**: (Project Phase 1)[https://canvas.asu.edu/courses/193728/assignments/5331994]
+**Due Date and Time**: [Project Phase 1](https://canvas.asu.edu/courses/193728/assignments/5331994)
 
 ---
 

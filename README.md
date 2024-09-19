@@ -1,5 +1,7 @@
 # Project Phases and Deliverables 🚀
 
+### [Figma: UI](https://github.com/LuaanNguyen/ASU360_BinaryBabes.git)
+
 The project consists of four phases, and your project will be evaluated at each phase. The instructor will provide more details and requirements for each phase, which can also be downloaded from Canvas.
 [Class Project Idea](https://canvas.asu.edu/courses/193728/files/89191301?wrap=1)
 

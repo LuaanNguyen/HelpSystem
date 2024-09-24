@@ -14,15 +14,15 @@ public class MyJavaFXApp extends Application {
     
     public void start(Stage primaryStage) {
     	System.out.println("Hello");
-        Button btn = new Button("Click me!");
-        btn.setOnAction(e -> System.out.println("Button clicked!"));
+        Button btn = new Button("Don't Press this");
+        btn.setOnAction(e -> System.out.println("You son of a gun"));
 
         StackPane root = new StackPane();
         root.getChildren().add(btn);
 
         Scene scene = new Scene(root, 300, 250);
 
-        primaryStage.setTitle("Ur mom stiny");
+        primaryStage.setTitle("2nd Commit");
         primaryStage.setScene(scene);
         primaryStage.show();
     }

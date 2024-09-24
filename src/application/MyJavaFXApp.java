@@ -22,7 +22,7 @@ public class MyJavaFXApp extends Application {
 
         Scene scene = new Scene(root, 300, 250);
 
-        primaryStage.setTitle("2nd Commit");
+        primaryStage.setTitle("2nd Commit hello");
         primaryStage.setScene(scene);
         primaryStage.show();
     }

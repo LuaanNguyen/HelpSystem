@@ -22,7 +22,7 @@ public class MyJavaFXApp extends Application {
 
         Scene scene = new Scene(root, 300, 250);
 
-        primaryStage.setTitle("My JavaFX App Testing");
+        primaryStage.setTitle("Ur mom stiny");
         primaryStage.setScene(scene);
         primaryStage.show();
     }

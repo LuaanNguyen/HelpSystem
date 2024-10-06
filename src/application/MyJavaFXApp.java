@@ -8,6 +8,8 @@ import javafx.stage.Stage;
 import javafx.scene.layout.GridPane;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
+import javafx.scene.control.ComboBox;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,28 +70,60 @@ public class MyJavaFXApp extends Application {
         TextField register_userNameField = new TextField();
         PasswordField register_passwordField = new PasswordField();
         PasswordField register_confirmPasswordField = new PasswordField();
+        ComboBox<String> roleComboBox = new ComboBox<>();
+        roleComboBox.getItems().addAll("Admin", "Student", "Instructor"); //Add the roles to the dropdown
         Button createAccountButton = new Button("Create Account");
         Button backToLoginButton = new Button("Back to Login");
 
+        //Add components to the register grid
         registerGrid.add(new Label("New Username: "), 0, 0);
-        registerGrid.add(new Label("Password: "), 0, 1);
-        registerGrid.add(new Label("Confirm Password: "), 0, 2);
         registerGrid.add(register_userNameField, 1, 0);
+        registerGrid.add(new Label("Password: "), 0, 1);
         registerGrid.add(register_passwordField, 1, 1);
+        registerGrid.add(new Label("Confirm Password: "), 0, 2);
         registerGrid.add(register_confirmPasswordField, 1, 2);
-        registerGrid.add(createAccountButton, 1, 3);
-        registerGrid.add(backToLoginButton, 1, 4);
-        Scene registerScene = new Scene(registerGrid, 300, 200);
+        registerGrid.add(new Label("Select Role: "), 0, 3);
+        registerGrid.add(roleComboBox, 1, 3);
+        registerGrid.add(createAccountButton, 1, 4);
+        registerGrid.add(backToLoginButton, 1, 5);
+        Scene registerScene = new Scene(registerGrid, 300, 250);
+
 
         //switching between login scene and register scene
         registerButton.setOnAction(e -> primaryStage.setScene(registerScene));
         backToLoginButton.setOnAction(e -> primaryStage.setScene(loginScene));
 
 
+        //Register Button action
+        createAccountButton.setOnAction(e -> {
+            String username = register_userNameField.getText();
+        });
+
         primaryStage.setScene(loginScene);
         //primaryStage.setScene(registerScene);
         primaryStage.show();
     }
+
+    private boolean authenticate(String username, String password) {
+        for (User user : users) {
+            if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
+                currentUser = user;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean registerUser(String username, String password, String role) {
+        if (users.stream().anyMatch(u -> u.getUsername().equals(username))) {
+            System.out.println("User already exists!");
+            return false;
+        }
+        users.add(new User(username, password, role));
+        return true;
+    }
+
+
 
 
     public static void main(String[] args) {

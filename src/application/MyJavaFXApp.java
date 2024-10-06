@@ -97,6 +97,22 @@ public class MyJavaFXApp extends Application {
         //Register Button action
         createAccountButton.setOnAction(e -> {
             String username = register_userNameField.getText();
+            String password = register_passwordField.getText();
+            String confirmPassword = register_confirmPasswordField.getText();
+            String selectedRole = roleComboBox.getValue(); //Get the selected role from the ComboBox
+
+            if (password.isEmpty() || username.isEmpty()) {
+                System.out.println("Username or password cannot be empty!");
+            } else if (!password.equals(confirmPassword)) {
+                System.out.println("Password doesn't match");
+            } else if (selectedRole == null || selectedRole.isEmpty()) {
+                System.out.println("Selected Role is empty");
+            } else {
+                if (registerUser(username, password, selectedRole)) {
+                    System.out.print("User registered Successfully");
+                    primaryStage.setScene(loginScene);
+                }
+            }
         });
 
         primaryStage.setScene(loginScene);
@@ -122,9 +138,6 @@ public class MyJavaFXApp extends Application {
         users.add(new User(username, password, role));
         return true;
     }
-
-
-
 
     public static void main(String[] args) {
         launch(args);

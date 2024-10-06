@@ -27,7 +27,6 @@ public class MyJavaFXApp extends Application {
         launch(args);
     }
 
-
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Help System"); //Set GUI title
@@ -44,27 +43,41 @@ public class MyJavaFXApp extends Application {
         Button loginButton = new Button("Login");
         Button registerButton = new Button("Register");
 
-        //Add login components to Login grid
+        //Add individual login components to Login grid
         //GridPane parameters (node, column index, row index, column span, row span)
-        loginGrid.add(new Label("Username"), 0 ,0);
+        loginGrid.add(new Label("Username: "), 0 ,0);
         loginGrid.add(userNameField, 1, 0);
-        loginGrid.add(new Label("Password"), 0, 1);
+        loginGrid.add(new Label("Password: "), 0, 1);
         loginGrid.add(passwordField, 1, 1);
         loginGrid.add(loginButton, 1, 2);
         loginGrid.add(registerButton, 1, 3);
-
         Scene loginScene = new Scene(loginGrid, 300, 200);
 
-        //Button btn = new Button("Press");
-        //btn.setOnAction(e -> System.out.println("Button Pressed"));
-        //StackPane root = new StackPane();
-        //root.getChildren().add(btn);
-        // Scene scene = new Scene(root, 300, 250);
+
+        //Register Scene
+        GridPane registerGrid = new GridPane();
+        registerGrid.setPadding(new Insets(10, 10, 10 ,10 ));
+        registerGrid.setHgap(5);
+        registerGrid.setVgap(5);
+
+        //Register components
+        TextField register_userNameField = new TextField();
+        PasswordField register_passwordField = new PasswordField();
+        PasswordField register_confirmPasswordField = new PasswordField();
+        Button createAccountButton = new Button("Create Account");
+
+        registerGrid.add(new Label("New Username: "), 0, 0);
+        registerGrid.add(new Label("Password: "), 0, 1);
+        registerGrid.add(new Label("Confirm Password: "), 0, 2);
+        registerGrid.add(register_userNameField, 1, 0);
+        registerGrid.add(register_passwordField, 1, 1);
+        registerGrid.add(register_confirmPasswordField, 1, 2);
+        registerGrid.add(createAccountButton, 1, 3);
+        Scene registerScene = new Scene(registerGrid, 300, 200);
 
 
         primaryStage.setScene(loginScene);
+//        primaryStage.setScene(registerScene);
         primaryStage.show();
     }
-
-    
 }

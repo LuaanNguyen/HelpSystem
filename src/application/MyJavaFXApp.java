@@ -9,6 +9,8 @@ import javafx.scene.layout.GridPane;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 
+import java.util.ArrayList;
+import java.util.List;
 /**
  * <p> MyJavaFXApp </p>
  *
@@ -23,9 +25,11 @@ import javafx.scene.control.*;
  */
 
 public class MyJavaFXApp extends Application {
-	public static void main(String[] args) {
-        launch(args);
-    }
+
+    //No database implementation yet, use arraylist to store users instead
+    private List<User> users = new ArrayList<>();
+    private User currentUser;
+
 
     @Override
     public void start(Stage primaryStage) {
@@ -65,6 +69,7 @@ public class MyJavaFXApp extends Application {
         PasswordField register_passwordField = new PasswordField();
         PasswordField register_confirmPasswordField = new PasswordField();
         Button createAccountButton = new Button("Create Account");
+        Button backToLoginButton = new Button("Back to Login");
 
         registerGrid.add(new Label("New Username: "), 0, 0);
         registerGrid.add(new Label("Password: "), 0, 1);
@@ -73,11 +78,66 @@ public class MyJavaFXApp extends Application {
         registerGrid.add(register_passwordField, 1, 1);
         registerGrid.add(register_confirmPasswordField, 1, 2);
         registerGrid.add(createAccountButton, 1, 3);
+        registerGrid.add(backToLoginButton, 1, 4);
         Scene registerScene = new Scene(registerGrid, 300, 200);
+
+        //switching between login scene and register scene
+        registerButton.setOnAction(e -> primaryStage.setScene(registerScene));
+        backToLoginButton.setOnAction(e -> primaryStage.setScene(loginScene));
 
 
         primaryStage.setScene(loginScene);
-//        primaryStage.setScene(registerScene);
+        //primaryStage.setScene(registerScene);
         primaryStage.show();
+    }
+
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
+
+class User {
+    private String username;
+    private String password;
+    private List<String> roles = new ArrayList<>();
+
+    //Default constructor: for testing
+    public User() {
+        this.username = "Admin";
+        this.password = "123123";
+        this.roles.add("Admin");
+        this.roles.add("Student");
+        this.roles.add("Instructor");
+    }
+
+    public User(String username, String password, String role) {
+        this.username = username;
+        this.password = password;
+        this.roles.add(role);
+    }
+
+    //Getter methods
+    public String getUsername() {
+        return this.username;
+    }
+
+    public String getPassword() {
+        return this.password;
+    }
+
+    public List<String> getRole() {
+        return this.roles;
+    }
+
+    public void addRole(String role) {
+        if (role.isEmpty()) {
+            System.out.println("Can not add empty role!");
+        }
+        if (!roles.contains(role)) {
+            roles.add(role);
+        } else {
+            System.out.println("Role already exists with user: " + this.username);
+        }
     }
 }

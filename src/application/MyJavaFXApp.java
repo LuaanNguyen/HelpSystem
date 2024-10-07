@@ -13,6 +13,8 @@ import javafx.scene.control.ComboBox;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 /**
  * <p> MyJavaFXApp </p>
  *
@@ -114,6 +116,9 @@ public class MyJavaFXApp extends Application {
                 }
             }
         });
+
+        //Load CSS
+        loginScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("application.css")).toExternalForm());
 
         primaryStage.setScene(loginScene);
         //primaryStage.setScene(registerScene);

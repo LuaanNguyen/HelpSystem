@@ -168,8 +168,10 @@ public class MyJavaFXApp extends Application {
         roleComboBox.getItems().addAll("Admin", "Student", "Instructor");
         Button createAccountButton = new Button("Create Account");
         Button backToLoginButton = new Button("Back to Login");
-        Label errorMessageLabel = new Label(); // Label for error messages
-
+        Label matchingErrorMessageLabel = new Label();
+        Label specialErrorMessageLabel = new Label();
+        Label upperErrorMessageLabel = new Label();
+        Label lowerErrorMessageLabel = new Label();
 
         registerGrid.add(new Label("New Username: "), 0, 0);
         registerGrid.add(registerUserNameField, 1, 0);
@@ -181,7 +183,29 @@ public class MyJavaFXApp extends Application {
         registerGrid.add(roleComboBox, 1, 3);
         registerGrid.add(createAccountButton, 1, 4);
         registerGrid.add(backToLoginButton, 1, 5);
-        registerGrid.add(errorMessageLabel, 1, 6); // Add the error message label
+        registerGrid.add(matchingErrorMessageLabel, 1, 6);
+        registerGrid.add(specialErrorMessageLabel, 1, 7);
+        registerGrid.add(upperErrorMessageLabel, 1, 8);
+        registerGrid.add(lowerErrorMessageLabel, 1, 9);
+
+
+        // Add listeners to the password fields
+        registerPasswordField.textProperty().addListener((observable, oldValue, newValue) -> {
+            checkPasswordsMatch(registerPasswordField, registerConfirmPasswordField, matchingErrorMessageLabel);
+        });
+
+        registerConfirmPasswordField.textProperty().addListener((observable, oldValue, newValue) -> {
+            checkPasswordsMatch(registerPasswordField, registerConfirmPasswordField, matchingErrorMessageLabel);
+        });
+        registerPasswordField.textProperty().addListener((observable, oldValue, newValue) -> {
+            checkPasswordsUpper(registerPasswordField, upperErrorMessageLabel);
+        });
+        registerPasswordField.textProperty().addListener((observable, oldValue, newValue) -> {
+            checkPasswordsLower(registerPasswordField, lowerErrorMessageLabel);
+        });
+        registerPasswordField.textProperty().addListener((observable, oldValue, newValue) -> {
+            checkPasswordsSpecial(registerPasswordField, specialErrorMessageLabel);
+        });
 
 
         createAccountButton.setOnAction(e -> {
@@ -191,20 +215,24 @@ public class MyJavaFXApp extends Application {
             String selectedRole = roleComboBox.getValue();
 
             if (password.isEmpty() || username.isEmpty()) {
-                errorMessageLabel.setText("Username or password cannot be empty!");
                 System.out.println("Username or password cannot be empty!");
-            } else if (!password.equals(confirmPassword)) {
-                errorMessageLabel.setText("Password doesn't match");
+            } else if (!password.matches(".*[!@#$%^&*].*")) {
+                System.out.println("Password must contain at least 1 Special Character");
+            }
+            else if (!password.matches(".*[a-z].*")) {
+                System.out.println("Password must contain at least 1 Lower Case letter");
+            }
+            else if (!password.matches(".*[A-Z].*")) {
+                System.out.println("Password must contain at least 1 Upper Case letter");
+            }
+            else if (!password.equals(confirmPassword)) {
                 System.out.println("Password doesn't match");
             } else if (selectedRole == null || selectedRole.isEmpty()) {
-                errorMessageLabel.setText("Selected Role is empty");
                 System.out.println("Selected Role is empty");
             } else {
                 try {
                     if (dbUtil.doesUserExist(username)) {
                         System.out.println("User already exists!");
-                        errorMessageLabel.setText("User already exists!");
-
                     } else {
                         dbUtil.register(username, password, selectedRole);
                         System.out.print("User registered successfully");
@@ -212,16 +240,44 @@ public class MyJavaFXApp extends Application {
                     }
                 } catch (SQLException ex) {
                     ex.printStackTrace();
-                    errorMessageLabel.setText("An error occurred during registration.");
                 }
             }
         });
 
 
-        Scene registerScene = new Scene(registerGrid, 400, 250);
+        Scene registerScene = new Scene(registerGrid, 300, 250);
         backToLoginButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
         registerScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("register.css")).toExternalForm());
         return registerScene;
+    }
+    // Method to check if passwords match and update the UI
+    private void checkPasswordsMatch(PasswordField passwordField, PasswordField confirmPasswordField, Label matchingErrorMessageLabel) {
+        if (!confirmPasswordField.getText().equals(passwordField.getText())) {
+            matchingErrorMessageLabel.setText("Passwords do not match");
+        } else {
+            matchingErrorMessageLabel.setText("");
+        }
+    }
+    private void checkPasswordsUpper(PasswordField passwordField, Label upperErrorMessageLabel) {
+        if (!passwordField.getText().matches(".*[A-Z].*")) {
+            upperErrorMessageLabel.setText("Password must contain at least 1 Upper Case letter");
+        } else {
+            upperErrorMessageLabel.setText("");
+        }
+    }
+    private void checkPasswordsLower(PasswordField passwordField, Label lowerErrorMessageLabel) {
+        if (!passwordField.getText().matches(".*[a-z].*")) {
+            lowerErrorMessageLabel.setText("Password must contain at least 1 Lower Case letter");
+        } else {
+            lowerErrorMessageLabel.setText("");
+        }
+    }
+    private void checkPasswordsSpecial(PasswordField passwordField, Label specialErrorMessageLabel) {
+        if (!passwordField.getText().matches(".*[!@#$%^&*].*")) {
+            specialErrorMessageLabel.setText("Password must contain at least 1 Special Character");
+        } else {
+            specialErrorMessageLabel.setText("");
+        }
     }
 
     private Scene userListScene(Stage primaryStage) {

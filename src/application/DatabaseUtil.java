@@ -109,11 +109,11 @@ public class DatabaseUtil {
                         .append(", Role(s): ").append(role)
                         .append("\n");
 
-                // Display values
-                System.out.print("ID: " + id);
-                System.out.print(", username: " + username);
-                System.out.print(", password: " + password);
-                System.out.println(", Role(s): " + role);
+//                // Display values
+//                System.out.print("ID: " + id);
+//                System.out.print(", username: " + username);
+//                System.out.print(", password: " + password);
+//                System.out.println(", Role(s): " + role);
             }
         } catch (SQLException e) {
             e.printStackTrace();

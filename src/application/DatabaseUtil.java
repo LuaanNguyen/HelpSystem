@@ -32,15 +32,64 @@ public class DatabaseUtil {
 
     //Create table for all the users
     private void createTables() throws SQLException {
-        String userTable = "CREATE TABLE IF NOT EXISTS helpsystem_users ("
+        String userTableQuery = "CREATE TABLE IF NOT EXISTS helpsystem_users ("
                 + "id INT AUTO_INCREMENT PRIMARY KEY, "
-                + "email VARCHAR(255) UNIQUE, "
+                + "username VARCHAR(255) UNIQUE, "
                 + "password VARCHAR(255), "
-                + "role VARCHAR(20))";
-        statement.execute(userTable);
+                + "roles VARCHAR(255))";
+        statement.execute(userTableQuery);
     }
 
     //Check whether the DB is empty or not
+    public boolean isDBEmpty() throws SQLException {
+        String query = "SELECT COUNT(*) AS count FROM helpsystem_users";
+        ResultSet resultSet = statement.executeQuery(query);
+        if (resultSet.next()) {
+            return resultSet.getInt("count") == 0;
+        }
+        return true;
+    }
+
+    //register new user
+    public void register(String username, String password, String role) throws SQLException {
+        String query = "INSERT INTO helpsystem_users (username, password, roles) VALUES (?, ?, ?)";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setString(1, username);
+            pstmt.setString(2, password);
+            pstmt.setString(3, role);
+            pstmt.executeUpdate();
+        }
+    }
+
+    //login new user
+    public boolean login(String username, String password, String role) throws SQLException {
+        String query = "SELECT * FROM helpsystem_users WHERE username = ? AND password = ? AND roles = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setString(1, username);
+            pstmt.setString(2, password);
+            pstmt.setString(3, role);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
+    //check if the user exists
+    public boolean doesUserExist(String username) {
+        String query = "SELECT COUNT(*) FROM helpsystem_users WHERE username = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setString(1, username);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    
 
 
 

@@ -8,8 +8,6 @@ import javafx.scene.layout.GridPane;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.ComboBox;
-
-
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,16 +29,19 @@ import java.util.Objects;
 
 public class MyJavaFXApp extends Application {
 
+    //Create a DB instance
     private static final DatabaseUtil dbUtil = new DatabaseUtil();
 
     @Override
     public void start(Stage primaryStage) {
+
+        //Connect to H2 DB
         try {
             dbUtil.connectToDatabase();
-            if (dbUtil.isDBEmpty()) {
+            if (dbUtil.isDBEmpty()) { //If DB is empty, setting up admin
                 System.out.print("In-Memory Database is empty");
                 primaryStage.setScene(createAdminSetupScene(primaryStage));
-            } else {
+            } else { //If DB is not empty, go to login screen
                 primaryStage.setScene(createLoginScene(primaryStage));
             }
         } catch (SQLException e) {
@@ -51,6 +52,7 @@ public class MyJavaFXApp extends Application {
         primaryStage.setTitle("Help System");
         primaryStage.show();
     }
+
 
     private Scene createAdminSetupScene(Stage primaryStage) {
         GridPane adminSetupGrid = new GridPane();
@@ -130,7 +132,7 @@ public class MyJavaFXApp extends Application {
         registerButton.setOnAction(e -> primaryStage.setScene(createRegisterScene(primaryStage)));
 
         Scene loginScene = new Scene(loginGrid, 300, 200);
-        loginScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("application.css")).toExternalForm());
+        loginScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("login.css")).toExternalForm());
         return loginScene;
     }
 
@@ -186,9 +188,12 @@ public class MyJavaFXApp extends Application {
             }
         });
 
-        backToLoginButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
 
-        return new Scene(registerGrid, 300, 250);
+        Scene registerScene = new Scene(registerGrid, 300, 250);
+        backToLoginButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
+        registerScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("register.css")).toExternalForm());
+
+        return registerScene;
     }
 
     public static void main(String[] args) {

@@ -1,5 +1,6 @@
 module CSE360_BinaryBabes {
 	requires javafx.controls;
-	
-	opens application to javafx.graphics, javafx.fxml;
+    requires java.sql;
+
+    opens application to javafx.graphics, javafx.fxml;
 }

@@ -11,6 +11,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.ComboBox;
 
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -30,6 +31,9 @@ import java.util.Objects;
 
 public class MyJavaFXApp extends Application {
 
+    //Create a DB instance
+    private static final DatabaseUtil dbUtil = new DatabaseUtil();
+
     //No database implementation yet, use arraylist to store users instead
     private List<User> users = new ArrayList<>();
     private User currentUser;
@@ -37,6 +41,15 @@ public class MyJavaFXApp extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        //Loading connection
+        try {
+            dbUtil.connectToDatabase();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return;
+        }
+
+
         primaryStage.setTitle("Help System"); //Set GUI title
 
         //Login scene

@@ -26,19 +26,16 @@ import java.util.Objects;
  *
  */
 
-
 public class MyJavaFXApp extends Application {
 
-    //Create a DB instance
+    /** Create a DB instance to interact with the database */
     private static final DatabaseUtil dbUtil = new DatabaseUtil();
 
     @Override
     public void start(Stage primaryStage) {
-
-        //Connect to H2 DB
-        try {
+        try { //Attempt to connect to H2 DB
             dbUtil.connectToDatabase();
-            if (dbUtil.isDBEmpty()) { //If DB is empty, setting up admin
+            if (dbUtil.isDBEmpty()) { //If DB is empty, setting up admin user
                 System.out.print("In-Memory Database is empty");
                 primaryStage.setScene(createAdminSetupScene(primaryStage));
             } else { //If DB is not empty, go to login screen
@@ -49,11 +46,18 @@ public class MyJavaFXApp extends Application {
             return;
         }
 
-        primaryStage.setTitle("Help System");
+        //Display primay stage
+        primaryStage.setTitle("Welcome to ASU Help System 👋");
         primaryStage.show();
     }
 
-
+    /**********
+     * ADMIN SETUP COMPONENT
+     * This is a Scene object (It's like Component in React)
+     *
+     * @param primaryStage primaryStage
+     * @return admin setup scene
+     */
     private Scene createAdminSetupScene(Stage primaryStage) {
         GridPane adminSetupGrid = new GridPane();
         adminSetupGrid.setPadding(new Insets(10, 10, 10, 10));
@@ -93,9 +97,17 @@ public class MyJavaFXApp extends Application {
             }
         });
 
-        return new Scene(adminSetupGrid, 300, 200);
+        Scene loginScene = new Scene(adminSetupGrid, 300, 200);
+        loginScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("admin.css")).toExternalForm());
+        return loginScene;
     }
 
+    /**********
+     * LOGIN COMPONENT
+     *
+     * @param primaryStage primaryStage
+     * @return login scene
+     */
     private Scene createLoginScene(Stage primaryStage) {
         GridPane loginGrid = new GridPane();
         loginGrid.setPadding(new Insets(10, 10, 10, 10));
@@ -136,6 +148,12 @@ public class MyJavaFXApp extends Application {
         return loginScene;
     }
 
+    /**********
+     * USER REGISTER COMPONENT
+     *
+     * @param primaryStage primaryStage
+     * @return register scene
+     */
     private Scene createRegisterScene(Stage primaryStage) {
         GridPane registerGrid = new GridPane();
         registerGrid.setPadding(new Insets(10, 10, 10, 10));
@@ -192,10 +210,16 @@ public class MyJavaFXApp extends Application {
         Scene registerScene = new Scene(registerGrid, 300, 250);
         backToLoginButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
         registerScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("register.css")).toExternalForm());
-
         return registerScene;
     }
 
+    /*******************************************************************************************************/
+    /*******************************************************************************************************
+     * This is the method that launches the JavaFX application
+     *
+     * @param args This parameter holds the command line parameters.
+     *
+     */
     public static void main(String[] args) {
         launch(args);
     }
@@ -207,7 +231,7 @@ class User {
     private String password;
     private List<String> roles = new ArrayList<>();
 
-    //Default constructor: for testing
+    /* Constructors */
     public User() {
         this.username = "Admin";
         this.password = "123123";
@@ -222,7 +246,7 @@ class User {
         this.roles.add(role);
     }
 
-    //Getter methods
+    /* Getter Methods */
     public String getUsername() {
         return this.username;
     }

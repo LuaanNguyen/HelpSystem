@@ -17,5 +17,6 @@
     <orderEntry type="library" name="org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER" level="application" />
     <orderEntry type="library" name="JavaFX21" level="project" />
     <orderEntry type="library" name="javafx-swt" level="project" />
+    <orderEntry type="library" name="h2-2.3.232" level="project" />
   </component>
 </module>

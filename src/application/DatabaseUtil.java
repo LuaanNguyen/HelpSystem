@@ -89,9 +89,40 @@ public class DatabaseUtil {
         return false;
     }
 
-    
 
+    //Display user in terminal (for now)
+    public void displayUsersByUser() throws SQLException{
+        String query = "SELECT * FROM helpsystem_users";
+        Statement stmt = connection.createStatement();
+        ResultSet rs = stmt.executeQuery(query);
 
+        while(rs.next()) {
+            // Retrieve by column name
+            int id  = rs.getInt("id");
+            String  username = rs.getString("username");
+            String password = rs.getString("password");
+            String role = rs.getString("roles");
 
+            // Display values
+            System.out.print("ID: " + id);
+            System.out.print(", username: " + username);
+            System.out.print(", password: " + password);
+            System.out.println(", Role(s): " + role);
+        }
+    }
+
+    //Close DB connection
+    public void closeConnection() {
+        try{
+            if(statement!=null) statement.close();
+        } catch(SQLException se2) {
+            se2.printStackTrace();
+        }
+        try {
+            if(connection!=null) connection.close();
+        } catch(SQLException se){
+            se.printStackTrace();
+        }
+    }
 }
 

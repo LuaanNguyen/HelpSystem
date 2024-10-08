@@ -1,0 +1,12 @@
+.button {
+    -fx-background-color: #4CAF50; /* Green */
+    -fx-text-fill: white;
+}
+
+.label {
+    -fx-font-size: 14px;
+}
+
+.text-field {
+    -fx-border-color: #4CAF50;
+}

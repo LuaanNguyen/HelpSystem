@@ -3,7 +3,6 @@ package application;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.scene.layout.GridPane;
 import javafx.geometry.Insets;
@@ -29,92 +28,142 @@ import java.util.Objects;
  *
  */
 
+
 public class MyJavaFXApp extends Application {
 
-    //Create a DB instance
     private static final DatabaseUtil dbUtil = new DatabaseUtil();
-
-    //No database implementation yet, use arraylist to store users instead
-    private List<User> users = new ArrayList<>();
-    private User currentUser;
-
 
     @Override
     public void start(Stage primaryStage) {
-        //Loading connection
         try {
             dbUtil.connectToDatabase();
+            if (dbUtil.isDBEmpty()) {
+                System.out.print("In-Memory Database is empty");
+                primaryStage.setScene(createAdminSetupScene(primaryStage));
+            } else {
+                primaryStage.setScene(createLoginScene(primaryStage));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             return;
         }
 
+        primaryStage.setTitle("Help System");
+        primaryStage.show();
+    }
 
-        primaryStage.setTitle("Help System"); //Set GUI title
+    private Scene createAdminSetupScene(Stage primaryStage) {
+        GridPane adminSetupGrid = new GridPane();
+        adminSetupGrid.setPadding(new Insets(10, 10, 10, 10));
+        adminSetupGrid.setHgap(5);
+        adminSetupGrid.setVgap(5);
 
-        //Login scene
+        TextField adminUserNameField = new TextField();
+        PasswordField adminPasswordField = new PasswordField();
+        PasswordField adminConfirmPasswordField = new PasswordField();
+        Button setupAdminButton = new Button("Setup Admin");
+
+        adminSetupGrid.add(new Label("Admin Username: "), 0, 0);
+        adminSetupGrid.add(adminUserNameField, 1, 0);
+        adminSetupGrid.add(new Label("Password: "), 0, 1);
+        adminSetupGrid.add(adminPasswordField, 1, 1);
+        adminSetupGrid.add(new Label("Confirm Password: "), 0, 2);
+        adminSetupGrid.add(adminConfirmPasswordField, 1, 2);
+        adminSetupGrid.add(setupAdminButton, 1, 3);
+
+        setupAdminButton.setOnAction(e -> {
+            String username = adminUserNameField.getText();
+            String password = adminPasswordField.getText();
+            String confirmPassword = adminConfirmPasswordField.getText();
+
+            if (password.isEmpty() || username.isEmpty()) {
+                System.out.println("Username or password cannot be empty!");
+            } else if (!password.equals(confirmPassword)) {
+                System.out.println("Password doesn't match");
+            } else {
+                try {
+                    dbUtil.register(username, password, "Admin");
+                    System.out.print("Admin user registered successfully");
+                    primaryStage.setScene(createLoginScene(primaryStage));
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+        return new Scene(adminSetupGrid, 300, 200);
+    }
+
+    private Scene createLoginScene(Stage primaryStage) {
         GridPane loginGrid = new GridPane();
         loginGrid.setPadding(new Insets(10, 10, 10, 10));
         loginGrid.setHgap(5);
         loginGrid.setVgap(5);
 
-        //Login components
         TextField userNameField = new TextField();
         PasswordField passwordField = new PasswordField();
         Button loginButton = new Button("Login");
         Button registerButton = new Button("Register");
 
-        //Add individual login components to Login grid
-        //GridPane parameters (node, column index, row index, column span, row span)
-        loginGrid.add(new Label("Username: "), 0 ,0);
+        loginGrid.add(new Label("Username: "), 0, 0);
         loginGrid.add(userNameField, 1, 0);
         loginGrid.add(new Label("Password: "), 0, 1);
         loginGrid.add(passwordField, 1, 1);
         loginGrid.add(loginButton, 1, 2);
         loginGrid.add(registerButton, 1, 3);
+
+        loginButton.setOnAction(e -> {
+            String username = userNameField.getText();
+            String password = passwordField.getText();
+            try {
+                if (dbUtil.login(username, password, "")) {
+                    System.out.println("Login successful");
+                    // Proceed to the next scene or functionality
+                } else {
+                    System.out.println("Invalid username or password");
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        });
+
+        registerButton.setOnAction(e -> primaryStage.setScene(createRegisterScene(primaryStage)));
+
         Scene loginScene = new Scene(loginGrid, 300, 200);
+        loginScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("application.css")).toExternalForm());
+        return loginScene;
+    }
 
-
-        //Register Scene
+    private Scene createRegisterScene(Stage primaryStage) {
         GridPane registerGrid = new GridPane();
-        registerGrid.setPadding(new Insets(10, 10, 10 ,10 ));
+        registerGrid.setPadding(new Insets(10, 10, 10, 10));
         registerGrid.setHgap(5);
         registerGrid.setVgap(5);
 
-        //Register components
-        TextField register_userNameField = new TextField();
-        PasswordField register_passwordField = new PasswordField();
-        PasswordField register_confirmPasswordField = new PasswordField();
+        TextField registerUserNameField = new TextField();
+        PasswordField registerPasswordField = new PasswordField();
+        PasswordField registerConfirmPasswordField = new PasswordField();
         ComboBox<String> roleComboBox = new ComboBox<>();
-        roleComboBox.getItems().addAll("Admin", "Student", "Instructor"); //Add the roles to the dropdown
+        roleComboBox.getItems().addAll("Admin", "Student", "Instructor");
         Button createAccountButton = new Button("Create Account");
         Button backToLoginButton = new Button("Back to Login");
 
-        //Add components to the register grid
         registerGrid.add(new Label("New Username: "), 0, 0);
-        registerGrid.add(register_userNameField, 1, 0);
+        registerGrid.add(registerUserNameField, 1, 0);
         registerGrid.add(new Label("Password: "), 0, 1);
-        registerGrid.add(register_passwordField, 1, 1);
+        registerGrid.add(registerPasswordField, 1, 1);
         registerGrid.add(new Label("Confirm Password: "), 0, 2);
-        registerGrid.add(register_confirmPasswordField, 1, 2);
+        registerGrid.add(registerConfirmPasswordField, 1, 2);
         registerGrid.add(new Label("Select Role: "), 0, 3);
         registerGrid.add(roleComboBox, 1, 3);
         registerGrid.add(createAccountButton, 1, 4);
         registerGrid.add(backToLoginButton, 1, 5);
-        Scene registerScene = new Scene(registerGrid, 300, 250);
 
-
-        //switching between login scene and register scene
-        registerButton.setOnAction(e -> primaryStage.setScene(registerScene));
-        backToLoginButton.setOnAction(e -> primaryStage.setScene(loginScene));
-
-
-        //Register Button action
         createAccountButton.setOnAction(e -> {
-            String username = register_userNameField.getText();
-            String password = register_passwordField.getText();
-            String confirmPassword = register_confirmPasswordField.getText();
-            String selectedRole = roleComboBox.getValue(); //Get the selected role from the ComboBox
+            String username = registerUserNameField.getText();
+            String password = registerPasswordField.getText();
+            String confirmPassword = registerConfirmPasswordField.getText();
+            String selectedRole = roleComboBox.getValue();
 
             if (password.isEmpty() || username.isEmpty()) {
                 System.out.println("Username or password cannot be empty!");
@@ -123,44 +172,30 @@ public class MyJavaFXApp extends Application {
             } else if (selectedRole == null || selectedRole.isEmpty()) {
                 System.out.println("Selected Role is empty");
             } else {
-                if (registerUser(username, password, selectedRole)) {
-                    System.out.print("User registered Successfully");
-                    primaryStage.setScene(loginScene);
+                try {
+                    if (dbUtil.doesUserExist(username)) {
+                        System.out.println("User already exists!");
+                    } else {
+                        dbUtil.register(username, password, selectedRole);
+                        System.out.print("User registered successfully");
+                        primaryStage.setScene(createLoginScene(primaryStage));
+                    }
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
                 }
             }
         });
 
-        //Load CSS
-        loginScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("application.css")).toExternalForm());
+        backToLoginButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
 
-        primaryStage.setScene(loginScene);
-        //primaryStage.setScene(registerScene);
-        primaryStage.show();
-    }
-
-    private boolean authenticate(String username, String password) {
-        for (User user : users) {
-            if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
-                currentUser = user;
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean registerUser(String username, String password, String role) {
-        if (users.stream().anyMatch(u -> u.getUsername().equals(username))) {
-            System.out.println("User already exists!");
-            return false;
-        }
-        users.add(new User(username, password, role));
-        return true;
+        return new Scene(registerGrid, 300, 250);
     }
 
     public static void main(String[] args) {
         launch(args);
     }
 }
+
 
 class User {
     private String username;
@@ -206,3 +241,24 @@ class User {
         }
     }
 }
+
+
+// Old functions
+//    private boolean authenticate(String username, String password) {
+//        for (User user : users) {
+//            if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
+//                currentUser = user;
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
+//
+//    private boolean registerUser(String username, String password, String role) {
+//        if (users.stream().anyMatch(u -> u.getUsername().equals(username))) {
+//            System.out.println("User already exists!");
+//            return false;
+//        }
+//        users.add(new User(username, password, role));
+//        return true;
+//    }

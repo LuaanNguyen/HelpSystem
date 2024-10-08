@@ -32,6 +32,10 @@ Two screencasts must be provided.  The first is a technical screencast that expl
 ### The Third Phase  (TBD)
 ### The Fourth Phase (TBD)
 
+## Phase 1 Architecture ⚙️
+
+![arhitecture](/public/phase1_architecture.png)
+
 ## Phase One Requirements ✅
 
 1. The very first person to log into the application (e.g., the list of users is empty) is assumed to be an Admin.  The system requires the first user to specify a username and password.  An account is created for that username and password, and that user is assigned the role of Admin.  At that point, the user is directed back to the original login.
@@ -54,7 +58,7 @@ Two screencasts must be provided.  The first is a technical screencast that expl
 
 ## Phase One Deliverables 🎁
 
-- A GitHub repository must be established, and a private project in that repository must include all the code required to build and test the application.  All the members of the team, a specified member of the grading team, must be given access to the repository.  If a Grader must ask for access after the deadline, `5%` will be deducted from the project grade.
+- A GitHub repository must be established, and a private project in that repository must include all the code required to build and test the application.  All the members of the team, a specified member of the grading team, must be given access to the repository.  If a Grader must ask for access after the deadline, `5%` will be deducted from the project grade.__
 - A PDF document must be produced that covers the following items.
 - Cover page (with an appropriate title and list of the members of the team): `5%`
 - Project overview: `20%`

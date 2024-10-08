@@ -62,12 +62,11 @@ public class DatabaseUtil {
     }
 
     //login new user
-    public boolean login(String username, String password, String role) throws SQLException {
-        String query = "SELECT * FROM helpsystem_users WHERE username = ? AND password = ? AND roles = ?";
+    public boolean login(String username, String password) throws SQLException {
+        String query = "SELECT * FROM helpsystem_users WHERE username = ? AND password = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
             pstmt.setString(1, username);
             pstmt.setString(2, password);
-            pstmt.setString(3, role);
             try (ResultSet rs = pstmt.executeQuery()) {
                 return rs.next();
             }
@@ -91,24 +90,36 @@ public class DatabaseUtil {
 
 
     //Display user in terminal (for now)
-    public void displayUsersByUser() throws SQLException{
+    public String displayUsersByUser() {
         String query = "SELECT * FROM helpsystem_users";
-        Statement stmt = connection.createStatement();
-        ResultSet rs = stmt.executeQuery(query);
+        StringBuilder result = new StringBuilder();
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+            while (rs.next()) {
+                // Retrieve by column name
+                int id = rs.getInt("id");
+                String username = rs.getString("username");
+                String password = rs.getString("password");
+                String role = rs.getString("roles");
 
-        while(rs.next()) {
-            // Retrieve by column name
-            int id  = rs.getInt("id");
-            String  username = rs.getString("username");
-            String password = rs.getString("password");
-            String role = rs.getString("roles");
+                // Append values to result
+                result.append("ID: ").append(id)
+                        .append(", username: ").append(username)
+                        .append(", password: ").append(password)
+                        .append(", Role(s): ").append(role)
+                        .append("\n");
 
-            // Display values
-            System.out.print("ID: " + id);
-            System.out.print(", username: " + username);
-            System.out.print(", password: " + password);
-            System.out.println(", Role(s): " + role);
+//                // Display values
+//                System.out.print("ID: " + id);
+//                System.out.print(", username: " + username);
+//                System.out.print(", password: " + password);
+//                System.out.println(", Role(s): " + role);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return "An error occurred while displaying users.";
         }
+        return result.toString();
     }
 
     //Close DB connection

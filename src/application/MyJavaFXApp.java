@@ -130,9 +130,10 @@ public class MyJavaFXApp extends Application {
             String username = userNameField.getText();
             String password = passwordField.getText();
             try {
-                if (dbUtil.login(username, password, "")) {
+                if (dbUtil.login(username, password)) {
                     System.out.println("Login successful");
                     // Proceed to the next scene or functionality
+                    primaryStage.setScene(userListScene(primaryStage));
                 } else {
                     System.out.println("Invalid username or password");
                 }
@@ -277,6 +278,31 @@ public class MyJavaFXApp extends Application {
         } else {
             specialErrorMessageLabel.setText("");
         }
+    }
+
+    private Scene userListScene(Stage primaryStage) {
+        GridPane userListGrid = new GridPane();
+        userListGrid.setPadding(new Insets(10, 10, 10, 10));
+        userListGrid.setHgap(5);
+        userListGrid.setVgap(5);
+
+        String res = dbUtil.displayUsersByUser();
+
+        ListView<String> userListView = new ListView<>();
+        String[] users = dbUtil.displayUsersByUser().split("\n");
+        userListView.getItems().addAll(users);
+
+        Button backToLoginButton = new Button("Back to Login");
+        userListGrid.add(userListView, 0, 0);
+        userListGrid.add(backToLoginButton, 0, 1);
+
+
+        backToLoginButton.setOnAction(e -> {
+            primaryStage.setScene(createLoginScene(primaryStage));
+        });
+
+        Scene userListScene = new Scene(userListGrid, 400, 300);
+        return userListScene;
     }
 
     /*******************************************************************************************************/

@@ -167,6 +167,8 @@ public class MyJavaFXApp extends Application {
         roleComboBox.getItems().addAll("Admin", "Student", "Instructor");
         Button createAccountButton = new Button("Create Account");
         Button backToLoginButton = new Button("Back to Login");
+        Label errorMessageLabel = new Label(); // Label for error messages
+
 
         registerGrid.add(new Label("New Username: "), 0, 0);
         registerGrid.add(registerUserNameField, 1, 0);
@@ -178,6 +180,8 @@ public class MyJavaFXApp extends Application {
         registerGrid.add(roleComboBox, 1, 3);
         registerGrid.add(createAccountButton, 1, 4);
         registerGrid.add(backToLoginButton, 1, 5);
+        registerGrid.add(errorMessageLabel, 1, 6); // Add the error message label
+
 
         createAccountButton.setOnAction(e -> {
             String username = registerUserNameField.getText();
@@ -186,15 +190,20 @@ public class MyJavaFXApp extends Application {
             String selectedRole = roleComboBox.getValue();
 
             if (password.isEmpty() || username.isEmpty()) {
+                errorMessageLabel.setText("Username or password cannot be empty!");
                 System.out.println("Username or password cannot be empty!");
             } else if (!password.equals(confirmPassword)) {
+                errorMessageLabel.setText("Password doesn't match");
                 System.out.println("Password doesn't match");
             } else if (selectedRole == null || selectedRole.isEmpty()) {
+                errorMessageLabel.setText("Selected Role is empty");
                 System.out.println("Selected Role is empty");
             } else {
                 try {
                     if (dbUtil.doesUserExist(username)) {
                         System.out.println("User already exists!");
+                        errorMessageLabel.setText("User already exists!");
+
                     } else {
                         dbUtil.register(username, password, selectedRole);
                         System.out.print("User registered successfully");
@@ -202,12 +211,13 @@ public class MyJavaFXApp extends Application {
                     }
                 } catch (SQLException ex) {
                     ex.printStackTrace();
+                    errorMessageLabel.setText("An error occurred during registration.");
                 }
             }
         });
 
 
-        Scene registerScene = new Scene(registerGrid, 300, 250);
+        Scene registerScene = new Scene(registerGrid, 400, 250);
         backToLoginButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
         registerScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("register.css")).toExternalForm());
         return registerScene;

@@ -14,14 +14,14 @@ public class DatabaseUtil {
     private static final String JDBC_URL = "jdbc:h2:~/test;AUTO_SERVER=TRUE";
     static final String JDBC_DRIVER = "org.h2.Driver";
 
+    //  Database credentials
+    static final String USER = "sa";
+    static final String PASS = "";
+
     //Variables for random generator
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     private static final int CODE_LENGTH = 10;
     private static final SecureRandom RANDOM = new SecureRandom();
-
-    //  Database credentials
-    static final String USER = "sa";
-    static final String PASS = "";
 
     private Connection connection = null;
     private Statement statement = null;
@@ -257,6 +257,19 @@ public class DatabaseUtil {
         createTables();  // Recreate the tables
     }
 
+    //Update user details
+    public void updateUserDetails(String username, String email, String firstName, String middleName, String lastName, String preferredFirstName) throws SQLException {
+        String query = "UPDATE helpsystem_users SET email = ?, first_name = ?, middle_name = ?, last_name = ?, preferred_first_name = ? WHERE username = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setString(1, email);
+            pstmt.setString(2, firstName);
+            pstmt.setString(3, middleName);
+            pstmt.setString(4, lastName);
+            pstmt.setString(5, preferredFirstName);
+            pstmt.setString(6, username);
+            pstmt.executeUpdate();
+        }
+    }
 
 
     //Close DB connection

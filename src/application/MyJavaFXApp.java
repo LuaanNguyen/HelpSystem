@@ -194,6 +194,7 @@ public class MyJavaFXApp extends Application {
                         primaryStage.setScene(adminScene(primaryStage));
                     } else if (user.getRole().contains("Student")) {
                         //Set other scene depending on user role
+
                         primaryStage.setScene(studentScene(primaryStage));
                     } else if  (user.getRole().contains("Instructor")) {
                         primaryStage.setScene(instructorScene(primaryStage));
@@ -452,6 +453,63 @@ public class MyJavaFXApp extends Application {
         return new Scene(instructorSceneGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
     }
 
+    /**********
+     * FINISH SETUP COMPONENT
+     *
+     * @param primaryStage primaryStage
+     * @return finish setup component
+     */
+    private Scene createFinishSetupScene(Stage primaryStage, String username) {
+        GridPane finishSetupGrid = new GridPane();
+        finishSetupGrid.setPadding(new Insets(10, 10, 10, 10));
+        finishSetupGrid.setHgap(H_GAP);
+        finishSetupGrid.setVgap(V_GAP);
+        finishSetupGrid.setAlignment(Pos.CENTER);
+
+        TextField emailField = new TextField();
+        TextField firstNameField = new TextField();
+        TextField middleNameField = new TextField();
+        TextField lastNameField = new TextField();
+        TextField preferredFirstNameField = new TextField();
+        Button finishSetupButton = new Button("Finish Setup");
+
+        finishSetupGrid.add(new Label("Email: "), 0, 0);
+        finishSetupGrid.add(emailField, 1, 0);
+        finishSetupGrid.add(new Label("First Name: "), 0, 1);
+        finishSetupGrid.add(firstNameField, 1, 1);
+        finishSetupGrid.add(new Label("Middle Name: "), 0, 2);
+        finishSetupGrid.add(middleNameField, 1, 2);
+        finishSetupGrid.add(new Label("Last Name: "), 0, 3);
+        finishSetupGrid.add(lastNameField, 1, 3);
+        finishSetupGrid.add(new Label("Preferred First Name: "), 0, 4);
+        finishSetupGrid.add(preferredFirstNameField, 1, 4);
+        finishSetupGrid.add(finishSetupButton, 1, 5);
+
+        finishSetupButton.setOnAction(e -> {
+            String email = emailField.getText();
+            String firstName = firstNameField.getText();
+            String middleName = middleNameField.getText();
+            String lastName = lastNameField.getText();
+            String preferredFirstName = preferredFirstNameField.getText();
+
+            if (email.isEmpty() || firstName.isEmpty() || lastName.isEmpty()) {
+                System.out.println("Email, First Name, and Last Name cannot be empty!");
+            } else {
+                try {
+                    dbUtil.updateUserDetails(username, email, firstName, middleName, lastName, preferredFirstName);
+                    primaryStage.setScene(createLoginScene(primaryStage));
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+        Scene finishSetupScene = new Scene(finishSetupGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
+        finishSetupScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("finishSetup.css")).toExternalForm());
+        return finishSetupScene;
+    }
+
+
     /*******************************************************************************************************/
     /*******************************************************************************************************
      * This is the method that launches the JavaFX application
@@ -464,60 +522,5 @@ public class MyJavaFXApp extends Application {
     }
 }
 
-//    /**********
-//     * FINISH SETUP COMPONENT
-//     *
-//     * @param primaryStage primaryStage
-//     * @return finish setup component
-//     */
-//    private Scene createFinishSetupScene(Stage primaryStage, String username) {
-//        GridPane finishSetupGrid = new GridPane();
-//        finishSetupGrid.setPadding(new Insets(10, 10, 10, 10));
-//        finishSetupGrid.setHgap(H_GAP);
-//        finishSetupGrid.setVgap(V_GAP);
-//        finishSetupGrid.setAlignment(Pos.CENTER);
-//
-//        TextField emailField = new TextField();
-//        TextField firstNameField = new TextField();
-//        TextField middleNameField = new TextField();
-//        TextField lastNameField = new TextField();
-//        TextField preferredFirstNameField = new TextField();
-//        Button finishSetupButton = new Button("Finish Setup");
-//
-//        finishSetupGrid.add(new Label("Email: "), 0, 0);
-//        finishSetupGrid.add(emailField, 1, 0);
-//        finishSetupGrid.add(new Label("First Name: "), 0, 1);
-//        finishSetupGrid.add(firstNameField, 1, 1);
-//        finishSetupGrid.add(new Label("Middle Name: "), 0, 2);
-//        finishSetupGrid.add(middleNameField, 1, 2);
-//        finishSetupGrid.add(new Label("Last Name: "), 0, 3);
-//        finishSetupGrid.add(lastNameField, 1, 3);
-//        finishSetupGrid.add(new Label("Preferred First Name: "), 0, 4);
-//        finishSetupGrid.add(preferredFirstNameField, 1, 4);
-//        finishSetupGrid.add(finishSetupButton, 1, 5);
-//
-//        finishSetupButton.setOnAction(e -> {
-//            String email = emailField.getText();
-//            String firstName = firstNameField.getText();
-//            String middleName = middleNameField.getText();
-//            String lastName = lastNameField.getText();
-//            String preferredFirstName = preferredFirstNameField.getText();
-//
-//            if (email.isEmpty() || firstName.isEmpty() || lastName.isEmpty()) {
-//                System.out.println("Email, First Name, and Last Name cannot be empty!");
-//            } else {
-//                try {
-//                    //dbUtil.updateUserDetails(username, email, firstName, middleName, lastName, preferredFirstName);
-//                    primaryStage.setScene(createLoginScene(primaryStage));
-//                } catch (SQLException ex) {
-//                    ex.printStackTrace();
-//                }
-//            }
-//        });
-//
-//        Scene finishSetupScene = new Scene(finishSetupGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
-//        finishSetupScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("finishSetup.css")).toExternalForm());
-//        return finishSetupScene;
-//    }
 
 

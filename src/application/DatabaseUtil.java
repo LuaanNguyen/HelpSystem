@@ -53,10 +53,26 @@ public class DatabaseUtil {
                 + "email VARCHAR(255) UNIQUE, "
                 + "username VARCHAR(255) UNIQUE, "
                 + "password VARCHAR(255), "
+                + "first_name VARCHAR(255), "
+                + "middle_name VARCHAR(255), "
+                + "last_name VARCHAR(255), "
+                + "preferred_first_name VARCHAR(255), "
                 + "roles VARCHAR(255))";
         statement.execute(userTableQuery);
 
-        // Ensure the email column exists
+        // Ensure the necessary columns exist
+        String addFirstNameColumnQuery = "ALTER TABLE helpsystem_users ADD COLUMN IF NOT EXISTS first_name VARCHAR(255)";
+        statement.execute(addFirstNameColumnQuery);
+
+        String addMiddleNameColumnQuery = "ALTER TABLE helpsystem_users ADD COLUMN IF NOT EXISTS middle_name VARCHAR(255)";
+        statement.execute(addMiddleNameColumnQuery);
+
+        String addLastNameColumnQuery = "ALTER TABLE helpsystem_users ADD COLUMN IF NOT EXISTS last_name VARCHAR(255)";
+        statement.execute(addLastNameColumnQuery);
+
+        String addPreferredFirstNameColumnQuery = "ALTER TABLE helpsystem_users ADD COLUMN IF NOT EXISTS preferred_first_name VARCHAR(255)";
+        statement.execute(addPreferredFirstNameColumnQuery);
+
         String addEmailColumnQuery = "ALTER TABLE helpsystem_users ADD COLUMN IF NOT EXISTS email VARCHAR(255) UNIQUE";
         statement.execute(addEmailColumnQuery);
     }

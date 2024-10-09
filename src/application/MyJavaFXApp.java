@@ -2,6 +2,7 @@ package application;
 
 import application.User;
 import javafx.application.Application;
+import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -141,10 +142,16 @@ public class MyJavaFXApp extends Application {
 
         Label errorMessage = new Label();
         loginGrid.add(errorMessage, 0, 7, 2, 1); // Span 2 columns for proper alignment
+        errorMessage.setStyle("-fx-alignment: center;");
+        GridPane.setColumnSpan(errorMessage, GridPane.REMAINING);
+        GridPane.setHalignment(errorMessage, HPos.CENTER);
+
         Button loginButton = new Button("Login");
         loginButton.getStyleClass().add("login_button");
+
         Button registerButton = new Button("Register");
         registerButton.getStyleClass().add("register_button");
+        
         Button resetDatabaseButton = new Button("Reset Database");
         resetDatabaseButton.getStyleClass().add("resetDb_button");
 

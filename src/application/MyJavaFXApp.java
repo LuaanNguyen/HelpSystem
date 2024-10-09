@@ -157,9 +157,9 @@ public class MyJavaFXApp extends Application {
                         primaryStage.setScene(adminScene(primaryStage));
                     } else if (user.getRole().contains("Student")) {
                         //Set other scene depending on user role
-                        primaryStage.setScene(userScene(primaryStage));
+                        primaryStage.setScene(studentScene(primaryStage));
                     } else if  (user.getRole().contains("Instructor")) {
-                        primaryStage.setScene(userScene(primaryStage));
+                        primaryStage.setScene(instructorScene(primaryStage));
                     } else {
                         System.out.println("Error finding a right role.");
                     }
@@ -295,64 +295,6 @@ public class MyJavaFXApp extends Application {
     }
 
 
-//    /**********
-//     * FINISH SETUP COMPONENT
-//     *
-//     * @param primaryStage primaryStage
-//     * @return finish setup component
-//     */
-//    private Scene createFinishSetupScene(Stage primaryStage, String username) {
-//        GridPane finishSetupGrid = new GridPane();
-//        finishSetupGrid.setPadding(new Insets(10, 10, 10, 10));
-//        finishSetupGrid.setHgap(H_GAP);
-//        finishSetupGrid.setVgap(V_GAP);
-//        finishSetupGrid.setAlignment(Pos.CENTER);
-//
-//        TextField emailField = new TextField();
-//        TextField firstNameField = new TextField();
-//        TextField middleNameField = new TextField();
-//        TextField lastNameField = new TextField();
-//        TextField preferredFirstNameField = new TextField();
-//        Button finishSetupButton = new Button("Finish Setup");
-//
-//        finishSetupGrid.add(new Label("Email: "), 0, 0);
-//        finishSetupGrid.add(emailField, 1, 0);
-//        finishSetupGrid.add(new Label("First Name: "), 0, 1);
-//        finishSetupGrid.add(firstNameField, 1, 1);
-//        finishSetupGrid.add(new Label("Middle Name: "), 0, 2);
-//        finishSetupGrid.add(middleNameField, 1, 2);
-//        finishSetupGrid.add(new Label("Last Name: "), 0, 3);
-//        finishSetupGrid.add(lastNameField, 1, 3);
-//        finishSetupGrid.add(new Label("Preferred First Name: "), 0, 4);
-//        finishSetupGrid.add(preferredFirstNameField, 1, 4);
-//        finishSetupGrid.add(finishSetupButton, 1, 5);
-//
-//        finishSetupButton.setOnAction(e -> {
-//            String email = emailField.getText();
-//            String firstName = firstNameField.getText();
-//            String middleName = middleNameField.getText();
-//            String lastName = lastNameField.getText();
-//            String preferredFirstName = preferredFirstNameField.getText();
-//
-//            if (email.isEmpty() || firstName.isEmpty() || lastName.isEmpty()) {
-//                System.out.println("Email, First Name, and Last Name cannot be empty!");
-//            } else {
-//                try {
-//                    //dbUtil.updateUserDetails(username, email, firstName, middleName, lastName, preferredFirstName);
-//                    primaryStage.setScene(createLoginScene(primaryStage));
-//                } catch (SQLException ex) {
-//                    ex.printStackTrace();
-//                }
-//            }
-//        });
-//
-//        Scene finishSetupScene = new Scene(finishSetupGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
-//        finishSetupScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("finishSetup.css")).toExternalForm());
-//        return finishSetupScene;
-//    }
-
-
-
     // Method to check if passwords match and update the UI
     private void checkPasswordsMatch(PasswordField passwordField, PasswordField confirmPasswordField, Label matchingErrorMessageLabel) {
         if (!confirmPasswordField.getText().equals(passwordField.getText())) {
@@ -416,24 +358,46 @@ public class MyJavaFXApp extends Application {
     }
 
     /**********
-     * USER SCENE
+     * STUDENT SCENE
      *
      * @param primaryStage primaryStage
-     * @return user scene after successfully login
+     * @return student scene after successfully login
      */
 
-    private Scene userScene(Stage primaryStage) {
-        GridPane userSceneGrid = new GridPane();
-        userSceneGrid.setPadding(new Insets(20, 20, 20, 20));
-        userSceneGrid.setHgap(H_GAP);
-        userSceneGrid.setVgap(V_GAP);
+    private Scene studentScene(Stage primaryStage) {
+        GridPane studentSceneGrid = new GridPane();
+        studentSceneGrid.setPadding(new Insets(20, 20, 20, 20));
+        studentSceneGrid.setHgap(H_GAP);
+        studentSceneGrid.setVgap(V_GAP);
 
         Button backToLoginButton = new Button("Back to login");
-        userSceneGrid.add(backToLoginButton, 0 ,0 );
+        studentSceneGrid.add(new Label("Student Scene"), 0 , 0);
+        studentSceneGrid.add(backToLoginButton, 0 ,1 );
 
         backToLoginButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
 
-        return new Scene(userSceneGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
+        return new Scene(studentSceneGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
+    }
+
+    /**********
+     * STUDENT SCENE
+     *
+     * @param primaryStage primaryStage
+     * @return student scene after successfully login
+     */
+    private Scene instructorScene(Stage primaryStage) {
+        GridPane instructorSceneGrid = new GridPane();
+        instructorSceneGrid.setPadding(new Insets(20, 20, 20, 20));
+        instructorSceneGrid.setHgap(H_GAP);
+        instructorSceneGrid.setVgap(V_GAP);
+
+        Button backToLoginButton = new Button("Back to login");
+        instructorSceneGrid.add(new Label("Instructor Scene"), 0, 0);
+        instructorSceneGrid.add(backToLoginButton, 0 ,1 );
+
+        backToLoginButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
+
+        return new Scene(instructorSceneGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
     }
 
 
@@ -448,5 +412,62 @@ public class MyJavaFXApp extends Application {
         launch(args);
     }
 }
+
+
+//    /**********
+//     * FINISH SETUP COMPONENT
+//     *
+//     * @param primaryStage primaryStage
+//     * @return finish setup component
+//     */
+//    private Scene createFinishSetupScene(Stage primaryStage, String username) {
+//        GridPane finishSetupGrid = new GridPane();
+//        finishSetupGrid.setPadding(new Insets(10, 10, 10, 10));
+//        finishSetupGrid.setHgap(H_GAP);
+//        finishSetupGrid.setVgap(V_GAP);
+//        finishSetupGrid.setAlignment(Pos.CENTER);
+//
+//        TextField emailField = new TextField();
+//        TextField firstNameField = new TextField();
+//        TextField middleNameField = new TextField();
+//        TextField lastNameField = new TextField();
+//        TextField preferredFirstNameField = new TextField();
+//        Button finishSetupButton = new Button("Finish Setup");
+//
+//        finishSetupGrid.add(new Label("Email: "), 0, 0);
+//        finishSetupGrid.add(emailField, 1, 0);
+//        finishSetupGrid.add(new Label("First Name: "), 0, 1);
+//        finishSetupGrid.add(firstNameField, 1, 1);
+//        finishSetupGrid.add(new Label("Middle Name: "), 0, 2);
+//        finishSetupGrid.add(middleNameField, 1, 2);
+//        finishSetupGrid.add(new Label("Last Name: "), 0, 3);
+//        finishSetupGrid.add(lastNameField, 1, 3);
+//        finishSetupGrid.add(new Label("Preferred First Name: "), 0, 4);
+//        finishSetupGrid.add(preferredFirstNameField, 1, 4);
+//        finishSetupGrid.add(finishSetupButton, 1, 5);
+//
+//        finishSetupButton.setOnAction(e -> {
+//            String email = emailField.getText();
+//            String firstName = firstNameField.getText();
+//            String middleName = middleNameField.getText();
+//            String lastName = lastNameField.getText();
+//            String preferredFirstName = preferredFirstNameField.getText();
+//
+//            if (email.isEmpty() || firstName.isEmpty() || lastName.isEmpty()) {
+//                System.out.println("Email, First Name, and Last Name cannot be empty!");
+//            } else {
+//                try {
+//                    //dbUtil.updateUserDetails(username, email, firstName, middleName, lastName, preferredFirstName);
+//                    primaryStage.setScene(createLoginScene(primaryStage));
+//                } catch (SQLException ex) {
+//                    ex.printStackTrace();
+//                }
+//            }
+//        });
+//
+//        Scene finishSetupScene = new Scene(finishSetupGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
+//        finishSetupScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("finishSetup.css")).toExternalForm());
+//        return finishSetupScene;
+//    }
 
 

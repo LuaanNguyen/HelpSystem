@@ -101,7 +101,7 @@ public class MyJavaFXApp extends Application {
             } else {
                 try {
                     dbUtil.register(email, username, password, "Admin");
-                    System.out.print("Admin user registered successfully");
+                    System.out.println("Admin user registered successfully");
                     primaryStage.setScene(createLoginScene(primaryStage));
                 } catch (SQLException ex) {
                     ex.printStackTrace();

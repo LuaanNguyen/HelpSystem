@@ -1,8 +1,17 @@
+.root {
+    -fx-background-color: #f0f0f0;
+    -fx-background-image: url('amogus.png');
+}
 .button {
     -fx-background-color: #4CAF50; /* Green */
     -fx-text-fill: white;
     -fx-border-radius: 10px;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+    -fx-min-width: 100px;
+    -fx-max-width: 100px;
+    -fx-alignment: center;
+
+    ;
 }
 
 .label {
@@ -11,6 +20,7 @@
 .button:hover
 {
     -fx-background-color: #000000;
+    -fx-cursor: hand;
 }
 .button:pressed
 {

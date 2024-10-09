@@ -1,6 +1,7 @@
 package application;
 
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
@@ -157,11 +158,13 @@ public class MyJavaFXApp extends Application {
      */
     private Scene createRegisterScene(Stage primaryStage) {
         GridPane registerGrid = new GridPane();
+        registerGrid.setAlignment(Pos.CENTER);
         registerGrid.setPadding(new Insets(10, 10, 10, 10));
         registerGrid.setHgap(5);
         registerGrid.setVgap(5);
 
         TextField registerUserNameField = new TextField();
+        registerUserNameField.setPromptText("Enter a username");
         PasswordField registerPasswordField = new PasswordField();
         PasswordField registerConfirmPasswordField = new PasswordField();
         ComboBox<String> roleComboBox = new ComboBox<>();
@@ -245,7 +248,7 @@ public class MyJavaFXApp extends Application {
         });
 
 
-        Scene registerScene = new Scene(registerGrid, 300, 250);
+        Scene registerScene = new Scene(registerGrid, 500, 300);
         backToLoginButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
         registerScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("register.css")).toExternalForm());
         registerScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("application.css")).toExternalForm());

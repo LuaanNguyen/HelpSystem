@@ -186,8 +186,20 @@ public class MyJavaFXApp extends Application {
             try {
                 if (dbUtil.login(username, password)) {
                     errorMessage.setText("Login successful");
+
+                    User user = dbUtil.getUserByUsername(username);
+
                     // Proceed to the next scene or functionality
-                    primaryStage.setScene(userListScene(primaryStage));
+                    if (user.getRole().contains("Admin")) {
+                        primaryStage.setScene(adminScene(primaryStage));
+                    } else if (user.getRole().contains("Student")) {
+                        //Set other scene depending on user role
+                        primaryStage.setScene(studentScene(primaryStage));
+                    } else if  (user.getRole().contains("Instructor")) {
+                        primaryStage.setScene(instructorScene(primaryStage));
+                    } else {
+                        System.out.println("Error finding a right role.");
+                    }
                 } else {
                     errorMessage.setText("Invalid username or password");
                 }
@@ -278,9 +290,11 @@ public class MyJavaFXApp extends Application {
             checkPasswordsSpecial(registerPasswordField, specialErrorMessageLabel);
         });
 
+
         registerConfirmPasswordField.textProperty().addListener((observable, oldValue, newValue) -> {
             checkPasswordsMatch(registerPasswordField, registerConfirmPasswordField, matchingErrorMessageLabel);
         });
+
 
         createAccountButton.setOnAction(e -> {
             String username = registerUserNameField.getText();
@@ -324,7 +338,7 @@ public class MyJavaFXApp extends Application {
                 }
             }
         });
-        
+
         Scene registerScene = new Scene(registerGrid,  WINDOW_HEIGHT ,  WINDOW_WIDTH);
         backToLoginButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
         registerScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("register.css")).toExternalForm());
@@ -333,12 +347,129 @@ public class MyJavaFXApp extends Application {
     }
 
 
+    // Method to check if passwords match and update the UI
+    private void checkPasswordsMatch(PasswordField passwordField, PasswordField confirmPasswordField, Label matchingErrorMessageLabel) {
+        if (!confirmPasswordField.getText().equals(passwordField.getText())) {
+            matchingErrorMessageLabel.setText("Passwords do not match");
+        } else {
+            matchingErrorMessageLabel.setText("");
+        }
+    }
+    private void checkPasswordsUpper(PasswordField passwordField, Label upperErrorMessageLabel) {
+        if (!passwordField.getText().matches(".*[A-Z].*")) {
+            upperErrorMessageLabel.setText("Password must contain at least 1 Upper Case letter");
+        } else {
+            upperErrorMessageLabel.setText("");
+        }
+    }
+    private void checkPasswordsLower(PasswordField passwordField, Label lowerErrorMessageLabel) {
+        if (!passwordField.getText().matches(".*[a-z].*")) {
+            lowerErrorMessageLabel.setText("Password must contain at least 1 Lower Case letter");
+        } else {
+            lowerErrorMessageLabel.setText("");
+        }
+    }
+    private void checkPasswordsSpecial(PasswordField passwordField, Label specialErrorMessageLabel) {
+        if (!passwordField.getText().matches(".*[!@#$%^&*].*")) {
+            specialErrorMessageLabel.setText("Password must contain at least 1 Special Character");
+        } else {
+            specialErrorMessageLabel.setText("");
+        }
+    }
+
+
     /**********
-     * FINISH SETUP COMPONENT
+     * ADMIN SCENE
      *
      * @param primaryStage primaryStage
-     * @return finish setup component
+     * @return admin scene after successfully login as admin
      */
+    private Scene adminScene(Stage primaryStage) {
+        GridPane userListGrid = new GridPane();
+        userListGrid.setPadding(new Insets(20, 20, 20, 20));
+        userListGrid.setHgap(H_GAP);
+        userListGrid.setVgap(V_GAP);
+
+        String res = dbUtil.displayUsersByUser();
+
+        ListView<String> userListView = new ListView<>();
+        String[] users = dbUtil.displayUsersByUser().split("\n");
+        userListView.getItems().addAll(users);
+
+        Button backToLoginButton = new Button("Back to Login");
+        userListGrid.add(userListView, 0, 0);
+        userListGrid.add(backToLoginButton, 0, 1);
+
+
+        backToLoginButton.setOnAction(e -> {
+            primaryStage.setScene(createLoginScene(primaryStage));
+        });
+
+        Scene userListScene = new Scene(userListGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
+        return userListScene;
+    }
+
+    /**********
+     * STUDENT SCENE
+     *
+     * @param primaryStage primaryStage
+     * @return student scene after successfully login
+     */
+
+    private Scene studentScene(Stage primaryStage) {
+        GridPane studentSceneGrid = new GridPane();
+        studentSceneGrid.setPadding(new Insets(20, 20, 20, 20));
+        studentSceneGrid.setHgap(H_GAP);
+        studentSceneGrid.setVgap(V_GAP);
+
+        Button backToLoginButton = new Button("Back to login");
+        studentSceneGrid.add(new Label("Student Scene"), 0 , 0);
+        studentSceneGrid.add(backToLoginButton, 0 ,1 );
+
+        backToLoginButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
+
+        return new Scene(studentSceneGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
+    }
+
+    /**********
+     * INSTRUCTOR SCENE
+     *
+     * @param primaryStage primaryStage
+     * @return instructor scene after successfully login
+     */
+    private Scene instructorScene(Stage primaryStage) {
+        GridPane instructorSceneGrid = new GridPane();
+        instructorSceneGrid.setPadding(new Insets(20, 20, 20, 20));
+        instructorSceneGrid.setHgap(H_GAP);
+        instructorSceneGrid.setVgap(V_GAP);
+
+        Button backToLoginButton = new Button("Back to login");
+        instructorSceneGrid.add(new Label("Instructor Scene"), 0, 0);
+        instructorSceneGrid.add(backToLoginButton, 0 ,1 );
+
+        backToLoginButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
+
+        return new Scene(instructorSceneGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
+    }
+
+    /*******************************************************************************************************/
+    /*******************************************************************************************************
+     * This is the method that launches the JavaFX application
+     *
+     * @param args This parameter holds the command line parameters.
+     *
+     */
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
+
+//    /**********
+//     * FINISH SETUP COMPONENT
+//     *
+//     * @param primaryStage primaryStage
+//     * @return finish setup component
+//     */
 //    private Scene createFinishSetupScene(Stage primaryStage, String username) {
 //        GridPane finishSetupGrid = new GridPane();
 //        finishSetupGrid.setPadding(new Insets(10, 10, 10, 10));
@@ -388,74 +519,5 @@ public class MyJavaFXApp extends Application {
 //        finishSetupScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("finishSetup.css")).toExternalForm());
 //        return finishSetupScene;
 //    }
-
-
-
-    // Method to check if passwords match and update the UI
-    private void checkPasswordsMatch(PasswordField passwordField, PasswordField confirmPasswordField, Label matchingErrorMessageLabel) {
-        if (!confirmPasswordField.getText().equals(passwordField.getText())) {
-            matchingErrorMessageLabel.setText("Passwords do not match");
-        } else {
-            matchingErrorMessageLabel.setText("");
-        }
-    }
-    private void checkPasswordsUpper(PasswordField passwordField, Label upperErrorMessageLabel) {
-        if (!passwordField.getText().matches(".*[A-Z].*")) {
-            upperErrorMessageLabel.setText("Password must contain at least 1 Upper Case letter");
-        } else {
-            upperErrorMessageLabel.setText("");
-        }
-    }
-    private void checkPasswordsLower(PasswordField passwordField, Label lowerErrorMessageLabel) {
-        if (!passwordField.getText().matches(".*[a-z].*")) {
-            lowerErrorMessageLabel.setText("Password must contain at least 1 Lower Case letter");
-        } else {
-            lowerErrorMessageLabel.setText("");
-        }
-    }
-    private void checkPasswordsSpecial(PasswordField passwordField, Label specialErrorMessageLabel) {
-        if (!passwordField.getText().matches(".*[!@#$%^&*].*")) {
-            specialErrorMessageLabel.setText("Password must contain at least 1 Special Character");
-        } else {
-            specialErrorMessageLabel.setText("");
-        }
-    }
-
-    private Scene userListScene(Stage primaryStage) {
-        GridPane userListGrid = new GridPane();
-        userListGrid.setPadding(new Insets(20, 20, 20, 20));
-        userListGrid.setHgap(H_GAP);
-        userListGrid.setVgap(V_GAP);
-
-        String res = dbUtil.displayUsersByUser();
-
-        ListView<String> userListView = new ListView<>();
-        String[] users = dbUtil.displayUsersByUser().split("\n");
-        userListView.getItems().addAll(users);
-
-        Button backToLoginButton = new Button("Back to Login");
-        userListGrid.add(userListView, 0, 0);
-        userListGrid.add(backToLoginButton, 0, 1);
-
-
-        backToLoginButton.setOnAction(e -> {
-            primaryStage.setScene(createLoginScene(primaryStage));
-        });
-
-        Scene userListScene = new Scene(userListGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
-        return userListScene;
-    }
-
-    /*******************************************************************************************************/
-    /*******************************************************************************************************
-     * This is the method that launches the JavaFX application
-     *
-     * @param args This parameter holds the command line parameters.
-     *
-     */
-    public static void main(String[] args) {
-        launch(args);
-    }
-}
 
 

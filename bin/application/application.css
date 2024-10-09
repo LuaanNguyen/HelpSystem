@@ -1,12 +1,21 @@
 .button {
     -fx-background-color: #4CAF50; /* Green */
     -fx-text-fill: white;
+    -fx-border-radius: 10px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 
 .label {
     -fx-font-size: 14px;
 }
-
+.button:hover
+{
+    -fx-background-color: #000000;
+}
+.button:pressed
+{
+    -fx-background-color: #000000;
+}
 .text-field {
     -fx-border-color: #4CAF50;
 }

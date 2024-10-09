@@ -248,6 +248,7 @@ public class MyJavaFXApp extends Application {
         Scene registerScene = new Scene(registerGrid, 300, 250);
         backToLoginButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
         registerScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("register.css")).toExternalForm());
+        registerScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("application.css")).toExternalForm());
         return registerScene;
     }
     // Method to check if passwords match and update the UI

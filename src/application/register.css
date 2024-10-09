@@ -1,14 +1,14 @@
 .root {
-    /*-fx-background-color: rgba(255, 255, 255, 0.65);*/
-    /*-fx-border-color: rgba(0, 0, 0, 0.24); !* Border color *!*/
-    /*-fx-border-width: 2px;   !* Border thickness *!*/
-    /*-fx-min-width: 300;*/
-    /*-fx-max-width: 300;*/
-    /*-fx-min-height: 380;*/
-    /*-fx-max-height: 380;*/
-    /*-fx-border-radius: 10px; !* Rounded corners *!*/
-    /*-fx-background-radius: 10px; !* Ensure background also has rounded corners *!*/
-    /*-fx-padding: 5px;*/
+    -fx-background-color: rgba(255, 255, 255, 0.65);
+    -fx-border-color: rgba(0, 0, 0, 0.24); /* Border color */
+    -fx-border-width: 2px;   /* Border thickness */
+    -fx-min-width: 300;
+    -fx-max-width: 300;
+    -fx-min-height: 380;
+    -fx-max-height: 380;
+    -fx-border-radius: 10px; /* Rounded corners */
+    -fx-background-radius: 10px; /* Ensure background also has rounded corners */
+    -fx-padding: 5px;
 }
 .register-grid {
     -fx-background-color: linear-gradient(to top right, #FFDEE9, #B5FFFC);
@@ -25,8 +25,16 @@
 }
 
 .border-container {
-    -fx-background-color: linear-gradient(to top right, #FFDEE9, #B5FFFC);
-    -fx-border-color: #ffffff;
+    -fx-background-color: rgba(255, 255, 255, 0.65);
+    -fx-border-color: rgba(0, 0, 0, 0.24); /* Border color */
+    -fx-border-width: 2px;   /* Border thickness */
+    -fx-min-width: 300;
+    -fx-max-width: 300;
+    -fx-min-height: 380;
+    -fx-max-height: 380;
+    -fx-border-radius: 10px; /* Rounded corners */
+    -fx-background-radius: 10px; /* Ensure background also has rounded corners */
+    -fx-padding: 5px;
 }
 
 .create-account-button {

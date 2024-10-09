@@ -208,14 +208,30 @@ public class MyJavaFXApp extends Application {
             }
         });
 
+        // Reset database button, prompts user to confirm resetting database
         resetDatabaseButton.setOnAction(e -> {
-            try {
-                System.out.println("Database reset successfully. Going back to Admin scene...");
-                dbUtil.resetDatabase();
-                primaryStage.setScene(createAdminSetupScene(primaryStage));
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
+            Dialog<ButtonType> dialog = new Dialog<>();
+            dialog.setTitle("Reset Database");
+            dialog.setHeaderText("Are you sure you want to reset the database?");
+
+            ButtonType resetButtonType = new ButtonType("Reset", ButtonBar.ButtonData.OK_DONE);
+            ButtonType cancelButtonType = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+            dialog.getDialogPane().getButtonTypes().addAll(resetButtonType, cancelButtonType);
+
+            dialog.setResultConverter(dialogButton -> {
+                if (dialogButton == resetButtonType) {
+                    try {
+                        dbUtil.resetDatabase();
+                        System.out.println("Database reset successfully. Going back to Admin scene...");
+                        primaryStage.setScene(createAdminSetupScene(primaryStage));
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+                return null;
+            });
+
+            dialog.showAndWait();
         });
 
         registerButton.setOnAction(e -> primaryStage.setScene(createRegisterScene(primaryStage)));
@@ -235,8 +251,8 @@ public class MyJavaFXApp extends Application {
         GridPane registerGrid = new GridPane();
         registerGrid.getStyleClass().add("register-grid");
         registerGrid.setPadding(new Insets(10, 10, 10, 10));
-        registerGrid.setHgap(H_GAP);
-        registerGrid.setVgap(5);
+        registerGrid.setHgap(5);
+        registerGrid.setVgap(1);
         registerGrid.setAlignment(Pos.CENTER);
 
         TextField registerUserNameField = new TextField();
@@ -254,45 +270,54 @@ public class MyJavaFXApp extends Application {
         createAccountButton.getStyleClass().add("create-account-button");
         Button backToLoginButton = new Button("Back to login");
         backToLoginButton.getStyleClass().add("back-to-login-button");
+        VBox borderContainer = new VBox();
+        borderContainer.setAlignment(Pos.CENTER);
+        borderContainer.setPadding(new Insets(0));
+        borderContainer.getStyleClass().add("border-container");
 
+        // Create labels for password requirements, !!! I'm not sure how to put the Label initialization in the requirementsBox and update the text
         Label errorMessageLabel = new Label();
-        Label matchingErrorMessageLabel = new Label();
-        Label specialErrorMessageLabel = new Label();
-        Label upperErrorMessageLabel = new Label();
-        Label lowerErrorMessageLabel = new Label();
+        Label requirementUpperCase = new Label("❌ Have one uppercase character");
+        Label requirementLowerCase = new Label("❌ Have one lowercase character");
+        Label requirementSpecialChar = new Label("❌ Have one special character");
+        Label requirementLength = new Label("❌ Have 8 characters minimum");
+        Label requirementMatches = new Label("❌ Passwords match");
+        VBox requirementsBox = new VBox(4, requirementUpperCase, requirementLowerCase, requirementSpecialChar, requirementLength, requirementMatches);
+        registerGrid.add(requirementsBox, 0, 6, 1, 1);
 
-        registerGrid.add(new Label("New Username: "), 0, 0);
-        registerGrid.add(registerUserNameField, 0, 1);
-        registerGrid.add(new Label("Password: "), 0, 2);
-        registerGrid.add(registerPasswordField, 0, 3);
-        registerGrid.add(new Label("Confirm Password: "), 0, 4);
-        registerGrid.add(registerConfirmPasswordField, 0, 5);
-        registerGrid.add(new Label("Select Role: "), 0, 6);
+        VBox registerContainer = new VBox(5, new Label("New Username: "),
+                registerUserNameField, new Label("Password: "),
+                registerPasswordField, new Label("Confirm Password: "),
+                registerConfirmPasswordField);
 
-
+        registerGrid.add(registerContainer, 0, 5, 1, 1);
         registerGrid.add(roleComboBox, 0, 7);
         registerGrid.add(createAccountButton, 0, 8);
         registerGrid.add(backToLoginButton, 1, 8);
-        registerGrid.add(errorMessageLabel, 1, 2);
-        registerGrid.add(matchingErrorMessageLabel, 1, 3);
-        registerGrid.add(specialErrorMessageLabel, 1, 4);
-        registerGrid.add(upperErrorMessageLabel, 1, 5);
-        registerGrid.add(lowerErrorMessageLabel, 1, 6);
+        registerGrid.add(errorMessageLabel, 1, 5);
 
-
-
-
-        // Add listeners to the password fields
+        // Add listeners to both password fields to validate password and match requirements
         registerPasswordField.textProperty().addListener((observable, oldValue, newValue) -> {
-            checkPasswordsMatch(registerPasswordField, registerConfirmPasswordField, matchingErrorMessageLabel);
-            checkPasswordsUpper(registerPasswordField, upperErrorMessageLabel);
-            checkPasswordsLower(registerPasswordField, lowerErrorMessageLabel);
-            checkPasswordsSpecial(registerPasswordField, specialErrorMessageLabel);
+            boolean hasUpperCase = newValue.matches(".*[A-Z].*");
+            boolean hasLowerCase = newValue.matches(".*[a-z].*");
+            boolean hasSpecialChar = newValue.matches(".*[!@#$%^&*].*");
+            boolean hasMinLength = newValue.length() >= 8;
+            boolean passwordMatch = newValue.equals(registerConfirmPasswordField.getText());
+
+            // Update labels
+            requirementUpperCase.setText(hasUpperCase ? "✔ Have one uppercase character" : "❌ Have one uppercase character");
+            requirementLowerCase.setText(hasLowerCase ? "✔ Have one lowercase character" : "❌ Have one lowercase character");
+            requirementSpecialChar.setText(hasSpecialChar ? "✔ Have one special character" : "❌ Have one special character");
+            requirementLength.setText(hasMinLength ? "✔ Have 8 characters minimum" : "❌ Have 8 characters minimum");
+            requirementMatches.setText(passwordMatch ? "✔ Passwords match" : "❌ Passwords match");
         });
 
-
+        // Listener for the confirmation password field
         registerConfirmPasswordField.textProperty().addListener((observable, oldValue, newValue) -> {
-            checkPasswordsMatch(registerPasswordField, registerConfirmPasswordField, matchingErrorMessageLabel);
+            boolean passwordMatch = registerPasswordField.getText().equals(newValue);
+
+            // Update the password match label
+            requirementMatches.setText(passwordMatch ? "✔ Passwords match" : "❌ Passwords match");
         });
 
 
@@ -303,26 +328,26 @@ public class MyJavaFXApp extends Application {
             String selectedRole = roleComboBox.getValue();
 
             if (password.isEmpty() || username.isEmpty() ) {
-                errorMessageLabel.setText("Username or password cannot be empty!");
+//                errorMessageLabel.setText("Username or password cannot be empty!");
                 System.out.println("Username or password or email cannot be empty!");
 
             } else if (!password.matches(".*[!@#$%^&*].*")) {
-                errorMessageLabel.setText("Password must contain at least 1 Special Character");
+//                errorMessageLabel.setText("Password must contain at least 1 Special Character");
                 System.out.println("Password must contain at least 1 Special Character");
             }
             else if (!password.matches(".*[a-z].*")) {
-                errorMessageLabel.setText("Password must contain at least 1 Lower Case letter");
+//                errorMessageLabel.setText("Password must contain at least 1 Lower Case letter");
                 System.out.println("Password must contain at least 1 Lower Case letter");
             }
             else if (!password.matches(".*[A-Z].*")) {
-                errorMessageLabel.setText("Password must contain at least 1 Upper Case letter");
+//                errorMessageLabel.setText("Password must contain at least 1 Upper Case letter");
                 System.out.println("Password must contain at least 1 Upper Case letter");
             }
             else if (!password.equals(confirmPassword)) {
-                errorMessageLabel.setText("Password doesn't match");
+//                errorMessageLabel.setText("Password doesn't match");
                 System.out.println("Password doesn't match");
             } else if (selectedRole == null || selectedRole.isEmpty()) {
-                errorMessageLabel.setText("Selected Role is empty");
+//                errorMessageLabel.setText("Selected Role is empty");
                 System.out.println("Selected Role is empty");
             } else {
                 try {
@@ -346,36 +371,36 @@ public class MyJavaFXApp extends Application {
         return registerScene;
     }
 
-
-    // Method to check if passwords match and update the UI
-    private void checkPasswordsMatch(PasswordField passwordField, PasswordField confirmPasswordField, Label matchingErrorMessageLabel) {
-        if (!confirmPasswordField.getText().equals(passwordField.getText())) {
-            matchingErrorMessageLabel.setText("Passwords do not match");
-        } else {
-            matchingErrorMessageLabel.setText("");
-        }
-    }
-    private void checkPasswordsUpper(PasswordField passwordField, Label upperErrorMessageLabel) {
-        if (!passwordField.getText().matches(".*[A-Z].*")) {
-            upperErrorMessageLabel.setText("Password must contain at least 1 Upper Case letter");
-        } else {
-            upperErrorMessageLabel.setText("");
-        }
-    }
-    private void checkPasswordsLower(PasswordField passwordField, Label lowerErrorMessageLabel) {
-        if (!passwordField.getText().matches(".*[a-z].*")) {
-            lowerErrorMessageLabel.setText("Password must contain at least 1 Lower Case letter");
-        } else {
-            lowerErrorMessageLabel.setText("");
-        }
-    }
-    private void checkPasswordsSpecial(PasswordField passwordField, Label specialErrorMessageLabel) {
-        if (!passwordField.getText().matches(".*[!@#$%^&*].*")) {
-            specialErrorMessageLabel.setText("Password must contain at least 1 Special Character");
-        } else {
-            specialErrorMessageLabel.setText("");
-        }
-    }
+//Old method for checking password requirements
+//    // Method to check if passwords match and update the UI
+//    private void checkPasswordsMatch(PasswordField passwordField, PasswordField confirmPasswordField, Label matchingErrorMessageLabel) {
+//        if (!confirmPasswordField.getText().equals(passwordField.getText())) {
+//            matchingErrorMessageLabel.setText("Passwords do not match");
+//        } else {
+//            matchingErrorMessageLabel.setText("");
+//        }
+//    }
+//    private void checkPasswordsUpper(PasswordField passwordField, Label upperErrorMessageLabel) {
+//        if (!passwordField.getText().matches(".*[A-Z].*")) {
+//            upperErrorMessageLabel.setText("Password must contain at least 1 Upper Case letter");
+//        } else {
+//            upperErrorMessageLabel.setText("");
+//        }
+//    }
+//    private void checkPasswordsLower(PasswordField passwordField, Label lowerErrorMessageLabel) {
+//        if (!passwordField.getText().matches(".*[a-z].*")) {
+//            lowerErrorMessageLabel.setText("Password must contain at least 1 Lower Case letter");
+//        } else {
+//            lowerErrorMessageLabel.setText("");
+//        }
+//    }
+//    private void checkPasswordsSpecial(PasswordField passwordField, Label specialErrorMessageLabel) {
+//        if (!passwordField.getText().matches(".*[!@#$%^&*].*")) {
+//            specialErrorMessageLabel.setText("Password must contain at least 1 Special Character");
+//        } else {
+//            specialErrorMessageLabel.setText("");
+//        }
+//    }
 
 
     /**********

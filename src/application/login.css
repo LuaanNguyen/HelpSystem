@@ -85,4 +85,7 @@
     -fx-text-fill: red;
     -fx-cursor: hand; /* Change cursor to hand */
 }
+.error-message {
+    -fx-text-fill: red;
+}
 

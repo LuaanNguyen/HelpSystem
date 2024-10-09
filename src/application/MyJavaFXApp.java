@@ -142,7 +142,7 @@ public class MyJavaFXApp extends Application {
 
         Label errorMessage = new Label();
         loginGrid.add(errorMessage, 0, 7, 2, 1); // Span 2 columns for proper alignment
-        errorMessage.setStyle("-fx-alignment: center;");
+        errorMessage.getStyleClass().add("error-message");
         GridPane.setColumnSpan(errorMessage, GridPane.REMAINING);
         GridPane.setHalignment(errorMessage, HPos.CENTER);
 
@@ -151,7 +151,7 @@ public class MyJavaFXApp extends Application {
 
         Button registerButton = new Button("Register");
         registerButton.getStyleClass().add("register_button");
-        
+
         Button resetDatabaseButton = new Button("Reset Database");
         resetDatabaseButton.getStyleClass().add("resetDb_button");
 

@@ -28,6 +28,10 @@ import java.util.Objects;
 
 public class MyJavaFXApp extends Application {
 
+    //Global Window sizes
+    public static final int WINDOW_HEIGHT = 800;
+    public static final int WINDOW_WIDTH = 500;
+
     /** Create a DB instance to interact with the database */
     private static final DatabaseUtil dbUtil = new DatabaseUtil();
 
@@ -98,7 +102,7 @@ public class MyJavaFXApp extends Application {
             }
         });
 
-        Scene loginScene = new Scene(adminSetupGrid, 300, 200);
+        Scene loginScene = new Scene(adminSetupGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
         loginScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("admin.css")).toExternalForm());
         return loginScene;
     }
@@ -145,7 +149,7 @@ public class MyJavaFXApp extends Application {
 
         registerButton.setOnAction(e -> primaryStage.setScene(createRegisterScene(primaryStage)));
 
-        Scene loginScene = new Scene(loginGrid, 300, 200);
+        Scene loginScene = new Scene(loginGrid, WINDOW_HEIGHT, WINDOW_WIDTH);;
         loginScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("login.css")).toExternalForm());
         return loginScene;
     }
@@ -203,7 +207,6 @@ public class MyJavaFXApp extends Application {
         });
 
 
-
         createAccountButton.setOnAction(e -> {
             String email = registerEmailField.getText();
             String username = registerUserNameField.getText();
@@ -242,7 +245,7 @@ public class MyJavaFXApp extends Application {
         });
 
 
-        Scene registerScene = new Scene(registerGrid, 500, 400);
+        Scene registerScene = new Scene(registerGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
         backToLoginButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
         registerScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("register.css")).toExternalForm());
         return registerScene;

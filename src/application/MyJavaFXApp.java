@@ -34,6 +34,8 @@ public class MyJavaFXApp extends Application {
     //Global Window sizes
     public static final int WINDOW_HEIGHT = 800;
     public static final int WINDOW_WIDTH = 500;
+    public static final int H_GAP = 20;
+    public static final int V_GAP = 20;
 
     /** Create a DB instance to interact with the database */
     private static final DatabaseUtil dbUtil = new DatabaseUtil();
@@ -70,6 +72,7 @@ public class MyJavaFXApp extends Application {
         adminSetupGrid.setPadding(new Insets(10, 10, 10, 10));
         adminSetupGrid.setHgap(20);
         adminSetupGrid.setVgap(20);
+        adminSetupGrid.setAlignment(Pos.CENTER);
 
         TextField adminUserNameField = new TextField();
         PasswordField adminPasswordField = new PasswordField();
@@ -120,14 +123,16 @@ public class MyJavaFXApp extends Application {
     private Scene createLoginScene(Stage primaryStage) {
         GridPane loginGrid = new GridPane();
         loginGrid.setPadding(new Insets(10, 10, 10, 10));
-        loginGrid.setHgap(5);
-        loginGrid.setVgap(5);
+        loginGrid.setHgap(H_GAP);
+        loginGrid.setVgap(V_GAP);
 
         TextField userNameField = new TextField();
         PasswordField passwordField = new PasswordField();
         loginGrid.setAlignment(Pos.CENTER);
         Button loginButton = new Button("Login");
         Button registerButton = new Button("Register");
+        Label errorMessage = new Label();
+        Button resetDatabaseButton = new Button("Reset Database");
 
         loginGrid.add(new Label("Username: "), 0, 0);
         loginGrid.add(userNameField, 1, 0);
@@ -135,23 +140,24 @@ public class MyJavaFXApp extends Application {
         loginGrid.add(passwordField, 1, 1);
         loginGrid.add(loginButton, 1, 2);
         loginGrid.add(registerButton, 1, 3);
+        loginGrid.add(errorMessage, 1, 4);
+        loginGrid.add(resetDatabaseButton, 1, 5);
 
         loginButton.setOnAction(e -> {
             String username = userNameField.getText();
             String password = passwordField.getText();
             try {
                 if (dbUtil.login(username, password)) {
-                   errorMessage.setText("Login successful");
+                    errorMessage.setText("Login successful");
                     // Proceed to the next scene or functionality
                     primaryStage.setScene(userListScene(primaryStage));
                 } else {
-                    System.out.println("Invalid username or password");
+                    errorMessage.setText("Invalid username or password");
                 }
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
         });
-
 
         resetDatabaseButton.setOnAction(e -> {
             try {
@@ -163,10 +169,9 @@ public class MyJavaFXApp extends Application {
             }
         });
 
-
         registerButton.setOnAction(e -> primaryStage.setScene(createRegisterScene(primaryStage)));
 
-        Scene loginScene = new Scene(loginGrid, 300, 200);
+        Scene loginScene = new Scene(loginGrid,  WINDOW_HEIGHT ,  WINDOW_WIDTH);
         loginScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("login.css")).toExternalForm());
         return loginScene;
     }
@@ -180,8 +185,9 @@ public class MyJavaFXApp extends Application {
     private Scene createRegisterScene(Stage primaryStage) {
         GridPane registerGrid = new GridPane();
         registerGrid.setPadding(new Insets(10, 10, 10, 10));
-        registerGrid.setHgap(5);
-        registerGrid.setVgap(5);
+        registerGrid.setHgap(H_GAP);
+        registerGrid.setVgap(V_GAP);
+        registerGrid.setAlignment(Pos.CENTER);
 
         TextField registerEmailField = new TextField();
         TextField registerUserNameField = new TextField();
@@ -267,7 +273,7 @@ public class MyJavaFXApp extends Application {
         });
 
 
-        Scene registerScene = new Scene(registerGrid, 300, 250);
+        Scene registerScene = new Scene(registerGrid,  WINDOW_HEIGHT ,  WINDOW_WIDTH);
         backToLoginButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
         registerScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("register.css")).toExternalForm());
         createAccountButton.requestFocus(); // Set focus on the create account button, prevents highlight on text field
@@ -308,8 +314,8 @@ public class MyJavaFXApp extends Application {
     private Scene userListScene(Stage primaryStage) {
         GridPane userListGrid = new GridPane();
         userListGrid.setPadding(new Insets(20, 20, 20, 20));
-        userListGrid.setHgap(5);
-        userListGrid.setVgap(5);
+        userListGrid.setHgap(H_GAP);
+        userListGrid.setVgap(V_GAP);
 
         String res = dbUtil.displayUsersByUser();
 

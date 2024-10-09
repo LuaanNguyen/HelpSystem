@@ -149,8 +149,16 @@ public class MyJavaFXApp extends Application {
             try {
                 if (dbUtil.login(username, password)) {
                     errorMessage.setText("Login successful");
+
+                    User user = dbUtil.getUserByUsername(username);
+
                     // Proceed to the next scene or functionality
-                    primaryStage.setScene(userListScene(primaryStage));
+                    if (user.getRole().contains("Admin")) {
+                        primaryStage.setScene(adminScene(primaryStage));
+                    } else {
+                        //Set other scene depending on user role
+                        System.out.println("hello");
+                    }
                 } else {
                     errorMessage.setText("Invalid username or password");
                 }
@@ -274,7 +282,7 @@ public class MyJavaFXApp extends Application {
                 }
             }
         });
-        
+
         Scene registerScene = new Scene(registerGrid,  WINDOW_HEIGHT ,  WINDOW_WIDTH);
         backToLoginButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
         registerScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("register.css")).toExternalForm());
@@ -371,7 +379,14 @@ public class MyJavaFXApp extends Application {
         }
     }
 
-    private Scene userListScene(Stage primaryStage) {
+
+    /**********
+     * ADMIN SCENE
+     *
+     * @param primaryStage primaryStage
+     * @return admin scene after successfully login as admin
+     */
+    private Scene adminScene(Stage primaryStage) {
         GridPane userListGrid = new GridPane();
         userListGrid.setPadding(new Insets(20, 20, 20, 20));
         userListGrid.setHgap(H_GAP);

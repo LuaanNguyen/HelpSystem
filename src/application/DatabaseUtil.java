@@ -107,6 +107,20 @@ public class DatabaseUtil {
         System.out.println("Invitation code: " + invitationCode);
     }
 
+    //get user by username
+    public User getUserByUsername(String username) throws SQLException {
+        String query = "SELECT * FROM helpsystem_users WHERE username = ?";
+        try ( PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setString(1, username);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return new User(rs.getString("username"), rs.getString("password"), rs.getString("roles"));
+                }
+            }
+        }
+        return null;
+    }
+
     //Reset user account
     public void resetUserAccount(String username, String oneTimePassword, Timestamp expiration) throws SQLException {
         String query = "UPDATE helpsystem_users SET one_time_password = ?, expiration = ? WHERE username = ?";

@@ -194,6 +194,7 @@ public class MyJavaFXApp extends Application {
                         primaryStage.setScene(adminScene(primaryStage));
                     } else if (user.getRole().contains("Student")) {
                         //Set other scene depending on user role
+                        if (user.getFirstName() ==)
 
                         primaryStage.setScene(studentScene(primaryStage));
                     } else if  (user.getRole().contains("Instructor")) {

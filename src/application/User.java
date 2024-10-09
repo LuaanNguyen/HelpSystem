@@ -13,7 +13,7 @@ public class User {
     private String preferredFirstName;
     private List<String> roles = new ArrayList<>();
 
-    /* Constructors */
+    /* Default Constructor */
     public User() {
         this.username = "Admin";
         this.password = "123123";
@@ -22,9 +22,25 @@ public class User {
         this.roles.add("Instructor");
     }
 
+    /* Constructor for Register New User*/
     public User(String username, String password, String role) {
         this.username = username;
         this.password = password;
+        this.firstName = "";
+        this.middleName ="";
+        this.lastName = "";
+       this.preferredFirstName = "";
+        this.roles.add(role);
+    }
+
+    /* Constructor for Completing the Register Process*/
+    public User(String username, String password, String firstName, String middleName, String  lastName, String preferredFirstName, String role) {
+        this.username = username;
+        this.password = password;
+        this.firstName = firstName;
+        this.middleName =middleName;
+        this.lastName = lastName;
+        this.preferredFirstName = preferredFirstName;
         this.roles.add(role);
     }
 

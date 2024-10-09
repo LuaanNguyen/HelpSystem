@@ -1,5 +1,6 @@
 package application;
 
+import application.User;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -89,7 +90,6 @@ public class MyJavaFXApp extends Application {
         adminSetupGrid.add(setupAdminButton, 1, 4);
 
         setupAdminButton.setOnAction(e -> {
-            String email = adminUserNameField.getText();
             String username = adminUserNameField.getText();
             String password = adminPasswordField.getText();
             String confirmPassword = adminConfirmPasswordField.getText();
@@ -100,7 +100,7 @@ public class MyJavaFXApp extends Application {
                 System.out.println("Password doesn't match");
             } else {
                 try {
-                    dbUtil.register(email, username, password, "Admin");
+                    dbUtil.register( username, password, "Admin");
                     System.out.println("Admin user registered successfully");
                     primaryStage.setScene(createLoginScene(primaryStage));
                 } catch (SQLException ex) {
@@ -189,7 +189,7 @@ public class MyJavaFXApp extends Application {
         registerGrid.setVgap(V_GAP);
         registerGrid.setAlignment(Pos.CENTER);
 
-        TextField registerEmailField = new TextField();
+
         TextField registerUserNameField = new TextField();
         registerUserNameField.setPromptText("Enter a username");
         PasswordField registerPasswordField = new PasswordField();
@@ -217,15 +217,15 @@ public class MyJavaFXApp extends Application {
         registerGrid.add(roleComboBox, 1, 3);
         registerGrid.add(createAccountButton, 1, 4);
         registerGrid.add(backToLoginButton, 1, 5);
-        registerGrid.add(matchingErrorMessageLabel, 1, 6);
-        registerGrid.add(specialErrorMessageLabel, 1, 7);
-        registerGrid.add(upperErrorMessageLabel, 1, 8);
-        registerGrid.add(lowerErrorMessageLabel, 1, 9);
+        registerGrid.add(errorMessageLabel, 1, 6);
+        registerGrid.add(matchingErrorMessageLabel, 1, 7);
+        registerGrid.add(specialErrorMessageLabel, 1, 8);
+        registerGrid.add(upperErrorMessageLabel, 1, 9);
+        registerGrid.add(lowerErrorMessageLabel, 1, 10);
 
 
         // Add listeners to the password fields
         registerPasswordField.textProperty().addListener((observable, oldValue, newValue) -> {
-            checkPasswordsMatch(registerPasswordField, registerConfirmPasswordField, matchingErrorMessageLabel);
             checkPasswordsMatch(registerPasswordField, registerConfirmPasswordField, matchingErrorMessageLabel);
             checkPasswordsUpper(registerPasswordField, upperErrorMessageLabel);
             checkPasswordsLower(registerPasswordField, lowerErrorMessageLabel);
@@ -233,36 +233,39 @@ public class MyJavaFXApp extends Application {
         });
 
 
-
         createAccountButton.setOnAction(e -> {
-            String email = registerEmailField.getText();
             String username = registerUserNameField.getText();
             String password = registerPasswordField.getText();
             String confirmPassword = registerConfirmPasswordField.getText();
             String selectedRole = roleComboBox.getValue();
 
-            if (password.isEmpty() || username.isEmpty() || email.isEmpty()) {
-                errorMessageLabel.setText("Username or password or email cannot be empty!");
+            if (password.isEmpty() || username.isEmpty() ) {
+                errorMessageLabel.setText("Username or password cannot be empty!");
                 System.out.println("Username or password or email cannot be empty!");
             } else if (!password.matches(".*[!@#$%^&*].*")) {
+                errorMessageLabel.setText("Password must contain at least 1 Special Character");
                 System.out.println("Password must contain at least 1 Special Character");
             }
             else if (!password.matches(".*[a-z].*")) {
+                errorMessageLabel.setText("Password must contain at least 1 Lower Case letter");
                 System.out.println("Password must contain at least 1 Lower Case letter");
             }
             else if (!password.matches(".*[A-Z].*")) {
+                errorMessageLabel.setText("Password must contain at least 1 Upper Case letter");
                 System.out.println("Password must contain at least 1 Upper Case letter");
             }
             else if (!password.equals(confirmPassword)) {
+                errorMessageLabel.setText("Password doesn't match");
                 System.out.println("Password doesn't match");
             } else if (selectedRole == null || selectedRole.isEmpty()) {
+                errorMessageLabel.setText("Selected Role is empty");
                 System.out.println("Selected Role is empty");
             } else {
                 try {
                     if (dbUtil.doesUserExist(username)) {
                         System.out.println("User already exists!");
                     } else {
-                        dbUtil.register(email, username, password, selectedRole);
+                        dbUtil.register( username, password, selectedRole);
                         System.out.print("User registered successfully");
                         primaryStage.setScene(createLoginScene(primaryStage));
                     }
@@ -271,14 +274,71 @@ public class MyJavaFXApp extends Application {
                 }
             }
         });
-
-
+        
         Scene registerScene = new Scene(registerGrid,  WINDOW_HEIGHT ,  WINDOW_WIDTH);
         backToLoginButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
         registerScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("register.css")).toExternalForm());
         createAccountButton.requestFocus(); // Set focus on the create account button, prevents highlight on text field
         return registerScene;
     }
+
+
+    /**********
+     * FINISH SETUP COMPONENT
+     *
+     * @param primaryStage primaryStage
+     * @return finish setup component
+     */
+//    private Scene createFinishSetupScene(Stage primaryStage, String username) {
+//        GridPane finishSetupGrid = new GridPane();
+//        finishSetupGrid.setPadding(new Insets(10, 10, 10, 10));
+//        finishSetupGrid.setHgap(H_GAP);
+//        finishSetupGrid.setVgap(V_GAP);
+//        finishSetupGrid.setAlignment(Pos.CENTER);
+//
+//        TextField emailField = new TextField();
+//        TextField firstNameField = new TextField();
+//        TextField middleNameField = new TextField();
+//        TextField lastNameField = new TextField();
+//        TextField preferredFirstNameField = new TextField();
+//        Button finishSetupButton = new Button("Finish Setup");
+//
+//        finishSetupGrid.add(new Label("Email: "), 0, 0);
+//        finishSetupGrid.add(emailField, 1, 0);
+//        finishSetupGrid.add(new Label("First Name: "), 0, 1);
+//        finishSetupGrid.add(firstNameField, 1, 1);
+//        finishSetupGrid.add(new Label("Middle Name: "), 0, 2);
+//        finishSetupGrid.add(middleNameField, 1, 2);
+//        finishSetupGrid.add(new Label("Last Name: "), 0, 3);
+//        finishSetupGrid.add(lastNameField, 1, 3);
+//        finishSetupGrid.add(new Label("Preferred First Name: "), 0, 4);
+//        finishSetupGrid.add(preferredFirstNameField, 1, 4);
+//        finishSetupGrid.add(finishSetupButton, 1, 5);
+//
+//        finishSetupButton.setOnAction(e -> {
+//            String email = emailField.getText();
+//            String firstName = firstNameField.getText();
+//            String middleName = middleNameField.getText();
+//            String lastName = lastNameField.getText();
+//            String preferredFirstName = preferredFirstNameField.getText();
+//
+//            if (email.isEmpty() || firstName.isEmpty() || lastName.isEmpty()) {
+//                System.out.println("Email, First Name, and Last Name cannot be empty!");
+//            } else {
+//                try {
+//                    //dbUtil.updateUserDetails(username, email, firstName, middleName, lastName, preferredFirstName);
+//                    primaryStage.setScene(createLoginScene(primaryStage));
+//                } catch (SQLException ex) {
+//                    ex.printStackTrace();
+//                }
+//            }
+//        });
+//
+//        Scene finishSetupScene = new Scene(finishSetupGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
+//        finishSetupScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("finishSetup.css")).toExternalForm());
+//        return finishSetupScene;
+//    }
+
 
 
     // Method to check if passwords match and update the UI
@@ -349,68 +409,3 @@ public class MyJavaFXApp extends Application {
 }
 
 
-class User {
-    private String username;
-    private String password;
-    private List<String> roles = new ArrayList<>();
-
-    /* Constructors */
-    public User() {
-        this.username = "Admin";
-        this.password = "123123";
-        this.roles.add("Admin");
-        this.roles.add("Student");
-        this.roles.add("Instructor");
-    }
-
-    public User(String username, String password, String role) {
-        this.username = username;
-        this.password = password;
-        this.roles.add(role);
-    }
-
-    /* Getter Methods */
-    public String getUsername() {
-        return this.username;
-    }
-
-    public String getPassword() {
-        return this.password;
-    }
-
-    public List<String> getRole() {
-        return this.roles;
-    }
-
-    public void addRole(String role) {
-        if (role.isEmpty()) {
-            System.out.println("Can not add empty role!");
-        }
-        if (!roles.contains(role)) {
-            roles.add(role);
-        } else {
-            System.out.println("Role already exists with user: " + this.username);
-        }
-    }
-}
-
-
-// Old functions
-//    private boolean authenticate(String username, String password) {
-//        for (User user : users) {
-//            if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
-//                currentUser = user;
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-//
-//    private boolean registerUser(String username, String password, String role) {
-//        if (users.stream().anyMatch(u -> u.getUsername().equals(username))) {
-//            System.out.println("User already exists!");
-//            return false;
-//        }
-//        users.add(new User(username, password, role));
-//        return true;
-//    }

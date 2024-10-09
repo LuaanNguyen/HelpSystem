@@ -155,9 +155,13 @@ public class MyJavaFXApp extends Application {
                     // Proceed to the next scene or functionality
                     if (user.getRole().contains("Admin")) {
                         primaryStage.setScene(adminScene(primaryStage));
-                    } else {
+                    } else if (user.getRole().contains("Student")) {
                         //Set other scene depending on user role
-                        System.out.println("hello");
+                        primaryStage.setScene(userScene(primaryStage));
+                    } else if  (user.getRole().contains("Instructor")) {
+                        primaryStage.setScene(userScene(primaryStage));
+                    } else {
+                        System.out.println("Error finding a right role.");
                     }
                 } else {
                     errorMessage.setText("Invalid username or password");
@@ -291,12 +295,12 @@ public class MyJavaFXApp extends Application {
     }
 
 
-    /**********
-     * FINISH SETUP COMPONENT
-     *
-     * @param primaryStage primaryStage
-     * @return finish setup component
-     */
+//    /**********
+//     * FINISH SETUP COMPONENT
+//     *
+//     * @param primaryStage primaryStage
+//     * @return finish setup component
+//     */
 //    private Scene createFinishSetupScene(Stage primaryStage, String username) {
 //        GridPane finishSetupGrid = new GridPane();
 //        finishSetupGrid.setPadding(new Insets(10, 10, 10, 10));
@@ -410,6 +414,28 @@ public class MyJavaFXApp extends Application {
         Scene userListScene = new Scene(userListGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
         return userListScene;
     }
+
+    /**********
+     * USER SCENE
+     *
+     * @param primaryStage primaryStage
+     * @return user scene after successfully login
+     */
+
+    private Scene userScene(Stage primaryStage) {
+        GridPane userSceneGrid = new GridPane();
+        userSceneGrid.setPadding(new Insets(20, 20, 20, 20));
+        userSceneGrid.setHgap(H_GAP);
+        userSceneGrid.setVgap(V_GAP);
+
+        Button backToLoginButton = new Button("Back to login");
+        userSceneGrid.add(backToLoginButton, 0 ,0 );
+
+        backToLoginButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
+
+        return new Scene(userSceneGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
+    }
+
 
     /*******************************************************************************************************/
     /*******************************************************************************************************

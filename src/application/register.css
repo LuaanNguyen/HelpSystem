@@ -1,31 +1,80 @@
 .root {
-    -fx-background-color: linear-gradient(#8EC5FC, #E0C3FC);
+    /*-fx-background-color: rgba(255, 255, 255, 0.65);*/
+    /*-fx-border-color: rgba(0, 0, 0, 0.24); !* Border color *!*/
+    /*-fx-border-width: 2px;   !* Border thickness *!*/
+    /*-fx-min-width: 300;*/
+    /*-fx-max-width: 300;*/
+    /*-fx-min-height: 380;*/
+    /*-fx-max-height: 380;*/
+    /*-fx-border-radius: 10px; !* Rounded corners *!*/
+    /*-fx-background-radius: 10px; !* Ensure background also has rounded corners *!*/
+    /*-fx-padding: 5px;*/
 }
-
-.button {
-    -fx-background-color: rgba(182, 9, 212, 0.6);
-    -fx-text-fill: white;
-    -fx-font-size: 12px; /* Larger font size for a more readable button */
-    -fx-font-weight: bold; /* Bold font for emphasis */
-    -fx-border-radius: 25px; /* More rounded button corners */
-    -fx-padding: 5px 10px; /* More padding for larger buttons */
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.15), 10, 0, 0, 0); /* Soft shadow for button */
-    -fx-cursor: hand;
-    -fx-transition: all 0.3s ease-in-out; /* Smooth transition effect */
+.register-grid {
+    -fx-background-color: linear-gradient(to top right, #FFDEE9, #B5FFFC);
+    -fx-border-color: rgba(255, 255, 255, 0);
 }
-
-.label {
+.role-combobox {
+    -fx-background-color: rgba(255, 255, 255, 0.65);
+    -fx-border-color: rgba(0, 0, 0, 0.24); /* Set the desired border color */
+    -fx-border-radius: 5px; /* Rounded corners */
+    -fx-background-radius: 5px; /* Ensure background also has rounded corners */
+    -fx-border-width: 2px; /* Border thickness */
+    -fx-padding: 0px; /* Add padding inside the ComboBox */
     -fx-font-size: 14px;
 }
-.button:hover
+
+.border-container {
+    -fx-background-color: linear-gradient(to top right, #FFDEE9, #B5FFFC);
+    -fx-border-color: #ffffff;
+}
+
+.create-account-button {
+    -fx-background-color: #2c2c2c;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-min-width: 220;
+    -fx-max-width: 220;
+    -fx-min-height: 32;
+    -fx-max-height: 32;
+    -fx-border-radius: 0px; /* Set the border radius */
+    -fx-background-radius: 5px;
+}
+.create-account-button:hover
 {
-    -fx-background-color: rgba(135, 76, 175, 0.75);
+    -fx-background-color: rgba(44, 44, 44, 0.75);
     -fx-cursor: hand;
 }
-.button:pressed
+.create-account-button:pressed
 {
-    -fx-background-color: rgba(182, 9, 212, 0.75);
+    -fx-background-color: #000000;
 }
-.text-field {
-    -fx-border-color: rgba(50, 169, 39, 0.55);
+.back-to-login-button {
+    -fx-background-color: transparent; /* Remove background */
+    -fx-text-fill: #000000; /* Set text color to blue */
+    -fx-underline: true; /* Underline the text */
+    -fx-cursor: hand; /* Change cursor to hand */
+    -fx-padding: 0; /* Remove padding */
+    -fx-border-width: 0; /* Remove border */
 }
+.password-field {
+    -fx-min-width: 220px;
+    -fx-max-width: 220px; /* Set preferred width */
+    -fx-border-radius: 0px; /* Set the border radius */
+    -fx-background-radius: 5px;
+    -fx-border-color: rgba(255, 255, 255, 0.65);
+    -fx-padding: 4px;
+    -fx-font-size: 14px;
+}
+.username-field {
+    -fx-min-width: 220px;
+    -fx-max-width: 220px; /* Set preferred width */
+    -fx-border-radius: 0px; /* Set the border radius */
+    -fx-background-radius: 5px;
+    -fx-border-color: rgba(255, 255, 255, 0.65);
+    -fx-padding: 4px;
+    -fx-font-size: 14px;
+}
+
+
+

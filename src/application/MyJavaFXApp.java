@@ -2,9 +2,12 @@ package application;
 
 import application.User;
 import javafx.application.Application;
+import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.layout.GridPane;
 import javafx.geometry.Insets;
@@ -122,26 +125,60 @@ public class MyJavaFXApp extends Application {
      */
     private Scene createLoginScene(Stage primaryStage) {
         GridPane loginGrid = new GridPane();
+        loginGrid.getStyleClass().add("root");
+
         loginGrid.setPadding(new Insets(10, 10, 10, 10));
-        loginGrid.setHgap(H_GAP);
-        loginGrid.setVgap(V_GAP);
+        loginGrid.setHgap(5);
+        loginGrid.setVgap(10); // Adjust as necessary to control vertical spacing
+        loginGrid.setAlignment(Pos.CENTER);
 
         TextField userNameField = new TextField();
-        PasswordField passwordField = new PasswordField();
-        loginGrid.setAlignment(Pos.CENTER);
-        Button loginButton = new Button("Login");
-        Button registerButton = new Button("Register");
-        Label errorMessage = new Label();
-        Button resetDatabaseButton = new Button("Reset Database");
+        userNameField.getStyleClass().add("username-field");
+        userNameField.setPromptText("Enter your username");
 
-        loginGrid.add(new Label("Username: "), 0, 0);
-        loginGrid.add(userNameField, 1, 0);
-        loginGrid.add(new Label("Password: "), 0, 1);
-        loginGrid.add(passwordField, 1, 1);
-        loginGrid.add(loginButton, 1, 2);
-        loginGrid.add(registerButton, 1, 3);
-        loginGrid.add(errorMessage, 1, 4);
-        loginGrid.add(resetDatabaseButton, 1, 5);
+        PasswordField passwordField = new PasswordField();
+        passwordField.getStyleClass().add("password-field");
+        passwordField.setPromptText("Enter your password");
+
+        Label errorMessage = new Label();
+        loginGrid.add(errorMessage, 0, 7, 2, 1); // Span 2 columns for proper alignment
+        errorMessage.getStyleClass().add("error-message");
+        GridPane.setColumnSpan(errorMessage, GridPane.REMAINING);
+        GridPane.setHalignment(errorMessage, HPos.CENTER);
+
+        Button loginButton = new Button("Login");
+        loginButton.getStyleClass().add("login_button");
+
+        Button registerButton = new Button("Register");
+        registerButton.getStyleClass().add("register_button");
+
+        Button resetDatabaseButton = new Button("Reset Database");
+        resetDatabaseButton.getStyleClass().add("resetDb_button");
+
+        HBox buttonBox = new HBox(10); // HBox with 10px spacing
+        buttonBox.setAlignment(Pos.CENTER); // Center the buttons
+        buttonBox.getChildren().addAll(registerButton, resetDatabaseButton); // Add buttons to HBox
+
+        VBox container = new VBox();
+        container.setAlignment(Pos.CENTER);
+        container.setPadding(new Insets(0));
+        container.getChildren().add(loginGrid);
+        container.getStyleClass().add("border-container");
+
+        Label welcomeLabel = new Label("Welcome");
+        loginGrid.add(welcomeLabel, 0, 0); // Add welcome label to GridPane
+        welcomeLabel.getStyleClass().add("welcome-label");
+        Label usernameLabel = new Label("Username: ");
+        loginGrid.add(usernameLabel, 0, 1); // Add username label to GridPane
+        usernameLabel.getStyleClass().add("username-label");
+        loginGrid.add(userNameField, 0, 2); // Add username field to GridPane
+        loginGrid.add(new Label("Password: "), 0, 3); // Add password label to GridPane
+        welcomeLabel.getStyleClass().add("password-label");
+
+        loginGrid.add(passwordField, 0, 4);  // Add password field to GridPane
+        loginGrid.add(loginButton, 0, 5, 2, 1); // Span 2 columns for proper alignment
+        loginGrid.add(buttonBox, 0, 6, 2, 1); // Add HBox to GridPane, spanning 2 columns
+
 
         loginButton.setOnAction(e -> {
             String username = userNameField.getText();
@@ -182,9 +219,9 @@ public class MyJavaFXApp extends Application {
         });
 
         registerButton.setOnAction(e -> primaryStage.setScene(createRegisterScene(primaryStage)));
-
-        Scene loginScene = new Scene(loginGrid,  WINDOW_HEIGHT ,  WINDOW_WIDTH);
+        Scene loginScene = new Scene(container, WINDOW_HEIGHT, WINDOW_WIDTH);
         loginScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("login.css")).toExternalForm());
+        loginButton.requestFocus(); // Set focus on the login button, prevents highlight on text field
         return loginScene;
     }
 
@@ -196,13 +233,14 @@ public class MyJavaFXApp extends Application {
      */
     private Scene createRegisterScene(Stage primaryStage) {
         GridPane registerGrid = new GridPane();
+        registerGrid.getStyleClass().add("register-grid");
         registerGrid.setPadding(new Insets(10, 10, 10, 10));
         registerGrid.setHgap(H_GAP);
-        registerGrid.setVgap(V_GAP);
+        registerGrid.setVgap(5);
         registerGrid.setAlignment(Pos.CENTER);
 
-
         TextField registerUserNameField = new TextField();
+        registerUserNameField.getStyleClass().add("username-field");
         registerUserNameField.setPromptText("Enter a username");
         PasswordField registerPasswordField = new PasswordField();
         registerPasswordField.setPromptText("Enter a password");
@@ -211,8 +249,12 @@ public class MyJavaFXApp extends Application {
         ComboBox<String> roleComboBox = new ComboBox<>();
         roleComboBox.setPromptText("Select a role");
         roleComboBox.getItems().addAll("Admin", "Student", "Instructor");
+        roleComboBox.getStyleClass().add("role-combobox");
         Button createAccountButton = new Button("Create Account");
+        createAccountButton.getStyleClass().add("create-account-button");
         Button backToLoginButton = new Button("Back to login");
+        backToLoginButton.getStyleClass().add("back-to-login-button");
+
         Label errorMessageLabel = new Label();
         Label matchingErrorMessageLabel = new Label();
         Label specialErrorMessageLabel = new Label();
@@ -220,20 +262,24 @@ public class MyJavaFXApp extends Application {
         Label lowerErrorMessageLabel = new Label();
 
         registerGrid.add(new Label("New Username: "), 0, 0);
-        registerGrid.add(registerUserNameField, 1, 0);
-        registerGrid.add(new Label("Password: "), 0, 1);
-        registerGrid.add(registerPasswordField, 1, 1);
-        registerGrid.add(new Label("Confirm Password: "), 0, 2);
-        registerGrid.add(registerConfirmPasswordField, 1, 2);
-        registerGrid.add(new Label("Select Role: "), 0, 3);
-        registerGrid.add(roleComboBox, 1, 3);
-        registerGrid.add(createAccountButton, 1, 4);
-        registerGrid.add(backToLoginButton, 1, 5);
-        registerGrid.add(errorMessageLabel, 1, 6);
-        registerGrid.add(matchingErrorMessageLabel, 1, 7);
-        registerGrid.add(specialErrorMessageLabel, 1, 8);
-        registerGrid.add(upperErrorMessageLabel, 1, 9);
-        registerGrid.add(lowerErrorMessageLabel, 1, 10);
+        registerGrid.add(registerUserNameField, 0, 1);
+        registerGrid.add(new Label("Password: "), 0, 2);
+        registerGrid.add(registerPasswordField, 0, 3);
+        registerGrid.add(new Label("Confirm Password: "), 0, 4);
+        registerGrid.add(registerConfirmPasswordField, 0, 5);
+        registerGrid.add(new Label("Select Role: "), 0, 6);
+
+
+        registerGrid.add(roleComboBox, 0, 7);
+        registerGrid.add(createAccountButton, 0, 8);
+        registerGrid.add(backToLoginButton, 1, 8);
+        registerGrid.add(errorMessageLabel, 1, 2);
+        registerGrid.add(matchingErrorMessageLabel, 1, 3);
+        registerGrid.add(specialErrorMessageLabel, 1, 4);
+        registerGrid.add(upperErrorMessageLabel, 1, 5);
+        registerGrid.add(lowerErrorMessageLabel, 1, 6);
+
+
 
 
         // Add listeners to the password fields
@@ -244,6 +290,12 @@ public class MyJavaFXApp extends Application {
             checkPasswordsSpecial(registerPasswordField, specialErrorMessageLabel);
         });
 
+
+        registerConfirmPasswordField.textProperty().addListener((observable, oldValue, newValue) -> {
+            checkPasswordsMatch(registerPasswordField, registerConfirmPasswordField, matchingErrorMessageLabel);
+        });
+
+
         createAccountButton.setOnAction(e -> {
             String username = registerUserNameField.getText();
             String password = registerPasswordField.getText();
@@ -253,6 +305,7 @@ public class MyJavaFXApp extends Application {
             if (password.isEmpty() || username.isEmpty() ) {
                 errorMessageLabel.setText("Username or password cannot be empty!");
                 System.out.println("Username or password or email cannot be empty!");
+
             } else if (!password.matches(".*[!@#$%^&*].*")) {
                 errorMessageLabel.setText("Password must contain at least 1 Special Character");
                 System.out.println("Password must contain at least 1 Special Character");

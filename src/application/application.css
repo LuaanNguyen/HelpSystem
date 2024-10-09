@@ -1,6 +1,6 @@
 /* Root style with gradient background */
 .root {
-    -fx-background-color: linear-gradient(#8EC5FC, #E0C3FC);
+    -fx-background-color: white;
 }
 
 /* Button styling */
@@ -37,7 +37,7 @@
 
 /* Text fields with rounded corners and border */
 .text-field {
-    -fx-border-color: #4CAF50;
+    -fx-border-color: rgba(255, 255, 255, 0.73);
     -fx-border-width: 2px;
     -fx-background-radius: 5px;
     -fx-padding: 8px; /* Padding inside the text field */

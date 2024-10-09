@@ -40,7 +40,7 @@ public class MyJavaFXApp extends Application {
         try { //Attempt to connect to H2 DB
             dbUtil.connectToDatabase();
             if (dbUtil.isDBEmpty()) { //If DB is empty, setting up admin user
-                System.out.print("In-Memory Database is empty");
+                System.out.println("In-Memory Database is empty");
                 primaryStage.setScene(createAdminSetupScene(primaryStage));
             } else { //If DB is not empty, go to login screen
                 primaryStage.setScene(createLoginScene(primaryStage));
@@ -125,6 +125,7 @@ public class MyJavaFXApp extends Application {
         Button loginButton = new Button("Login");
         Button registerButton = new Button("Register");
         Button resetDatabaseButton = new Button("Reset Database");
+        Label errorMessage = new Label();
 
 
         loginGrid.add(new Label("Username: "), 0, 0);
@@ -134,13 +135,14 @@ public class MyJavaFXApp extends Application {
         loginGrid.add(loginButton, 1, 2);
         loginGrid.add(registerButton, 1, 3);
         loginGrid.add(resetDatabaseButton, 1, 4);
+        loginGrid.add(errorMessage, 1, 5, 2 ,1);
 
         loginButton.setOnAction(e -> {
             String username = userNameField.getText();
             String password = passwordField.getText();
             try {
                 if (dbUtil.login(username, password)) {
-                    System.out.println("Login successful");
+                   errorMessage.setText("Login successful");
                     // Proceed to the next scene or functionality
                     primaryStage.setScene(userListScene(primaryStage));
                 } else {
@@ -154,8 +156,9 @@ public class MyJavaFXApp extends Application {
 
         resetDatabaseButton.setOnAction(e -> {
             try {
+                System.out.println("Database reset successfully. Going back to Admin scene...");
                 dbUtil.resetDatabase();
-                System.out.println("Database reset successfully");
+                primaryStage.setScene(createAdminSetupScene(primaryStage));
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
@@ -188,7 +191,8 @@ public class MyJavaFXApp extends Application {
         ComboBox<String> roleComboBox = new ComboBox<>();
         roleComboBox.getItems().addAll("Admin", "Student", "Instructor");
         Button createAccountButton = new Button("Create Account");
-        Button backToLoginButton = new Button("Log out");
+        Button backToLoginButton = new Button("Back to login");
+        Label errorMessageLabel = new Label();
         Label matchingErrorMessageLabel = new Label();
         Label specialErrorMessageLabel = new Label();
         Label upperErrorMessageLabel = new Label();
@@ -206,10 +210,11 @@ public class MyJavaFXApp extends Application {
         registerGrid.add(roleComboBox, 1, 4);
         registerGrid.add(createAccountButton, 1, 5);
         registerGrid.add(backToLoginButton, 1, 6);
-        registerGrid.add(matchingErrorMessageLabel, 1, 7);
-        registerGrid.add(specialErrorMessageLabel, 1, 8);
-        registerGrid.add(upperErrorMessageLabel, 1, 9);
-        registerGrid.add(lowerErrorMessageLabel, 1, 10);
+        registerGrid.add(errorMessageLabel, 0, 7);
+        registerGrid.add(matchingErrorMessageLabel, 1, 8);
+        registerGrid.add(specialErrorMessageLabel, 1, 9);
+        registerGrid.add(upperErrorMessageLabel, 1, 10);
+        registerGrid.add(lowerErrorMessageLabel, 1, 11);
 
 
         // Add listeners to the password fields
@@ -230,6 +235,7 @@ public class MyJavaFXApp extends Application {
             String selectedRole = roleComboBox.getValue();
 
             if (password.isEmpty() || username.isEmpty() || email.isEmpty()) {
+                errorMessageLabel.setText("Username or password or email cannot be empty!");
                 System.out.println("Username or password or email cannot be empty!");
             } else if (!password.matches(".*[!@#$%^&*].*")) {
                 System.out.println("Password must contain at least 1 Special Character");
@@ -265,6 +271,8 @@ public class MyJavaFXApp extends Application {
         registerScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("register.css")).toExternalForm());
         return registerScene;
     }
+
+
     // Method to check if passwords match and update the UI
     private void checkPasswordsMatch(PasswordField passwordField, PasswordField confirmPasswordField, Label matchingErrorMessageLabel) {
         if (!confirmPasswordField.getText().equals(passwordField.getText())) {

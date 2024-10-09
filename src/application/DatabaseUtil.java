@@ -34,10 +34,15 @@ public class DatabaseUtil {
     private void createTables() throws SQLException {
         String userTableQuery = "CREATE TABLE IF NOT EXISTS helpsystem_users ("
                 + "id INT AUTO_INCREMENT PRIMARY KEY, "
+                + "email VARCHAR(255) UNIQUE, "
                 + "username VARCHAR(255) UNIQUE, "
                 + "password VARCHAR(255), "
                 + "roles VARCHAR(255))";
         statement.execute(userTableQuery);
+
+        // Ensure the email column exists
+        String addEmailColumnQuery = "ALTER TABLE helpsystem_users ADD COLUMN IF NOT EXISTS email VARCHAR(255) UNIQUE";
+        statement.execute(addEmailColumnQuery);
     }
 
     //Check whether the DB is empty or not
@@ -51,12 +56,13 @@ public class DatabaseUtil {
     }
 
     //register new user
-    public void register(String username, String password, String role) throws SQLException {
-        String query = "INSERT INTO helpsystem_users (username, password, roles) VALUES (?, ?, ?)";
+    public void register(String email, String username, String password, String role) throws SQLException {
+        String query = "INSERT INTO helpsystem_users (email, username, password, roles) VALUES (?, ?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
-            pstmt.setString(1, username);
-            pstmt.setString(2, password);
-            pstmt.setString(3, role);
+            pstmt.setString(1, email);
+            pstmt.setString(2, username);
+            pstmt.setString(3, password);
+            pstmt.setString(4, role);
             pstmt.executeUpdate();
         }
     }
@@ -72,6 +78,8 @@ public class DatabaseUtil {
             }
         }
     }
+
+
 
     //check if the user exists
     public boolean doesUserExist(String username) {
@@ -98,12 +106,14 @@ public class DatabaseUtil {
             while (rs.next()) {
                 // Retrieve by column name
                 int id = rs.getInt("id");
+                String email = rs.getString("email");
                 String username = rs.getString("username");
                 String password = rs.getString("password");
                 String role = rs.getString("roles");
 
                 // Append values to result
                 result.append("ID: ").append(id)
+                        .append(", email: ").append(email)
                         .append(", username: ").append(username)
                         .append(", password: ").append(password)
                         .append(", Role(s): ").append(role)
@@ -120,6 +130,13 @@ public class DatabaseUtil {
             return "An error occurred while displaying users.";
         }
         return result.toString();
+    }
+
+    //Reset Database (Sudo action)
+    public void resetDatabase() throws SQLException {
+        String dropUserTableQuery = "DROP TABLE IF EXISTS helpsystem_users";
+        statement.execute(dropUserTableQuery);
+        createTables();  // Recreate the tables
     }
 
     //Close DB connection

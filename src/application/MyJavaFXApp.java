@@ -31,6 +31,10 @@ import javafx.scene.image.ImageView;
 
 public class MyJavaFXApp extends Application {
 
+    //Global Window sizes
+    public static final int WINDOW_HEIGHT = 800;
+    public static final int WINDOW_WIDTH = 500;
+
     /** Create a DB instance to interact with the database */
     private static final DatabaseUtil dbUtil = new DatabaseUtil();
 
@@ -39,7 +43,7 @@ public class MyJavaFXApp extends Application {
         try { //Attempt to connect to H2 DB
             dbUtil.connectToDatabase();
             if (dbUtil.isDBEmpty()) { //If DB is empty, setting up admin user
-                System.out.print("In-Memory Database is empty");
+                System.out.println("In-Memory Database is empty");
                 primaryStage.setScene(createAdminSetupScene(primaryStage));
             } else { //If DB is not empty, go to log in screen
                 primaryStage.setScene(createLoginScene(primaryStage));
@@ -72,15 +76,17 @@ public class MyJavaFXApp extends Application {
         PasswordField adminConfirmPasswordField = new PasswordField();
         Button setupAdminButton = new Button("Setup Admin");
 
-        adminSetupGrid.add(new Label("Admin Username: "), 0, 0);
-        adminSetupGrid.add(adminUserNameField, 1, 0);
-        adminSetupGrid.add(new Label("Password: "), 0, 1);
-        adminSetupGrid.add(adminPasswordField, 1, 1);
-        adminSetupGrid.add(new Label("Confirm Password: "), 0, 2);
-        adminSetupGrid.add(adminConfirmPasswordField, 1, 2);
-        adminSetupGrid.add(setupAdminButton, 1, 3);
+        adminSetupGrid.add(new Label("Database is empty, setting up Admin "), 0, 0, 4, 1);
+        adminSetupGrid.add(new Label("Admin Username: "), 0, 1);
+        adminSetupGrid.add(adminUserNameField, 1, 1);
+        adminSetupGrid.add(new Label("Password: "), 0, 2);
+        adminSetupGrid.add(adminPasswordField, 1, 2);
+        adminSetupGrid.add(new Label("Confirm Password: "), 0, 3);
+        adminSetupGrid.add(adminConfirmPasswordField, 1, 3);
+        adminSetupGrid.add(setupAdminButton, 1, 4);
 
         setupAdminButton.setOnAction(e -> {
+            String email = adminUserNameField.getText();
             String username = adminUserNameField.getText();
             String password = adminPasswordField.getText();
             String confirmPassword = adminConfirmPasswordField.getText();
@@ -91,7 +97,7 @@ public class MyJavaFXApp extends Application {
                 System.out.println("Password doesn't match");
             } else {
                 try {
-                    dbUtil.register(username, password, "Admin");
+                    dbUtil.register(email, username, password, "Admin");
                     System.out.print("Admin user registered successfully");
                     primaryStage.setScene(createLoginScene(primaryStage));
                 } catch (SQLException ex) {
@@ -100,7 +106,7 @@ public class MyJavaFXApp extends Application {
             }
         });
 
-        Scene loginScene = new Scene(adminSetupGrid, 300, 200);
+        Scene loginScene = new Scene(adminSetupGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
         loginScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("admin.css")).toExternalForm());
         return loginScene;
     }
@@ -114,34 +120,28 @@ public class MyJavaFXApp extends Application {
     private Scene createLoginScene(Stage primaryStage) {
         GridPane loginGrid = new GridPane();
         loginGrid.setPadding(new Insets(10, 10, 10, 10));
-        //loginGrid.getStyleClass().add("grid-pane");
-//        Image image = new Image("file:public/Support.png");
-//        ImageView imageView = new ImageView(image);
+        loginGrid.setHgap(5);
+        loginGrid.setVgap(5);
+
         TextField userNameField = new TextField();
         PasswordField passwordField = new PasswordField();
         loginGrid.setAlignment(Pos.CENTER);
         Button loginButton = new Button("Login");
         Button registerButton = new Button("Register");
-//        loginGrid.add(imageView, 17, 1, 1, 1);
-//        imageView.setFitHeight(200);
-//        imageView.setFitWidth(200);
-        Label detailsLabel = new Label("Please enter your details");
-        detailsLabel.getStyleClass().add("custom-label");
-        loginGrid.add(detailsLabel, 0, 0);
-        loginGrid.add(new Label("Welcome back "), 0, 1);
-        loginGrid.add(new Label("Username: "), 0, 3);
-        loginGrid.add(userNameField, 1, 3);
-        loginGrid.add(new Label("Password: "), 0, 4);
-        loginGrid.add(passwordField, 1, 4);
-        loginGrid.add(loginButton, 0, 5);
-        loginGrid.add(registerButton, 1, 5);
+
+        loginGrid.add(new Label("Username: "), 0, 0);
+        loginGrid.add(userNameField, 1, 0);
+        loginGrid.add(new Label("Password: "), 0, 1);
+        loginGrid.add(passwordField, 1, 1);
+        loginGrid.add(loginButton, 1, 2);
+        loginGrid.add(registerButton, 1, 3);
 
         loginButton.setOnAction(e -> {
             String username = userNameField.getText();
             String password = passwordField.getText();
             try {
                 if (dbUtil.login(username, password)) {
-                    System.out.println("Login successful");
+                   errorMessage.setText("Login successful");
                     // Proceed to the next scene or functionality
                     primaryStage.setScene(userListScene(primaryStage));
                 } else {
@@ -152,9 +152,21 @@ public class MyJavaFXApp extends Application {
             }
         });
 
+
+        resetDatabaseButton.setOnAction(e -> {
+            try {
+                System.out.println("Database reset successfully. Going back to Admin scene...");
+                dbUtil.resetDatabase();
+                primaryStage.setScene(createAdminSetupScene(primaryStage));
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        });
+
+
         registerButton.setOnAction(e -> primaryStage.setScene(createRegisterScene(primaryStage)));
 
-        Scene loginScene = new Scene(loginGrid, 800, 600);
+        Scene loginScene = new Scene(loginGrid, 300, 200);
         loginScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("login.css")).toExternalForm());
         return loginScene;
     }
@@ -167,11 +179,11 @@ public class MyJavaFXApp extends Application {
      */
     private Scene createRegisterScene(Stage primaryStage) {
         GridPane registerGrid = new GridPane();
-        registerGrid.setAlignment(Pos.CENTER);
         registerGrid.setPadding(new Insets(10, 10, 10, 10));
         registerGrid.setHgap(5);
         registerGrid.setVgap(5);
 
+        TextField registerEmailField = new TextField();
         TextField registerUserNameField = new TextField();
         registerUserNameField.setPromptText("Enter a username");
         PasswordField registerPasswordField = new PasswordField();
@@ -182,7 +194,8 @@ public class MyJavaFXApp extends Application {
         roleComboBox.setPromptText("Select a role");
         roleComboBox.getItems().addAll("Admin", "Student", "Instructor");
         Button createAccountButton = new Button("Create Account");
-        Button backToLoginButton = new Button("Back to Login");
+        Button backToLoginButton = new Button("Back to login");
+        Label errorMessageLabel = new Label();
         Label matchingErrorMessageLabel = new Label();
         Label specialErrorMessageLabel = new Label();
         Label upperErrorMessageLabel = new Label();
@@ -197,7 +210,7 @@ public class MyJavaFXApp extends Application {
         registerGrid.add(new Label("Select Role: "), 0, 3);
         registerGrid.add(roleComboBox, 1, 3);
         registerGrid.add(createAccountButton, 1, 4);
-        registerGrid.add(backToLoginButton, 2, 4);
+        registerGrid.add(backToLoginButton, 1, 5);
         registerGrid.add(matchingErrorMessageLabel, 1, 6);
         registerGrid.add(specialErrorMessageLabel, 1, 7);
         registerGrid.add(upperErrorMessageLabel, 1, 8);
@@ -216,13 +229,15 @@ public class MyJavaFXApp extends Application {
 
 
         createAccountButton.setOnAction(e -> {
+            String email = registerEmailField.getText();
             String username = registerUserNameField.getText();
             String password = registerPasswordField.getText();
             String confirmPassword = registerConfirmPasswordField.getText();
             String selectedRole = roleComboBox.getValue();
 
-            if (password.isEmpty() || username.isEmpty()) {
-                System.out.println("Username or password cannot be empty!");
+            if (password.isEmpty() || username.isEmpty() || email.isEmpty()) {
+                errorMessageLabel.setText("Username or password or email cannot be empty!");
+                System.out.println("Username or password or email cannot be empty!");
             } else if (!password.matches(".*[!@#$%^&*].*")) {
                 System.out.println("Password must contain at least 1 Special Character");
             }
@@ -241,7 +256,7 @@ public class MyJavaFXApp extends Application {
                     if (dbUtil.doesUserExist(username)) {
                         System.out.println("User already exists!");
                     } else {
-                        dbUtil.register(username, password, selectedRole);
+                        dbUtil.register(email, username, password, selectedRole);
                         System.out.print("User registered successfully");
                         primaryStage.setScene(createLoginScene(primaryStage));
                     }
@@ -252,12 +267,14 @@ public class MyJavaFXApp extends Application {
         });
 
 
-        Scene registerScene = new Scene(registerGrid, 800, 600);
+        Scene registerScene = new Scene(registerGrid, 300, 250);
         backToLoginButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
         registerScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("register.css")).toExternalForm());
         createAccountButton.requestFocus(); // Set focus on the create account button, prevents highlight on text field
         return registerScene;
     }
+
+
     // Method to check if passwords match and update the UI
     private void checkPasswordsMatch(PasswordField passwordField, PasswordField confirmPasswordField, Label matchingErrorMessageLabel) {
         if (!confirmPasswordField.getText().equals(passwordField.getText())) {
@@ -290,7 +307,7 @@ public class MyJavaFXApp extends Application {
 
     private Scene userListScene(Stage primaryStage) {
         GridPane userListGrid = new GridPane();
-        userListGrid.setPadding(new Insets(10, 10, 10, 10));
+        userListGrid.setPadding(new Insets(20, 20, 20, 20));
         userListGrid.setHgap(5);
         userListGrid.setVgap(5);
 
@@ -309,7 +326,7 @@ public class MyJavaFXApp extends Application {
             primaryStage.setScene(createLoginScene(primaryStage));
         });
 
-        Scene userListScene = new Scene(userListGrid, 400, 300);
+        Scene userListScene = new Scene(userListGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
         return userListScene;
     }
 

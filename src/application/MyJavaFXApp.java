@@ -73,13 +73,14 @@ public class MyJavaFXApp extends Application {
         PasswordField adminConfirmPasswordField = new PasswordField();
         Button setupAdminButton = new Button("Setup Admin");
 
-        adminSetupGrid.add(new Label("Admin Username: "), 0, 0);
-        adminSetupGrid.add(adminUserNameField, 1, 0);
-        adminSetupGrid.add(new Label("Password: "), 0, 1);
-        adminSetupGrid.add(adminPasswordField, 1, 1);
-        adminSetupGrid.add(new Label("Confirm Password: "), 0, 2);
-        adminSetupGrid.add(adminConfirmPasswordField, 1, 2);
-        adminSetupGrid.add(setupAdminButton, 1, 3);
+        adminSetupGrid.add(new Label("Database is empty, setting up Admin "), 0, 0, 4, 1);
+        adminSetupGrid.add(new Label("Admin Username: "), 0, 1);
+        adminSetupGrid.add(adminUserNameField, 1, 1);
+        adminSetupGrid.add(new Label("Password: "), 0, 2);
+        adminSetupGrid.add(adminPasswordField, 1, 2);
+        adminSetupGrid.add(new Label("Confirm Password: "), 0, 3);
+        adminSetupGrid.add(adminConfirmPasswordField, 1, 3);
+        adminSetupGrid.add(setupAdminButton, 1, 4);
 
         setupAdminButton.setOnAction(e -> {
             String email = adminUserNameField.getText();
@@ -123,6 +124,8 @@ public class MyJavaFXApp extends Application {
         PasswordField passwordField = new PasswordField();
         Button loginButton = new Button("Login");
         Button registerButton = new Button("Register");
+        Button resetDatabaseButton = new Button("Reset Database");
+
 
         loginGrid.add(new Label("Username: "), 0, 0);
         loginGrid.add(userNameField, 1, 0);
@@ -130,6 +133,7 @@ public class MyJavaFXApp extends Application {
         loginGrid.add(passwordField, 1, 1);
         loginGrid.add(loginButton, 1, 2);
         loginGrid.add(registerButton, 1, 3);
+        loginGrid.add(resetDatabaseButton, 1, 4);
 
         loginButton.setOnAction(e -> {
             String username = userNameField.getText();
@@ -146,6 +150,17 @@ public class MyJavaFXApp extends Application {
                 ex.printStackTrace();
             }
         });
+
+
+        resetDatabaseButton.setOnAction(e -> {
+            try {
+                dbUtil.resetDatabase();
+                System.out.println("Database reset successfully");
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        });
+
 
         registerButton.setOnAction(e -> primaryStage.setScene(createRegisterScene(primaryStage)));
 
@@ -173,7 +188,7 @@ public class MyJavaFXApp extends Application {
         ComboBox<String> roleComboBox = new ComboBox<>();
         roleComboBox.getItems().addAll("Admin", "Student", "Instructor");
         Button createAccountButton = new Button("Create Account");
-        Button backToLoginButton = new Button("Back to Login");
+        Button backToLoginButton = new Button("Log out");
         Label matchingErrorMessageLabel = new Label();
         Label specialErrorMessageLabel = new Label();
         Label upperErrorMessageLabel = new Label();
@@ -301,7 +316,7 @@ public class MyJavaFXApp extends Application {
             primaryStage.setScene(createLoginScene(primaryStage));
         });
 
-        Scene userListScene = new Scene(userListGrid, 400, 300);
+        Scene userListScene = new Scene(userListGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
         return userListScene;
     }
 

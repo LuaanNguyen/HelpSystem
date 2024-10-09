@@ -39,6 +39,10 @@ public class DatabaseUtil {
                 + "password VARCHAR(255), "
                 + "roles VARCHAR(255))";
         statement.execute(userTableQuery);
+
+        // Ensure the email column exists
+        String addEmailColumnQuery = "ALTER TABLE helpsystem_users ADD COLUMN IF NOT EXISTS email VARCHAR(255) UNIQUE";
+        statement.execute(addEmailColumnQuery);
     }
 
     //Check whether the DB is empty or not
@@ -74,6 +78,8 @@ public class DatabaseUtil {
             }
         }
     }
+
+
 
     //check if the user exists
     public boolean doesUserExist(String username) {
@@ -124,6 +130,13 @@ public class DatabaseUtil {
             return "An error occurred while displaying users.";
         }
         return result.toString();
+    }
+
+    //Reset Database (Sudo action)
+    public void resetDatabase() throws SQLException {
+        String dropUserTableQuery = "DROP TABLE IF EXISTS helpsystem_users";
+        statement.execute(dropUserTableQuery);
+        createTables();  // Recreate the tables
     }
 
     //Close DB connection

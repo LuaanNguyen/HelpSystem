@@ -244,7 +244,6 @@ public class MyJavaFXApp extends Application {
             checkPasswordsSpecial(registerPasswordField, specialErrorMessageLabel);
         });
 
-
         createAccountButton.setOnAction(e -> {
             String username = registerUserNameField.getText();
             String password = registerPasswordField.getText();
@@ -380,10 +379,10 @@ public class MyJavaFXApp extends Application {
     }
 
     /**********
-     * STUDENT SCENE
+     * INSTRUCTOR SCENE
      *
      * @param primaryStage primaryStage
-     * @return student scene after successfully login
+     * @return instructor scene after successfully login
      */
     private Scene instructorScene(Stage primaryStage) {
         GridPane instructorSceneGrid = new GridPane();
@@ -400,7 +399,6 @@ public class MyJavaFXApp extends Application {
         return new Scene(instructorSceneGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
     }
 
-
     /*******************************************************************************************************/
     /*******************************************************************************************************
      * This is the method that launches the JavaFX application
@@ -412,7 +410,6 @@ public class MyJavaFXApp extends Application {
         launch(args);
     }
 }
-
 
 //    /**********
 //     * FINISH SETUP COMPONENT

@@ -1,45 +1,89 @@
 .root {
-    -fx-background-color: linear-gradient(#8EC5FC, #E0C3FC);
+    -fx-background-color: rgba(255, 255, 255, 0.65);
+
+    -fx-border-color: rgba(0, 0, 0, 0.24); /* Border color */
+    -fx-border-width: 2px;   /* Border thickness */
+    -fx-min-width: 300;
+    -fx-max-width: 300;
+    -fx-min-height: 380;
+    -fx-max-height: 380;
+    -fx-border-radius: 10px; /* Rounded corners */
+    -fx-background-radius: 10px; /* Ensure background also has rounded corners */
+    -fx-padding: 5px;
 }
-.grid-pane {
-    -fx-border-color: black; /* Set the border color */
-    -fx-border-width: 2px; /* Set the border width */
-    -fx-border-style: solid; /* Set the border style */
-    -fx-padding: 1px; /* Add padding inside the border */
+.border-container {
+    -fx-background-color: linear-gradient(to top right, #FFDEE9, #B5FFFC);
+    -fx-border-color: #ffffff;
 }
-.button {
-    -fx-background-color: #4CAF50; /* Green */
-    -fx-text-fill: white;
-    -fx-border-radius: 10px;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
-    -fx-min-width: 100px;
-    -fx-max-width: 100px;
-    -fx-alignment: center;
-}
-.custom-label {
-    -fx-font-size: 16px; /* Set the font size */
-    -fx-font-weight: bold; /* Set the font weight */
-    -fx-text-fill: #333333; /* Set the text color */
-    -fx-font-family: "Arial"; /* Set the font family */
-    -fx-background-color: #f0f0f0; /* Set the background color */
-    -fx-padding: 5px; /* Set padding */
-    -fx-border-color: #4CAF50; /* Set border color */
-    -fx-border-width: 2px; /* Set border width */
-    -fx-border-radius: 5px; /* Set border radius */
+.welcome-label {
+    -fx-font-family: "JetBrains Mono SemiBold";
+    -fx-font-size: 30px; /* Set font size */
+    -fx-font-weight: bold;
+    -fx-text-fill: #000000; /* Set text color */
+    -fx-background-color: rgba(255, 255, 255, 0); /* Set background color */
+
 }
 
-.label {
+.password-field {
+    -fx-min-width: 220px;
+    -fx-max-width: 220px; /* Set preferred width */
+    -fx-border-radius: 0px; /* Set the border radius */
+    -fx-background-radius: 5px;
+    -fx-border-color: rgba(255, 255, 255, 0.65);
+    -fx-padding: 4px;
     -fx-font-size: 14px;
 }
-.button:hover
+.username-field {
+    -fx-min-width: 220px;
+    -fx-max-width: 220px; /* Set preferred width */
+    -fx-border-radius: 0px; /* Set the border radius */
+    -fx-background-radius: 5px;
+    -fx-border-color: rgba(255, 255, 255, 0.65);
+    -fx-padding: 4px;
+    -fx-font-size: 14px;
+}
+.login_button {
+    -fx-background-color: #2c2c2c;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-min-width: 220;
+    -fx-max-width: 220;
+    -fx-min-height: 32;
+    -fx-max-height: 32;
+    -fx-border-radius: 0px; /* Set the border radius */
+    -fx-background-radius: 5px;
+}
+
+/*.label {*/
+/*    -fx-font-size: 14px;*/
+/*    -fx-padding: 0 0 5px 0;*/
+/*}*/
+.login_button:hover
 {
-    -fx-background-color: #000000;
+    -fx-background-color: rgba(44, 44, 44, 0.75);
     -fx-cursor: hand;
 }
-.button:pressed
+.login_button:pressed
 {
     -fx-background-color: #000000;
 }
-.text-field {
-    -fx-border-color: #4CAF50;
+.register_button {
+    -fx-background-color: transparent; /* Remove background */
+    -fx-text-fill: #000000; /* Set text color to blue */
+    -fx-underline: true; /* Underline the text */
+    -fx-cursor: hand; /* Change cursor to hand */
+    -fx-padding: 0; /* Remove padding */
+    -fx-border-width: 0; /* Remove border */
 }
+.resetDb_button {
+    -fx-background-color: transparent; /* Remove background */
+    -fx-text-fill: #000000; /* Set text color to blue */
+    -fx-underline: true; /* Underline the text */
+    -fx-padding: 0; /* Remove padding */
+    -fx-border-width: 0; /* Remove border */
+}
+.resetDb_button:hover {
+    -fx-text-fill: red;
+    -fx-cursor: hand; /* Change cursor to hand */
+}
+

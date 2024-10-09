@@ -5,6 +5,8 @@ import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.layout.GridPane;
 import javafx.geometry.Insets;
@@ -122,26 +124,53 @@ public class MyJavaFXApp extends Application {
      */
     private Scene createLoginScene(Stage primaryStage) {
         GridPane loginGrid = new GridPane();
+        loginGrid.getStyleClass().add("root");
+
         loginGrid.setPadding(new Insets(10, 10, 10, 10));
-        loginGrid.setHgap(H_GAP);
-        loginGrid.setVgap(V_GAP);
+        loginGrid.setHgap(5);
+        loginGrid.setVgap(10); // Adjust as necessary to control vertical spacing
+        loginGrid.setAlignment(Pos.CENTER);
 
         TextField userNameField = new TextField();
-        PasswordField passwordField = new PasswordField();
-        loginGrid.setAlignment(Pos.CENTER);
-        Button loginButton = new Button("Login");
-        Button registerButton = new Button("Register");
-        Label errorMessage = new Label();
-        Button resetDatabaseButton = new Button("Reset Database");
+        userNameField.getStyleClass().add("username-field");
+        userNameField.setPromptText("Enter your username");
 
-        loginGrid.add(new Label("Username: "), 0, 0);
-        loginGrid.add(userNameField, 1, 0);
-        loginGrid.add(new Label("Password: "), 0, 1);
-        loginGrid.add(passwordField, 1, 1);
-        loginGrid.add(loginButton, 1, 2);
-        loginGrid.add(registerButton, 1, 3);
-        loginGrid.add(errorMessage, 1, 4);
-        loginGrid.add(resetDatabaseButton, 1, 5);
+        PasswordField passwordField = new PasswordField();
+        passwordField.getStyleClass().add("password-field");
+        passwordField.setPromptText("Enter your password");
+
+        Label errorMessage = new Label();
+        Button loginButton = new Button("Login");
+        loginButton.getStyleClass().add("login_button");
+        Button registerButton = new Button("Register");
+        registerButton.getStyleClass().add("register_button");
+        Button resetDatabaseButton = new Button("Reset Database");
+        resetDatabaseButton.getStyleClass().add("resetDb_button");
+
+        HBox buttonBox = new HBox(10); // HBox with 10px spacing
+        buttonBox.setAlignment(Pos.CENTER); // Center the buttons
+        buttonBox.getChildren().addAll(registerButton, resetDatabaseButton); // Add buttons to HBox
+
+        VBox container = new VBox();
+        container.setAlignment(Pos.CENTER);
+        container.setPadding(new Insets(0));
+        container.getChildren().add(loginGrid);
+        container.getStyleClass().add("border-container");
+
+        Label welcomeLabel = new Label("Welcome");
+        loginGrid.add(welcomeLabel, 0, 0); // Add welcome label to GridPane
+        welcomeLabel.getStyleClass().add("welcome-label");
+        Label usernameLabel = new Label("Username: ");
+        loginGrid.add(usernameLabel, 0, 1); // Add username label to GridPane
+        usernameLabel.getStyleClass().add("username-label");
+        loginGrid.add(userNameField, 0, 2); // Add username field to GridPane
+        loginGrid.add(new Label("Password: "), 0, 3); // Add password label to GridPane
+        welcomeLabel.getStyleClass().add("password-label");
+
+        loginGrid.add(passwordField, 0, 4);  // Add password field to GridPane
+        loginGrid.add(loginButton, 0, 5, 2, 1); // Span 2 columns for proper alignment
+        loginGrid.add(buttonBox, 0, 6, 2, 1); // Add HBox to GridPane, spanning 2 columns
+
 
         loginButton.setOnAction(e -> {
             String username = userNameField.getText();
@@ -170,9 +199,9 @@ public class MyJavaFXApp extends Application {
         });
 
         registerButton.setOnAction(e -> primaryStage.setScene(createRegisterScene(primaryStage)));
-
-        Scene loginScene = new Scene(loginGrid,  WINDOW_HEIGHT ,  WINDOW_WIDTH);
+        Scene loginScene = new Scene(container, WINDOW_HEIGHT, WINDOW_WIDTH);
         loginScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("login.css")).toExternalForm());
+        loginButton.requestFocus(); // Set focus on the login button, prevents highlight on text field
         return loginScene;
     }
 

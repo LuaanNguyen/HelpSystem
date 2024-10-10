@@ -1,0 +1,11 @@
+Database:
+After user finsihes set up, fills out all fields, when user relogs,
+they are then prompted again to "finish set up".
+Need to skip if already done
+
+User can receive a "student" code but if they select "admin" during register, they will receive the admin role.
+
+UI:
+Error messages for missing invite code
+Fix register page spacing
+Admin set up needs spacing fixed, title needs to be fixed

@@ -140,7 +140,7 @@ public class MyJavaFXApp extends Application {
         passwordField.setPromptText("Enter your password");
 
         Label errorMessage = new Label();
-        loginGrid.add(errorMessage, 0, 7, 2, 1); // Span 2 columns for proper alignment
+        loginGrid.add(errorMessage, 0, 7, 2, 1);
         errorMessage.getStyleClass().add("error-message");
         GridPane.setColumnSpan(errorMessage, GridPane.REMAINING);
         GridPane.setHalignment(errorMessage, HPos.CENTER);
@@ -256,30 +256,41 @@ public class MyJavaFXApp extends Application {
     private Scene createRegisterScene(Stage primaryStage) {
         GridPane registerGrid = new GridPane();
         registerGrid.getStyleClass().add("register-grid");
+
         registerGrid.setPadding(new Insets(10, 10, 10, 10));
         registerGrid.setHgap(5);
-        registerGrid.setVgap(1);
+        registerGrid.setVgap(10);
         registerGrid.setAlignment(Pos.CENTER);
+
+        Label welcomeLabel = new Label("Create an Account");
+        registerGrid.add(welcomeLabel, 0, 3); // Add welcome label to GridPane
+        welcomeLabel.getStyleClass().add("register-label");
 
         TextField registerUserNameField = new TextField();
         registerUserNameField.getStyleClass().add("username-field");
         registerUserNameField.setPromptText("Enter a username");
+
         PasswordField registerPasswordField = new PasswordField();
         registerPasswordField.setPromptText("Enter a password");
         PasswordField registerConfirmPasswordField = new PasswordField();
         registerConfirmPasswordField.setPromptText("Confirm password");
+
         ComboBox<String> roleComboBox = new ComboBox<>();
         roleComboBox.setPromptText("Select a role");
         roleComboBox.getItems().addAll("Admin", "Student", "Instructor");
         roleComboBox.getStyleClass().add("role-combobox");
+
         Button createAccountButton = new Button("Create Account");
         createAccountButton.getStyleClass().add("create-account-button");
         Button backToLoginButton = new Button("Back to login");
         backToLoginButton.getStyleClass().add("back-to-login-button");
-        VBox borderContainer = new VBox();
-        borderContainer.setAlignment(Pos.CENTER);
-        borderContainer.setPadding(new Insets(0));
-        borderContainer.getStyleClass().add("border-container");
+
+        VBox container = new VBox();
+        container.setAlignment(Pos.CENTER);
+        container.setPadding(new Insets(0));
+        container.getChildren().add(registerGrid);
+        container.getStyleClass().add("border-container");
+
 
         // Create labels for password requirements, !!! I'm not sure how to put the Label initialization in the requirementsBox and update the text
         Label errorMessageLabel = new Label();
@@ -301,6 +312,7 @@ public class MyJavaFXApp extends Application {
         registerGrid.add(createAccountButton, 0, 8);
         registerGrid.add(backToLoginButton, 1, 8);
         registerGrid.add(errorMessageLabel, 1, 5);
+
 
         // Add listeners to both password fields to validate password and match requirements
         registerPasswordField.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -370,7 +382,7 @@ public class MyJavaFXApp extends Application {
             }
         });
 
-        Scene registerScene = new Scene(registerGrid,  WINDOW_HEIGHT ,  WINDOW_WIDTH);
+        Scene registerScene = new Scene(container,  WINDOW_HEIGHT ,  WINDOW_WIDTH);
         backToLoginButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
         registerScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("register.css")).toExternalForm());
         createAccountButton.requestFocus(); // Set focus on the create account button, prevents highlight on text field

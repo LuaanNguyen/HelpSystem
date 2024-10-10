@@ -18,8 +18,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+
 
 /**
  * <p> MyJavaFXApp </p>
@@ -302,30 +301,30 @@ public class MyJavaFXApp extends Application {
         //Invitation code
         TextField invitationCodeField = new TextField();
         invitationCodeField.setPromptText("Enter invitation code");
-
+        // Welcome label postioning and styling
         Label welcomeLabel = new Label("Create an Account");
         registerGrid.add(welcomeLabel, 0, 3); // Add welcome label to GridPane
         welcomeLabel.getStyleClass().add("register-label");
-
+        // Username field positioning and styling
         TextField registerUserNameField = new TextField();
         registerUserNameField.getStyleClass().add("username-field");
         registerUserNameField.setPromptText("Enter a username");
-
+        // Password field positioning and styling
         PasswordField registerPasswordField = new PasswordField();
         registerPasswordField.setPromptText("Enter a password");
         PasswordField registerConfirmPasswordField = new PasswordField();
         registerConfirmPasswordField.setPromptText("Confirm password");
-
+        // Role ComboBox positioning and styling
         ComboBox<String> roleComboBox = new ComboBox<>();
         roleComboBox.setPromptText("Select a role");
         roleComboBox.getItems().addAll("Admin", "Student", "Instructor");
         roleComboBox.getStyleClass().add("role-combobox");
-
+        // Create Account Button positioning and styling
         Button createAccountButton = new Button("Create Account");
         createAccountButton.getStyleClass().add("create-account-button");
         Button backToLoginButton = new Button("Back to login");
         backToLoginButton.getStyleClass().add("back-to-login-button");
-
+        // Add all components to the Vbox container
         VBox container = new VBox();
         container.setAlignment(Pos.CENTER);
         container.setPadding(new Insets(0));
@@ -342,12 +341,13 @@ public class MyJavaFXApp extends Application {
         Label requirementMatches = new Label("❌ Passwords match");
         VBox requirementsBox = new VBox(4, requirementUpperCase, requirementLowerCase, requirementSpecialChar, requirementLength, requirementMatches);
         registerGrid.add(requirementsBox, 0, 6, 1, 1);
-
+        // Add all components to the registerContainer VBox
         VBox registerContainer = new VBox(4, new Label("New Username: "),
                 registerUserNameField, new Label("Password: "),
                 registerPasswordField, new Label("Confirm Password: "),
                 registerConfirmPasswordField);
 
+        // Positioning of all components
         registerGrid.add(registerContainer, 0, 5, 1, 1);
         registerGrid.add(roleComboBox, 0, 7);
         registerGrid.add(createAccountButton, 0, 9);
@@ -381,43 +381,38 @@ public class MyJavaFXApp extends Application {
             requirementMatches.setText(passwordMatch ? "✔ Passwords match" : "❌ Passwords match");
         });
 
-
+        //
         createAccountButton.setOnAction(e -> {
             String username = registerUserNameField.getText();
             String password = registerPasswordField.getText();
             String invitationCode = invitationCodeField.getText();
             String confirmPassword = registerConfirmPasswordField.getText();
             String selectedRole = roleComboBox.getValue();
-
-
+            // Check if the invitation code is valid
            try {
                System.out.println(dbUtil.isValidInvitationCode(invitationCode));
            } catch(SQLException s) {
                System.out.println("cooked");
            }
 
-
+            // Check if the username, password, email, and invitation code are empty
             if (password.isEmpty() || username.isEmpty()  || invitationCode.isEmpty()) {
-//                errorMessageLabel.setText("Username or password cannot be empty!");
                 System.out.println("Username, password, email, invitation code cannot be empty!");
-
+            // Check if the password meets the requirements
             } else if (!password.matches(".*[!@#$%^&*].*")) {
-//                errorMessageLabel.setText("Password must contain at least 1 Special Character");
                 System.out.println("Password must contain at least 1 Special Character");
             }
             else if (!password.matches(".*[a-z].*")) {
-//                errorMessageLabel.setText("Password must contain at least 1 Lower Case letter");
                 System.out.println("Password must contain at least 1 Lower Case letter");
             }
             else if (!password.matches(".*[A-Z].*")) {
-//                errorMessageLabel.setText("Password must contain at least 1 Upper Case letter");
                 System.out.println("Password must contain at least 1 Upper Case letter");
             }
             else if (!password.equals(confirmPassword)) {
-//                errorMessageLabel.setText("Password doesn't match");
+            // Check if the password and confirm password match
                 System.out.println("Password doesn't match");
             } else if (selectedRole == null || selectedRole.isEmpty()) {
-//                errorMessageLabel.setText("Selected Role is empty");
+            // Check if the selected role is empty
                 System.out.println("Selected Role is empty");
             } else {
                 try {
@@ -429,13 +424,13 @@ public class MyJavaFXApp extends Application {
                         dbUtil.invalidateInvitationCode(invitationCode);
                         primaryStage.setScene(createLoginScene(primaryStage));
                     }
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
+                } catch (SQLException ex) { // Catch any SQL exceptions
+                    ex.printStackTrace(); // Print the stack trace
                 }
             }
         });
 
-
+        // Back to login button, returns to the login scene
         Scene registerScene = new Scene(container,  WINDOW_HEIGHT ,  WINDOW_WIDTH);
         backToLoginButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
         registerScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("register.css")).toExternalForm());
@@ -458,15 +453,13 @@ public class MyJavaFXApp extends Application {
 
         ListView<String> userListView = new ListView<>();
         updateUserListView(userListView);
-
+        // Create buttons for admin scene
         Button deleteUserButton = new Button("Delete User");
         Button addRoleButton = new Button("Add Role");
         Button removeRoleButton = new Button("Remove Role");
         Button inviteUserButton = new Button("Invite User");
         Button logoutButton = new Button("Log Out");
-
-
-
+        // Positioning of all components
         adminGrid.add(userListView, 0, 0, 2, 1);
         adminGrid.add(deleteUserButton, 0, 1);
         adminGrid.add(addRoleButton, 0, 2);
@@ -474,7 +467,7 @@ public class MyJavaFXApp extends Application {
         adminGrid.add(inviteUserButton, 0, 3);
         adminGrid.add(logoutButton, 0, 4, 2, 1);
 
-
+        // Delete user button, prompts user to confirm deleting user
         deleteUserButton.setOnAction(e -> {
             String selectedUser = userListView.getSelectionModel().getSelectedItem();
             if (selectedUser != null) {
@@ -492,7 +485,7 @@ public class MyJavaFXApp extends Application {
             }
         });
 
-
+        // Add role button, prompts user to enter a role to add to the selected user
         addRoleButton.setOnAction(e -> {
             String selectedUser = userListView.getSelectionModel().getSelectedItem();
             if (selectedUser != null) {
@@ -510,18 +503,18 @@ public class MyJavaFXApp extends Application {
                 });
             }
         });
-
+        // Remove role button, prompts user to enter a role to remove from the selected user
         removeRoleButton.setOnAction(e -> {
             String selectedUser = userListView.getSelectionModel().getSelectedItem();
             if (selectedUser != null) {
                 Dialog<String> dialog = new Dialog<>();
                 dialog.setTitle("Remove Role");
                 dialog.setHeaderText("Remove Role from User");
-
+                // Create a ComboBox to select a role
                 ComboBox<String> roleComboBox = new ComboBox<>();
                 roleComboBox.getItems().addAll("Admin", "Student", "Instructor");
                 roleComboBox.setPromptText("Select a role");
-
+                // Set the content of the dialog pane to the ComboBox
                 dialog.getDialogPane().setContent(roleComboBox);
                 ButtonType removeButtonType = new ButtonType("Remove", ButtonBar.ButtonData.OK_DONE);
                 dialog.getDialogPane().getButtonTypes().addAll(removeButtonType, ButtonType.CANCEL);
@@ -545,21 +538,21 @@ public class MyJavaFXApp extends Application {
                 });
             }
         });
-
+        // Invite user button, prompts user to select a role to invite a new user
         inviteUserButton.setOnAction(e -> {
             ComboBox<String> roleComboBox = new ComboBox<>();
             roleComboBox.getItems().addAll("Admin", "Student", "Instructor");
             roleComboBox.setPromptText("Select a role");
-
+            // Create a dialog to prompt the user to select a role
             Dialog<String> dialog = new Dialog<>();
             dialog.setTitle("Invite User");
             dialog.setHeaderText("Select a role");
-
+            // Create a GridPane set padding
             GridPane grid = new GridPane();
             grid.setHgap(10);
             grid.setVgap(10);
             grid.setPadding(new Insets(20, 150, 10, 10));
-
+            // Add Role label and postion
             grid.add(new Label("Role:"), 0, 0);
             grid.add(roleComboBox, 1, 0);
 
@@ -594,13 +587,13 @@ public class MyJavaFXApp extends Application {
         });
 
 
-
+        // Logout button, returns to the login scene
         logoutButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
         Scene adminScene = new Scene(adminGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
         adminScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("adminScene.css")).toExternalForm());
         return  adminScene;
     }
-
+    // Update the user list view
     private void updateUserListView(ListView<String> userListView) {
         try {
             List<User> users = dbUtil.listUserAccounts();
@@ -625,13 +618,12 @@ public class MyJavaFXApp extends Application {
         studentSceneGrid.setPadding(new Insets(20, 20, 20, 20));
         studentSceneGrid.setHgap(H_GAP);
         studentSceneGrid.setVgap(V_GAP);
-
+        // Create all the components for the student scene
         Button backToLoginButton = new Button("Back to login");
         studentSceneGrid.add(new Label("Student Scene"), 0 , 0);
         studentSceneGrid.add(backToLoginButton, 0 ,1 );
-
+        // Back to login button, returns to the login scene
         backToLoginButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
-
         return new Scene(studentSceneGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
     }
 
@@ -646,13 +638,12 @@ public class MyJavaFXApp extends Application {
         instructorSceneGrid.setPadding(new Insets(20, 20, 20, 20));
         instructorSceneGrid.setHgap(H_GAP);
         instructorSceneGrid.setVgap(V_GAP);
-
+        // Create all the components for the instructor scene
         Button backToLoginButton = new Button("Back to login");
         instructorSceneGrid.add(new Label("Instructor Scene"), 0, 0);
         instructorSceneGrid.add(backToLoginButton, 0 ,1 );
-
+        // Back to login button, returns to the login scene
         backToLoginButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
-
         return new Scene(instructorSceneGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
     }
 
@@ -668,14 +659,14 @@ public class MyJavaFXApp extends Application {
         finishSetupGrid.setHgap(H_GAP);
         finishSetupGrid.setVgap(V_GAP);
         finishSetupGrid.setAlignment(Pos.CENTER);
-
+        // Create all the components for the finish setup scene
         TextField emailField = new TextField();
         TextField firstNameField = new TextField();
         TextField middleNameField = new TextField();
         TextField lastNameField = new TextField();
         TextField preferredFirstNameField = new TextField();
         Button finishSetupButton = new Button("Finish Setup");
-
+        // Positioning of all components
         finishSetupGrid.add(new Label("Finish setting up your account"), 0, 0, 4 , 1);
         finishSetupGrid.add(new Label("Email: "), 0, 1);
         finishSetupGrid.add(emailField, 1, 1);
@@ -689,13 +680,14 @@ public class MyJavaFXApp extends Application {
         finishSetupGrid.add(preferredFirstNameField, 1, 5);
         finishSetupGrid.add(finishSetupButton, 1, 6);
 
+        // Finish setup button, updates user details in the database
         finishSetupButton.setOnAction(e -> {
             String email = emailField.getText();
             String firstName = firstNameField.getText();
             String middleName = middleNameField.getText();
             String lastName = lastNameField.getText();
             String preferredFirstName = preferredFirstNameField.getText();
-
+            // Check if email, first name, and last name are empty
             if (email.isEmpty() || firstName.isEmpty() || lastName.isEmpty()) {
                 System.out.println("Email, First Name, and Last Name cannot be empty!");
             } else {
@@ -711,7 +703,7 @@ public class MyJavaFXApp extends Application {
                 }
             }
         });
-
+        // Return the scene
         Scene finishSetupScene = new Scene(finishSetupGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
         //finishSetupScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("finishSetup.css")).toExternalForm());
         return finishSetupScene;

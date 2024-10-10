@@ -1,19 +1,23 @@
+/* CSS for the AdminSetup.fxml file */
+/* Set the root pane style */
 .root {
     -fx-background-color: rgba(255, 255, 255, 0.65);
-    -fx-border-color: rgba(0, 0, 0, 0.24); /* Border color */
-    -fx-border-width: 2px;   /* Border thickness */
+    -fx-border-color: rgba(0, 0, 0, 0.24);
+    -fx-border-width: 2px;
     -fx-min-width: 300;
     -fx-max-width: 300;
     -fx-min-height: 380;
     -fx-max-height: 380;
-    -fx-border-radius: 10px; /* Rounded corners */
-    -fx-background-radius: 10px; /* Ensure background also has rounded corners */
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
     -fx-padding: 5px;
 }
+/* Set the border container style */
 .border-container {
     -fx-background-color: linear-gradient(to top right, #FFDEE9, #B5FFFC);
     -fx-border-color: #ffffff;
 }
+/* Set the admin setup label style */
 .admin-setup-label {
     -fx-font-family: "JetBrains Mono SemiBold";
     -fx-font-size: 13px; /* Set font size */
@@ -23,6 +27,7 @@
     -fx-underline: true;
 
 }
+/* Set the setup admin button style */
 .setup-admin-button {
     -fx-background-color: #2c2c2c;
     -fx-text-fill: white;
@@ -34,16 +39,18 @@
     -fx-border-radius: 0px; /* Set the border radius */
     -fx-background-radius: 5px;
 }
+/* Set the hover effect for the setup admin button */
 .setup-admin-button:hover
 {
     -fx-background-color: rgba(44, 44, 44, 0.75);
     -fx-cursor: hand;
 }
+/* Set the pressed effect for the setup admin button */
 .setup-admin-button:pressed
 {
     -fx-background-color: #000000;
 }
-
+/* Set the password field style */
 .password-field {
     -fx-min-width: 220px;
     -fx-max-width: 220px; /* Set preferred width */
@@ -53,6 +60,7 @@
     -fx-padding: 4px;
     -fx-font-size: 14px;
 }
+/* Set the username field style */
 .username-field {
     -fx-min-width: 220px;
     -fx-max-width: 220px; /* Set preferred width */
@@ -63,8 +71,7 @@
     -fx-font-size: 14px;
 }
 
-
-
+/* Set the error message style */
 .error-message {
     -fx-text-fill: red;
 }

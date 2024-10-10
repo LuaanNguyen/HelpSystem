@@ -377,38 +377,7 @@ public class MyJavaFXApp extends Application {
         createAccountButton.requestFocus(); // Set focus on the create account button, prevents highlight on text field
         return registerScene;
     }
-
-//Old method for checking password requirements
-//    // Method to check if passwords match and update the UI
-//    private void checkPasswordsMatch(PasswordField passwordField, PasswordField confirmPasswordField, Label matchingErrorMessageLabel) {
-//        if (!confirmPasswordField.getText().equals(passwordField.getText())) {
-//            matchingErrorMessageLabel.setText("Passwords do not match");
-//        } else {
-//            matchingErrorMessageLabel.setText("");
-//        }
-//    }
-//    private void checkPasswordsUpper(PasswordField passwordField, Label upperErrorMessageLabel) {
-//        if (!passwordField.getText().matches(".*[A-Z].*")) {
-//            upperErrorMessageLabel.setText("Password must contain at least 1 Upper Case letter");
-//        } else {
-//            upperErrorMessageLabel.setText("");
-//        }
-//    }
-//    private void checkPasswordsLower(PasswordField passwordField, Label lowerErrorMessageLabel) {
-//        if (!passwordField.getText().matches(".*[a-z].*")) {
-//            lowerErrorMessageLabel.setText("Password must contain at least 1 Lower Case letter");
-//        } else {
-//            lowerErrorMessageLabel.setText("");
-//        }
-//    }
-//    private void checkPasswordsSpecial(PasswordField passwordField, Label specialErrorMessageLabel) {
-//        if (!passwordField.getText().matches(".*[!@#$%^&*].*")) {
-//            specialErrorMessageLabel.setText("Password must contain at least 1 Special Character");
-//        } else {
-//            specialErrorMessageLabel.setText("");
-//        }
-//    }
-
+    
 
     /**********
      * ADMIN SCENE
@@ -417,28 +386,111 @@ public class MyJavaFXApp extends Application {
      * @return admin scene after successfully login as admin
      */
     private Scene adminScene(Stage primaryStage) {
-        GridPane userListGrid = new GridPane();
-        userListGrid.setPadding(new Insets(20, 20, 20, 20));
-        userListGrid.setHgap(H_GAP);
-        userListGrid.setVgap(V_GAP);
-
-        String res = dbUtil.displayUsersByUser();
+        GridPane adminGrid = new GridPane();
+        adminGrid.setPadding(new Insets(20, 20, 20, 20));
+        adminGrid.setHgap(10);
+        adminGrid.setVgap(10);
 
         ListView<String> userListView = new ListView<>();
-        String[] users = dbUtil.displayUsersByUser().split("\n");
-        userListView.getItems().addAll(users);
+        updateUserListView(userListView);
 
-        Button backToLoginButton = new Button("Back to Login");
-        userListGrid.add(userListView, 0, 0);
-        userListGrid.add(backToLoginButton, 0, 1);
+        Button deleteUserButton = new Button("Delete User");
+        Button addRoleButton = new Button("Add Role");
+        Button removeRoleButton = new Button("Remove Role");
+        Button logoutButton = new Button("Log Out");
 
+        adminGrid.add(userListView, 0, 0, 2, 1);
+        adminGrid.add(deleteUserButton, 0, 1);
+        adminGrid.add(addRoleButton, 0, 2);
+        adminGrid.add(removeRoleButton, 1, 2);
+        adminGrid.add(logoutButton, 0, 3, 2, 1);
 
-        backToLoginButton.setOnAction(e -> {
-            primaryStage.setScene(createLoginScene(primaryStage));
+        deleteUserButton.setOnAction(e -> {
+            String selectedUser = userListView.getSelectionModel().getSelectedItem();
+            if (selectedUser != null) {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete this user?", ButtonType.YES, ButtonType.NO);
+                alert.showAndWait().ifPresent(response -> {
+                    if (response == ButtonType.YES) {
+                        try {
+                            dbUtil.deleteUserAccount(selectedUser);
+                            updateUserListView(userListView);
+                        } catch (SQLException ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                });
+            }
         });
 
-        Scene userListScene = new Scene(userListGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
-        return userListScene;
+
+        addRoleButton.setOnAction(e -> {
+            String selectedUser = userListView.getSelectionModel().getSelectedItem();
+            if (selectedUser != null) {
+                TextInputDialog dialog = new TextInputDialog();
+                dialog.setTitle("Add Role");
+                dialog.setHeaderText("Add Role to User");
+                dialog.setContentText("Enter role:");
+                dialog.showAndWait().ifPresent(role -> {
+                    try {
+                        dbUtil.addRoleToUser(selectedUser, role);
+                        updateUserListView(userListView);
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
+                    }
+                });
+            }
+        });
+
+        removeRoleButton.setOnAction(e -> {
+            String selectedUser = userListView.getSelectionModel().getSelectedItem();
+            if (selectedUser != null) {
+                Dialog<String> dialog = new Dialog<>();
+                dialog.setTitle("Remove Role");
+                dialog.setHeaderText("Remove Role from User");
+
+                ComboBox<String> roleComboBox = new ComboBox<>();
+                roleComboBox.getItems().addAll("Admin", "Student", "Instructor");
+                roleComboBox.setPromptText("Select a role");
+
+                dialog.getDialogPane().setContent(roleComboBox);
+                ButtonType removeButtonType = new ButtonType("Remove", ButtonBar.ButtonData.OK_DONE);
+                dialog.getDialogPane().getButtonTypes().addAll(removeButtonType, ButtonType.CANCEL);
+
+                dialog.setResultConverter(dialogButton -> {
+                    if (dialogButton == removeButtonType) {
+                        return roleComboBox.getValue();
+                    }
+                    return null;
+                });
+
+                dialog.showAndWait().ifPresent(role -> {
+                    if (role != null) {
+                        try {
+                            dbUtil.removeRoleFromUser(selectedUser, role);
+                            updateUserListView(userListView);
+                        } catch (SQLException ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                });
+            }
+        });
+
+        logoutButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
+
+        return new Scene(adminGrid, 800, 600);
+    }
+
+    private void updateUserListView(ListView<String> userListView) {
+        try {
+            List<User> users = dbUtil.listUserAccounts();
+            userListView.getItems().clear();
+            for (User user : users) {
+                userListView.getItems().add(user.getUsername());
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
 
     /**********

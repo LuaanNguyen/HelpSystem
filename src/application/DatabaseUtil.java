@@ -137,6 +137,19 @@ public class DatabaseUtil {
         return null;
     }
 
+    // Generate an invitation code
+    public String generateInvitationCode(String email, String role) throws SQLException {
+        String code = generateInvitationCode();
+        String query = "INSERT INTO invitations (code, email, role) VALUES (?, ?, ?)";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setString(1, code);
+            pstmt.setString(2, email);
+            pstmt.setString(3, role);
+            pstmt.executeUpdate();
+        }
+        return code;
+    }
+
     //Reset user account
     public void resetUserAccount(String username, String oneTimePassword, Timestamp expiration) throws SQLException {
         String query = "UPDATE helpsystem_users SET one_time_password = ?, expiration = ? WHERE username = ?";
@@ -167,6 +180,7 @@ public class DatabaseUtil {
         }
     }
 
+    // Remove role from user
     public void removeRoleFromUser(String username, String role) throws SQLException {
         String query = "UPDATE helpsystem_users SET roles = REPLACE(roles, ?, '') WHERE username = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {

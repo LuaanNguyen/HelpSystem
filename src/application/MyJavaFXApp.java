@@ -183,7 +183,7 @@ public class MyJavaFXApp extends Application {
         loginGrid.add(passwordField, 0, 4);  // Add password field to GridPane
         loginGrid.add(loginButton, 0, 5, 2, 1); // Span 2 columns for proper alignment
         loginGrid.add(buttonBox, 0, 6, 2, 1); // Add HBox to GridPane, spanning 2 columns
-        loginGrid.add(new Label("Invitation Code"), 0, 5);
+        //loginGrid.add(new Label("Invitation Code"), 0, 5);
 
 
         loginButton.setOnAction(e -> {

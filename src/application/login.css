@@ -10,6 +10,15 @@
     -fx-background-radius: 10px; /* Ensure background also has rounded corners */
     -fx-padding: 5px;
 }
+.login_button:hover
+{
+    -fx-background-color: rgba(44, 44, 44, 0.75);
+    -fx-cursor: hand;
+}
+.login_button:pressed
+{
+    -fx-background-color: #000000;
+}
 .border-container {
     -fx-background-color: linear-gradient(to top right, #FFDEE9, #B5FFFC);
     -fx-border-color: #ffffff;

@@ -47,8 +47,12 @@ public class MyJavaFXApp extends Application {
     public void start(Stage primaryStage) {
         try { //Attempt to connect to H2 DB
             dbUtil.connectToDatabase();
-            if (dbUtil.isDBEmpty()) { //If DB is empty, setting up admin user
+            if (dbUtil.isDBEmpty()) { //If DB is empty, setting up admin user, alert user
                 System.out.println("In-Memory Database is empty");
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Admin Setup");
+                alert.setHeaderText("Database is empty. Please setup an admin user.");
+                alert.showAndWait();
                 primaryStage.setScene(createAdminSetupScene(primaryStage));
             } else { //If DB is not empty, go to log in screen
                 primaryStage.setScene(createLoginScene(primaryStage));
@@ -96,7 +100,7 @@ public class MyJavaFXApp extends Application {
         Button setupAdminButton = new Button("Setup Admin");
         setupAdminButton.getStyleClass().add("setup-admin-button");
 
-        Label adminRegisterLabel = new Label("Database is empty, setting up Admin ");
+        Label adminRegisterLabel = new Label("Admin Registration");
         adminSetupGrid.add(adminRegisterLabel, 0, 0, 4, 1);
         adminRegisterLabel.getStyleClass().add("admin-setup-label");
 

@@ -112,7 +112,7 @@ public class MyJavaFXApp extends Application {
         });
 
         Scene loginScene = new Scene(adminSetupGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
-        loginScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("admin.css")).toExternalForm());
+        loginScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("adminSetup.css")).toExternalForm());
         return loginScene;
     }
 
@@ -476,8 +476,9 @@ public class MyJavaFXApp extends Application {
         });
 
         logoutButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
-
-        return new Scene(adminGrid, 800, 600);
+        Scene adminScene = new Scene(adminGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
+        adminScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("adminScene.css")).toExternalForm());
+        return  adminScene;
     }
 
     private void updateUserListView(ListView<String> userListView) {

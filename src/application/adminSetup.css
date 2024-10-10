@@ -22,7 +22,6 @@
     -fx-background-color: rgba(255, 255, 255, 0); /* Set background color */
 
 }
-
 .password-field {
     -fx-min-width: 220px;
     -fx-max-width: 220px; /* Set preferred width */

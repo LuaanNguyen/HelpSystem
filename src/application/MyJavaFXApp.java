@@ -29,12 +29,11 @@ import javafx.scene.image.ImageView;
  *
  * @author Luan Nguyen, Smit Devrukhkar, Gabriel Clark, Meadow Kubanski, Isabella Paschal
  *
- * @version 1.00		2024-10-05 Basic outline of the class
+ * @version 1.00
  *
  */
 
 public class MyJavaFXApp extends Application {
-
     //Global Window sizes
     public static final int WINDOW_HEIGHT = 800;
     public static final int WINDOW_WIDTH = 500;
@@ -377,7 +376,7 @@ public class MyJavaFXApp extends Application {
         createAccountButton.requestFocus(); // Set focus on the create account button, prevents highlight on text field
         return registerScene;
     }
-    
+
 
     /**********
      * ADMIN SCENE

@@ -56,7 +56,8 @@ public class DatabaseUtil {
             System.out.println("Connecting to database...");
             connection = DriverManager.getConnection(JDBC_URL, USER, PASS);
             statement = connection.createStatement();
-            createTables();  // Create the necessary tables if they don't exist
+            createUserTables();  // Create the necessary tables if they don't exist
+            createInvitationsTable(); // Create the invitations table
             System.out.println("Database initialized successfully!");
         } catch (ClassNotFoundException e) {
             System.err.println("JDBC Driver not found: " + e.getMessage());
@@ -64,7 +65,7 @@ public class DatabaseUtil {
     }
 
     /* Create table for all the users */
-    private void createTables() throws SQLException {
+    private void createUserTables() throws SQLException {
         String userTableQuery = "CREATE TABLE IF NOT EXISTS helpsystem_users ("
                 + "id INT AUTO_INCREMENT PRIMARY KEY, "
                 + "email VARCHAR(255) UNIQUE, "
@@ -92,6 +93,15 @@ public class DatabaseUtil {
 
         String addEmailColumnQuery = "ALTER TABLE helpsystem_users ADD COLUMN IF NOT EXISTS email VARCHAR(255) UNIQUE";
         statement.execute(addEmailColumnQuery);
+    }
+
+    /* Create table for all the invitations */
+    public void createInvitationsTable() throws SQLException {
+        String createTableQuery = "CREATE TABLE IF NOT EXISTS invitations ("
+                + "id INT AUTO_INCREMENT PRIMARY KEY, "
+                + "role VARCHAR(255), "
+                + "code VARCHAR(255))";
+        statement.execute(createTableQuery);
     }
 
     /* Check if DB is empty */
@@ -128,29 +138,14 @@ public class DatabaseUtil {
     }
 
     /* Invite new user with 1-time code*/
-    public void inviteUser(String email, String role) throws SQLException {
-        String invitationCode = generateInvitationCode();
-        String query = "INSERT INTO invitations (email, role, code) VALUES (?, ?, ?)";
+    public void inviteUser(String code, String role) throws SQLException {
+        String query = "INSERT INTO invitations ( role, code) VALUES ( ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
-            pstmt.setString(1, email);
-            pstmt.setString(2, role);
-            pstmt.setString(3, invitationCode);
+            pstmt.setString(1, role);
+            pstmt.setString(2, code);
             pstmt.executeUpdate();
         }
-        System.out.println("Invitation code: " + invitationCode);
-    }
-
-    /* Invite new user with 1-time code*/
-    public String generateInvitationCode(String email, String role) throws SQLException {
-        String code = generateInvitationCode();
-        String query = "INSERT INTO invitations (code, email, role) VALUES (?, ?, ?)";
-        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
-            pstmt.setString(1, code);
-            pstmt.setString(2, email);
-            pstmt.setString(3, role);
-            pstmt.executeUpdate();
-        }
-        return code;
+        System.out.println("Invitation code: " + code);
     }
 
     /* Use invitation code */
@@ -266,6 +261,29 @@ public class DatabaseUtil {
         return false;
     }
 
+    /*Check if the invitation code is valid */
+    public boolean isValidInvitationCode(String code) throws SQLException {
+        String query = "SELECT COUNT(*) FROM invitations WHERE code = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, code);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
+    }
+
+    /* Invalidate invitation code */
+    public void invalidateInvitationCode(String code) throws SQLException {
+        String query = "DELETE FROM invitations WHERE code = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, code);
+            stmt.executeUpdate();
+        }
+    }
+
 
     /*  Update user details */
     public void updateUserDetails(String username, String email, String firstName, String middleName, String lastName, String preferredFirstName) throws SQLException {
@@ -282,10 +300,17 @@ public class DatabaseUtil {
     }
 
     /* Get user by username */
-    public void resetDatabase() throws SQLException {
+    public void resetUserDatabase() throws SQLException {
         String dropUserTableQuery = "DROP TABLE IF EXISTS helpsystem_users";
         statement.execute(dropUserTableQuery);
-        createTables();  // Recreate the tables
+        createUserTables();  // Recreate the tables
+    }
+
+    /* Get user by username */
+    public void resetInvitationDatabase() throws SQLException {
+        String dropInvitationQuery = "DROP TABLE IF EXISTS invitations";
+        statement.execute(dropInvitationQuery);
+        createInvitationsTable();  // Recreate the tables
     }
 
 

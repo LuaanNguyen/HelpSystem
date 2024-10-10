@@ -20,7 +20,7 @@
     -fx-font-weight: bold;
     -fx-text-fill: #000000; /* Set text color */
     -fx-background-color: rgba(255, 255, 255, 0); /* Set background color */
-
+    -fx-underline: true;
 }
 
 .password-field {
@@ -53,10 +53,6 @@
     -fx-background-radius: 5px;
 }
 
-/*.label {*/
-/*    -fx-font-size: 14px;*/
-/*    -fx-padding: 0 0 5px 0;*/
-/*}*/
 .login_button:hover
 {
     -fx-background-color: rgba(44, 44, 44, 0.75);

@@ -71,6 +71,16 @@
     -fx-background-radius: 5px;
 }
 
+.setup-admin-button:hover
+{
+    -fx-background-color: rgba(44, 44, 44, 0.75);
+    -fx-cursor: hand;
+}
+.setup-admin-button:pressed
+{
+    -fx-background-color: #000000;
+}
+
 .error-message {
     -fx-text-fill: red;
 }

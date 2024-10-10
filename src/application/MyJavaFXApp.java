@@ -36,8 +36,8 @@ import javafx.scene.image.ImageView;
 
 public class MyJavaFXApp extends Application {
     //Global Window sizes
-    public static final int WINDOW_HEIGHT = 800;
-    public static final int WINDOW_WIDTH = 500;
+    public static final int WINDOW_HEIGHT = 900;
+    public static final int WINDOW_WIDTH = 600;
     public static final int H_GAP = 20;
     public static final int V_GAP = 20;
 
@@ -73,24 +73,49 @@ public class MyJavaFXApp extends Application {
      */
     private Scene createAdminSetupScene(Stage primaryStage) {
         GridPane adminSetupGrid = new GridPane();
+        adminSetupGrid.getStyleClass().add("root");
+
         adminSetupGrid.setPadding(new Insets(10, 10, 10, 10));
         adminSetupGrid.setHgap(20);
         adminSetupGrid.setVgap(20);
         adminSetupGrid.setAlignment(Pos.CENTER);
 
+        // Username field styling
         TextField adminUserNameField = new TextField();
+        adminUserNameField.getStyleClass().add("username-field");
+        adminUserNameField.setPromptText("Enter your username");
+        // Password field styling
         PasswordField adminPasswordField = new PasswordField();
-        PasswordField adminConfirmPasswordField = new PasswordField();
-        Button setupAdminButton = new Button("Setup Admin");
+        adminPasswordField.getStyleClass().add("password-field");
+        adminPasswordField.setPromptText("Enter a password");
 
-        adminSetupGrid.add(new Label("Database is empty, setting up Admin "), 0, 0, 4, 1);
-        adminSetupGrid.add(new Label("Admin Username: "), 0, 1);
-        adminSetupGrid.add(adminUserNameField, 1, 1);
-        adminSetupGrid.add(new Label("Password: "), 0, 2);
-        adminSetupGrid.add(adminPasswordField, 1, 2);
-        adminSetupGrid.add(new Label("Confirm Password: "), 0, 3);
-        adminSetupGrid.add(adminConfirmPasswordField, 1, 3);
-        adminSetupGrid.add(setupAdminButton, 1, 4);
+        // Confirm Password field styling
+        PasswordField adminConfirmPasswordField = new PasswordField();
+        adminConfirmPasswordField.getStyleClass().add("password-field");
+        adminConfirmPasswordField.setPromptText("Confirm password");
+
+        Button setupAdminButton = new Button("Setup Admin");
+        setupAdminButton.getStyleClass().add("setup-admin-button");
+
+        Label adminRegisterLabel = new Label("Database is empty, setting up Admin ");
+        adminSetupGrid.add(adminRegisterLabel, 0, 0, 4, 1);
+        adminRegisterLabel.getStyleClass().add("admin-setup-label");
+
+        Label adminUsernameLabel = new Label("Admin Username: ");
+        adminSetupGrid.add(adminUsernameLabel, 0, 1);
+        adminUsernameLabel.getStyleClass().add("admin-username-label");
+        adminSetupGrid.add(adminUserNameField, 0, 2);
+
+        Label adminPasswordLabel = new Label("Admin Password: ");
+        adminSetupGrid.add(adminPasswordLabel, 0, 3);
+        adminPasswordField.getStyleClass().add("password-field");
+        adminSetupGrid.add(adminPasswordField, 0, 4);
+
+        adminSetupGrid.add(new Label("Confirm Password: "), 0, 5);
+        adminSetupGrid.add(adminConfirmPasswordField, 0, 6);
+        adminConfirmPasswordField.getStyleClass().add("password-field");
+        adminSetupGrid.add(setupAdminButton, 0, 7);
+
 
         setupAdminButton.setOnAction(e -> {
             String username = adminUserNameField.getText();
@@ -114,9 +139,9 @@ public class MyJavaFXApp extends Application {
 
 
 
-        Scene loginScene = new Scene(adminSetupGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
-        loginScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("adminSetup.css")).toExternalForm());
-        return loginScene;
+        Scene adminSetupScene = new Scene(adminSetupGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
+        adminSetupScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("adminSetup.css")).toExternalForm());
+        return adminSetupScene;
     }
 
     /**********

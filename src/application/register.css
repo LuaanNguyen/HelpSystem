@@ -4,8 +4,8 @@
     -fx-border-width: 2px;   /* Border thickness */
     -fx-min-width: 400;
     -fx-max-width: 400;
-    -fx-min-height: 490;
-    -fx-max-height: 490;
+    -fx-min-height: 530;
+    -fx-max-height: 530;
     -fx-border-radius: 10px; /* Rounded corners */
     -fx-background-radius: 10px; /* Ensure background also has rounded corners */
     -fx-padding: 5px;

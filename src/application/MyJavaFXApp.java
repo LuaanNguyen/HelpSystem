@@ -35,8 +35,8 @@ import javafx.scene.image.ImageView;
 
 public class MyJavaFXApp extends Application {
     //Global Window sizes
-    public static final int WINDOW_HEIGHT = 800;
-    public static final int WINDOW_WIDTH = 500;
+    public static final int WINDOW_HEIGHT = 900;
+    public static final int WINDOW_WIDTH = 600;
     public static final int H_GAP = 20;
     public static final int V_GAP = 20;
 
@@ -262,9 +262,9 @@ public class MyJavaFXApp extends Application {
         registerGrid.setVgap(10);
         registerGrid.setAlignment(Pos.CENTER);
 
-        Label welcomeLabel = new Label("Create an Account");
-        registerGrid.add(welcomeLabel, 0, 3); // Add welcome label to GridPane
-        welcomeLabel.getStyleClass().add("register-label");
+        Label registerLabel = new Label("Create an Account");
+        registerGrid.add(registerLabel, 0, 2); // Add welcome label to GridPane
+        registerLabel.getStyleClass().add("register-label");
 
         TextField registerUserNameField = new TextField();
         registerUserNameField.getStyleClass().add("username-field");
@@ -300,17 +300,17 @@ public class MyJavaFXApp extends Application {
         Label requirementLength = new Label("❌ Have 8 characters minimum");
         Label requirementMatches = new Label("❌ Passwords match");
         VBox requirementsBox = new VBox(4, requirementUpperCase, requirementLowerCase, requirementSpecialChar, requirementLength, requirementMatches);
-        registerGrid.add(requirementsBox, 0, 6, 1, 1);
+        registerGrid.add(requirementsBox, 0, 5, 1, 1);
 
         VBox registerContainer = new VBox(5, new Label("New Username: "),
                 registerUserNameField, new Label("Password: "),
                 registerPasswordField, new Label("Confirm Password: "),
                 registerConfirmPasswordField);
 
-        registerGrid.add(registerContainer, 0, 5, 1, 1);
+        registerGrid.add(registerContainer, 0, 3, 1, 1);
         registerGrid.add(roleComboBox, 0, 7);
-        registerGrid.add(createAccountButton, 0, 8);
-        registerGrid.add(backToLoginButton, 1, 8);
+        registerGrid.add(createAccountButton, 0, 6);
+        registerGrid.add(backToLoginButton, 1, 7);
         registerGrid.add(errorMessageLabel, 1, 5);
 
 

@@ -92,16 +92,34 @@ public class MyJavaFXApp extends Application {
         PasswordField adminConfirmPasswordField = new PasswordField();
         adminConfirmPasswordField.getStyleClass().add("password-field");
         adminConfirmPasswordField.setPromptText("Confirm password");
-        Button setupAdminButton = new Button("Setup Admin");
 
-        adminSetupGrid.add(new Label("Database is empty, setting up Admin "), 0, 0, 4, 1);
-        adminSetupGrid.add(new Label("Admin Username: "), 0, 1);
+        Button setupAdminButton = new Button("Setup Admin");
+        setupAdminButton.getStyleClass().add("setup-admin-button");
+
+        Label adminRegisterLabel = new Label("Database is empty, setting up Admin ");
+        adminSetupGrid.add(adminRegisterLabel, 0, 0, 4, 1);
+        adminRegisterLabel.getStyleClass().add("admin-setup-label");
+
+        Label adminUsernameLabel = new Label("Admin Username: ");
+        adminSetupGrid.add(adminUsernameLabel, 0, 1);
+        adminUsernameLabel.getStyleClass().add("admin-username-label");
         adminSetupGrid.add(adminUserNameField, 0, 2);
-        adminSetupGrid.add(new Label("Password: "), 0, 3);
+
+        Label adminPasswordLabel = new Label("Admin Password: ");
+        adminSetupGrid.add(adminPasswordLabel, 0, 3);
+        adminPasswordField.getStyleClass().add("password-field");
         adminSetupGrid.add(adminPasswordField, 0, 4);
+
         adminSetupGrid.add(new Label("Confirm Password: "), 0, 5);
         adminSetupGrid.add(adminConfirmPasswordField, 0, 6);
+        adminConfirmPasswordField.getStyleClass().add("password-field");
         adminSetupGrid.add(setupAdminButton, 0, 7);
+
+        VBox container = new VBox();
+        container.setAlignment(Pos.CENTER);
+        container.setPadding(new Insets(0));
+        container.getChildren().add(adminSetupGrid);
+        container.getStyleClass().add("border-container");
 
         setupAdminButton.setOnAction(e -> {
             String username = adminUserNameField.getText();
@@ -123,10 +141,10 @@ public class MyJavaFXApp extends Application {
             }
         });
 
-        Scene loginScene = new Scene(adminSetupGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
-        loginScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("adminSetup.css")).toExternalForm());
+        Scene adminRegisterScene = new Scene(container, WINDOW_HEIGHT, WINDOW_WIDTH);
+        adminRegisterScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("adminSetup.css")).toExternalForm());
         setupAdminButton.requestFocus();
-        return loginScene;
+        return adminRegisterScene;
     }
 
     /**********
@@ -145,10 +163,12 @@ public class MyJavaFXApp extends Application {
         loginGrid.setAlignment(Pos.CENTER);
 
         TextField userNameField = new TextField();
+        loginGrid.add(userNameField, 0, 2);
         userNameField.getStyleClass().add("username-field");
         userNameField.setPromptText("Enter your username");
 
         PasswordField passwordField = new PasswordField();
+        loginGrid.add(passwordField, 0, 4);  // Add password field to GridPane
         passwordField.getStyleClass().add("password-field");
         passwordField.setPromptText("Enter your password");
 
@@ -159,6 +179,7 @@ public class MyJavaFXApp extends Application {
         GridPane.setHalignment(errorMessage, HPos.CENTER);
 
         Button loginButton = new Button("Login");
+        loginGrid.add(loginButton, 0, 5, 2, 1); // Span 2 columns for proper alignment
         loginButton.getStyleClass().add("login_button");
 
         Button registerButton = new Button("Register");
@@ -169,6 +190,7 @@ public class MyJavaFXApp extends Application {
 
         HBox buttonBox = new HBox(10); // HBox with 10px spacing
         buttonBox.setAlignment(Pos.CENTER); // Center the buttons
+        loginGrid.add(buttonBox, 0, 6, 2, 1); // Add HBox to GridPane, spanning 2 columns
         buttonBox.getChildren().addAll(registerButton, resetDatabaseButton); // Add buttons to HBox
 
         VBox container = new VBox();
@@ -180,16 +202,16 @@ public class MyJavaFXApp extends Application {
         Label welcomeLabel = new Label("Welcome");
         loginGrid.add(welcomeLabel, 0, 0); // Add welcome label to GridPane
         welcomeLabel.getStyleClass().add("welcome-label");
+
         Label usernameLabel = new Label("Username: ");
         loginGrid.add(usernameLabel, 0, 1); // Add username label to GridPane
         usernameLabel.getStyleClass().add("username-label");
-        loginGrid.add(userNameField, 0, 2); // Add username field to GridPane
-        loginGrid.add(new Label("Password: "), 0, 3); // Add password label to GridPane
-        welcomeLabel.getStyleClass().add("password-label");
 
-        loginGrid.add(passwordField, 0, 4);  // Add password field to GridPane
-        loginGrid.add(loginButton, 0, 5, 2, 1); // Span 2 columns for proper alignment
-        loginGrid.add(buttonBox, 0, 6, 2, 1); // Add HBox to GridPane, spanning 2 columns
+        Label passwordLabel = new Label("Password: ");
+        loginGrid.add(new Label("Password: "), 0, 3); // Add password label to GridPane
+        passwordLabel.getStyleClass().add("password-label");
+
+
 
 
         loginButton.setOnAction(e -> {
@@ -276,7 +298,7 @@ public class MyJavaFXApp extends Application {
         registerGrid.setAlignment(Pos.CENTER);
 
         Label registerLabel = new Label("Create an Account");
-        registerGrid.add(registerLabel, 0, 2); // Add welcome label to GridPane
+        registerGrid.add(registerLabel, 0, 2);
         registerLabel.getStyleClass().add("register-label");
 
         TextField registerUserNameField = new TextField();

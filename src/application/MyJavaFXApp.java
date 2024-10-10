@@ -116,6 +116,12 @@ public class MyJavaFXApp extends Application {
         adminConfirmPasswordField.getStyleClass().add("password-field");
         adminSetupGrid.add(setupAdminButton, 0, 7);
 
+        VBox container = new VBox();
+        container.setAlignment(Pos.CENTER);
+        container.setPadding(new Insets(0));
+        container.getChildren().add(adminSetupGrid);
+        container.getStyleClass().add("border-container");
+
 
         setupAdminButton.setOnAction(e -> {
             String username = adminUserNameField.getText();
@@ -137,10 +143,9 @@ public class MyJavaFXApp extends Application {
             }
         });
 
-
-
-        Scene adminSetupScene = new Scene(adminSetupGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
+        Scene adminSetupScene = new Scene(container, WINDOW_HEIGHT, WINDOW_WIDTH);
         adminSetupScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("adminSetup.css")).toExternalForm());
+        setupAdminButton.requestFocus();
         return adminSetupScene;
     }
 
@@ -338,7 +343,7 @@ public class MyJavaFXApp extends Application {
         VBox requirementsBox = new VBox(4, requirementUpperCase, requirementLowerCase, requirementSpecialChar, requirementLength, requirementMatches);
         registerGrid.add(requirementsBox, 0, 6, 1, 1);
 
-        VBox registerContainer = new VBox(5, new Label("New Username: "),
+        VBox registerContainer = new VBox(4, new Label("New Username: "),
                 registerUserNameField, new Label("Password: "),
                 registerPasswordField, new Label("Confirm Password: "),
                 registerConfirmPasswordField);

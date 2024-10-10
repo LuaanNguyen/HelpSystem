@@ -14,13 +14,34 @@
     -fx-background-color: linear-gradient(to top right, #FFDEE9, #B5FFFC);
     -fx-border-color: #ffffff;
 }
-.welcome-label {
+.admin-setup-label {
     -fx-font-family: "JetBrains Mono SemiBold";
-    -fx-font-size: 30px; /* Set font size */
+    -fx-font-size: 13px; /* Set font size */
     -fx-font-weight: bold;
     -fx-text-fill: #000000; /* Set text color */
     -fx-background-color: rgba(255, 255, 255, 0); /* Set background color */
+    -fx-underline: true;
 
+}
+.setup-admin-button {
+    -fx-background-color: #2c2c2c;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-min-width: 220;
+    -fx-max-width: 220;
+    -fx-min-height: 32;
+    -fx-max-height: 32;
+    -fx-border-radius: 0px; /* Set the border radius */
+    -fx-background-radius: 5px;
+}
+.setup-admin-button:hover
+{
+    -fx-background-color: rgba(44, 44, 44, 0.75);
+    -fx-cursor: hand;
+}
+.setup-admin-button:pressed
+{
+    -fx-background-color: #000000;
 }
 
 .password-field {
@@ -41,50 +62,9 @@
     -fx-padding: 4px;
     -fx-font-size: 14px;
 }
-.login_button {
-    -fx-background-color: #2c2c2c;
-    -fx-text-fill: white;
-    -fx-font-size: 12px;
-    -fx-min-width: 220;
-    -fx-max-width: 220;
-    -fx-min-height: 32;
-    -fx-max-height: 32;
-    -fx-border-radius: 0px; /* Set the border radius */
-    -fx-background-radius: 5px;
-}
 
-/*.label {*/
-/*    -fx-font-size: 14px;*/
-/*    -fx-padding: 0 0 5px 0;*/
-/*}*/
-.login_button:hover
-{
-    -fx-background-color: rgba(44, 44, 44, 0.75);
-    -fx-cursor: hand;
-}
-.login_button:pressed
-{
-    -fx-background-color: #000000;
-}
-.register_button {
-    -fx-background-color: transparent; /* Remove background */
-    -fx-text-fill: #000000; /* Set text color to blue */
-    -fx-underline: true; /* Underline the text */
-    -fx-cursor: hand; /* Change cursor to hand */
-    -fx-padding: 0; /* Remove padding */
-    -fx-border-width: 0; /* Remove border */
-}
-.resetDb_button {
-    -fx-background-color: transparent; /* Remove background */
-    -fx-text-fill: #000000; /* Set text color to blue */
-    -fx-underline: true; /* Underline the text */
-    -fx-padding: 0; /* Remove padding */
-    -fx-border-width: 0; /* Remove border */
-}
-.resetDb_button:hover {
-    -fx-text-fill: red;
-    -fx-cursor: hand; /* Change cursor to hand */
-}
+
+
 .error-message {
     -fx-text-fill: red;
 }

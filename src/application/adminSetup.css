@@ -16,11 +16,15 @@
 .border-container {
     -fx-background-color: linear-gradient(to top right, #FFDEE9, #B5FFFC);
     -fx-border-color: #ffffff;
+    -fx-border-width: 0px;
+    -fx-border-radius: 0px;
+    -fx-background-radius: 0px;
+    -fx-padding: 5px;
 }
 /* Set the admin setup label style */
 .admin-setup-label {
     -fx-font-family: "JetBrains Mono SemiBold";
-    -fx-font-size: 13px; /* Set font size */
+    -fx-font-size: 24px; /* Set font size */
     -fx-font-weight: bold;
     -fx-text-fill: #000000; /* Set text color */
     -fx-background-color: rgba(255, 255, 255, 0); /* Set background color */

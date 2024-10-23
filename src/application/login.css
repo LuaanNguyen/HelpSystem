@@ -22,6 +22,10 @@
 .border-container {
     -fx-background-color: linear-gradient(to top right, #FFDEE9, #B5FFFC);
     -fx-border-color: #ffffff;
+    -fx-border-width: 0px;
+    -fx-border-radius: 0px;
+    -fx-background-radius: 0px;
+    -fx-padding: 5px;
 }
 .welcome-label {
     -fx-font-family: "JetBrains Mono SemiBold";
@@ -60,8 +64,18 @@
     -fx-max-height: 32;
     -fx-border-radius: 0px; /* Set the border radius */
     -fx-background-radius: 5px;
+    -fx-cursor: hand;
 }
 
+.test_button {
+    -fx-background-color: transparent; /* Remove background */
+    -fx-text-fill: #000000; /* Set text color to blue */
+    -fx-underline: false; /* Underline the text */
+    -fx-padding: 0; /* Remove padding */
+    -fx-border-width: 0; /* Remove border */
+    -fx-min-width: 5;
+    -fx-cursor: hand;
+}
 
 .register_button {
     -fx-background-color: transparent; /* Remove background */

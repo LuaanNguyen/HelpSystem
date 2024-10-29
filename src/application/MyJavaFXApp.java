@@ -342,10 +342,9 @@ public class MyJavaFXApp extends Application {
     private Scene createRegisterScene(Stage primaryStage) {
         GridPane registerGrid = new GridPane();
         registerGrid.getStyleClass().add("register-grid");
-
         registerGrid.setPadding(new Insets(10, 10, 10, 10));
-        registerGrid.setHgap(5);
-        registerGrid.setVgap(3);
+        registerGrid.setHgap(10);
+        registerGrid.setVgap(2);
         registerGrid.setAlignment(Pos.CENTER);
 
         //Invitation code
@@ -378,13 +377,15 @@ public class MyJavaFXApp extends Application {
         // Add all components to the Vbox container
         VBox container = new VBox();
         container.setAlignment(Pos.CENTER);
-        container.setPadding(new Insets(0));
+        container.setPadding(new Insets(10));
         container.getChildren().add(registerGrid);
         container.getStyleClass().add("border-container");
 
 
         // Create labels for password requirements, !!! I'm not sure how to put the Label initialization in the requirementsBox and update the text
         Label errorMessageLabel = new Label();
+        errorMessageLabel.getStyleClass().add("error-message");
+
         Label requirementUpperCase = new Label("❌ Have one uppercase character");
         Label requirementLowerCase = new Label("❌ Have one lowercase character");
         Label requirementSpecialChar = new Label("❌ Have one special character");
@@ -403,7 +404,7 @@ public class MyJavaFXApp extends Application {
         registerGrid.add(roleComboBox, 0, 6);
         registerGrid.add(createAccountButton, 0, 7);
         registerGrid.add(backToLoginButton, 0, 10);
-        registerGrid.add(errorMessageLabel, 1, 5);
+        registerGrid.add(errorMessageLabel, 0, 11);
         registerGrid.add(invitationCodeField, 0 , 3);
         registerGrid.add(new Label("Invitation Code:"), 0, 2);
 
@@ -450,6 +451,7 @@ public class MyJavaFXApp extends Application {
             // Check if the username, password, email, and invitation code are empty
             if (password.isEmpty() || username.isEmpty()  || invitationCode.isEmpty()) {
                 System.out.println("Username, password, email, invitation code cannot be empty!");
+                errorMessageLabel.setText("Username, password, email, invite code cannot be empty!");
             // Check if the password meets the requirements
             } else if (!password.matches(".*[!@#$%^&*].*")) {
                 System.out.println("Password must contain at least 1 Special Character");
@@ -470,6 +472,7 @@ public class MyJavaFXApp extends Application {
                 try {
                     if (dbUtil.doesUserExist(username)) {
                         System.out.println("User already exists!");
+                        errorMessageLabel.setText("User already exists!");
                     } else if (dbUtil.isValidInvitationCode(invitationCode)) {
                         dbUtil.register( username, password, selectedRole);
                         System.out.println("User registered successfully");

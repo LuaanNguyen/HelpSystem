@@ -2,8 +2,8 @@
     -fx-background-color: rgba(255, 255, 255, 0.65);
     -fx-border-color: rgba(0, 0, 0, 0.24); /* Border color */
     -fx-border-width: 2px;   /* Border thickness */
-    -fx-min-width: 400;
-    -fx-max-width: 400;
+    -fx-min-width: 420;
+    -fx-max-width: 420;
     -fx-min-height: 530;
     -fx-max-height: 530;
     -fx-border-radius: 10px; /* Rounded corners */
@@ -21,7 +21,7 @@
 }
 .register-label {
     -fx-font-family: "JetBrains Mono SemiBold";
-    -fx-font-size: 30px; /* Set font size */
+    -fx-font-size: 33px; /* Set font size */
     -fx-font-weight: bold;
     -fx-text-fill: #000000; /* Set text color */
     -fx-background-color: rgba(255, 255, 255, 0); /* Set background color */
@@ -41,8 +41,8 @@
     -fx-background-color: #2c2c2c;
     -fx-text-fill: white;
     -fx-font-size: 12px;
-    -fx-min-width: 220;
-    -fx-max-width: 220;
+    -fx-min-width: 250;
+    -fx-max-width: 250;
     -fx-min-height: 32;
     -fx-max-height: 32;
     -fx-border-radius: 0px; /* Set the border radius */
@@ -66,8 +66,8 @@
     -fx-border-width: 0; /* Remove border */
 }
 .password-field {
-    -fx-min-width: 220px;
-    -fx-max-width: 220px; /* Set preferred width */
+    -fx-min-width: 250px;
+    -fx-max-width: 250px; /* Set preferred width */
     -fx-border-radius: 0px; /* Set the border radius */
     -fx-background-radius: 5px;
     -fx-border-color: rgba(255, 255, 255, 0.65);
@@ -75,8 +75,8 @@
     -fx-font-size: 14px;
 }
 .username-field {
-    -fx-min-width: 220px;
-    -fx-max-width: 220px; /* Set preferred width */
+    -fx-min-width: 250px;
+    -fx-max-width: 250px; /* Set preferred width */
     -fx-border-radius: 0px; /* Set the border radius */
     -fx-background-radius: 5px;
     -fx-border-color: rgba(255, 255, 255, 0.65);
@@ -84,13 +84,18 @@
     -fx-font-size: 14px;
 }
 .invitation-code-field {
-    -fx-min-width: 220px;
-    -fx-max-width: 220px; /* Set preferred width */
+    -fx-min-width: 250px;
+    -fx-max-width: 250px; /* Set preferred width */
     -fx-border-radius: 0px; /* Set the border radius */
     -fx-background-radius: 5px;
     -fx-border-color: rgba(255, 255, 255, 0.65);
     -fx-padding: 4px;
     -fx-font-size: 14px;
+}
+.error-message {
+    -fx-text-fill: red;
+    -fx-font-size: 11px;
+    -fx-wrap-text: true;
 }
 
 

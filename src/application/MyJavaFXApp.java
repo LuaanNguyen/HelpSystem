@@ -239,22 +239,21 @@ public class MyJavaFXApp extends Application {
             alert.setTitle("You found the Easter Egg!");
             alert.setHeaderText(null);
 
-
-            Image image = new Image("file:C:/Users/Gabriel/IdeaProjects/HelpSystem/public/monkey.png");
-            ImageView imageView = new ImageView(image);
+            // Load the GIF image
+            Image gifImage = new Image("file:C:/Users/Gabriel/IdeaProjects/HelpSystem/public/twerk.gif");
+            ImageView gifImageView = new ImageView(gifImage);
 
             // Set properties for the image view to adjust size
-            imageView.setFitWidth(200);  // Set the width
-            imageView.setFitHeight(200); // Set the height
-            imageView.setPreserveRatio(true); // Keep aspect ratio
+            gifImageView.setFitWidth(200);  // Set the width
+            gifImageView.setFitHeight(200); // Set the height
+            gifImageView.setPreserveRatio(true); // Keep aspect ratio
 
             // Create a VBox to hold both the image and the text
             VBox vbox = new VBox();
             vbox.setSpacing(10); // Optional: Set spacing between image and text
 
-
             Label label = new Label("Project by: Luan, Meadow, Isabella, Smit and Gabriel <3");
-            vbox.getChildren().addAll(imageView, label);
+            vbox.getChildren().addAll(gifImageView, label);
 
             // Add the VBox to the alert dialog
             alert.getDialogPane().setContent(vbox);
@@ -450,8 +449,8 @@ public class MyJavaFXApp extends Application {
 
             // Check if the username, password, email, and invitation code are empty
             if (password.isEmpty() || username.isEmpty()  || invitationCode.isEmpty()) {
-                System.out.println("Username, password, email, invitation code cannot be empty!");
-                errorMessageLabel.setText("Username, password, email, invite code cannot be empty!");
+                System.out.println("Username, password, invitation code cannot be empty!");
+                errorMessageLabel.setText("Username, password, invite code cannot be empty!");
             // Check if the password meets the requirements
             } else if (!password.matches(".*[!@#$%^&*].*")) {
                 System.out.println("Password must contain at least 1 Special Character");

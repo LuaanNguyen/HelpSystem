@@ -1,5 +1,5 @@
 package application;
-
+import javafx.scene.layout.StackPane;
 import application.User;
 import javafx.util.Pair;
 import javafx.application.Application;
@@ -15,9 +15,10 @@ import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.ComboBox;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 
 /**
@@ -47,8 +48,12 @@ public class MyJavaFXApp extends Application {
     public void start(Stage primaryStage) {
         try { //Attempt to connect to H2 DB
             dbUtil.connectToDatabase();
-            if (dbUtil.isDBEmpty()) { //If DB is empty, setting up admin user
+            if (dbUtil.isDBEmpty()) { //If DB is empty, setting up admin user, alert user
                 System.out.println("In-Memory Database is empty");
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Admin Setup");
+                alert.setHeaderText("Database is empty. Please setup an admin user.");
+                alert.showAndWait();
                 primaryStage.setScene(createAdminSetupScene(primaryStage));
             } else { //If DB is not empty, go to log in screen
                 primaryStage.setScene(createLoginScene(primaryStage));
@@ -75,8 +80,8 @@ public class MyJavaFXApp extends Application {
         adminSetupGrid.getStyleClass().add("root");
 
         adminSetupGrid.setPadding(new Insets(10, 10, 10, 10));
-        adminSetupGrid.setHgap(20);
-        adminSetupGrid.setVgap(20);
+        adminSetupGrid.setHgap(5);
+        adminSetupGrid.setVgap(7);
         adminSetupGrid.setAlignment(Pos.CENTER);
 
         // Username field styling
@@ -96,24 +101,24 @@ public class MyJavaFXApp extends Application {
         Button setupAdminButton = new Button("Setup Admin");
         setupAdminButton.getStyleClass().add("setup-admin-button");
 
-        Label adminRegisterLabel = new Label("Database is empty, setting up Admin ");
+        Label adminRegisterLabel = new Label("Admin Registration");
         adminSetupGrid.add(adminRegisterLabel, 0, 0, 4, 1);
         adminRegisterLabel.getStyleClass().add("admin-setup-label");
 
         Label adminUsernameLabel = new Label("Admin Username: ");
-        adminSetupGrid.add(adminUsernameLabel, 0, 1);
+        adminSetupGrid.add(adminUsernameLabel, 0, 4);
         adminUsernameLabel.getStyleClass().add("admin-username-label");
-        adminSetupGrid.add(adminUserNameField, 0, 2);
+        adminSetupGrid.add(adminUserNameField, 0, 5);
 
         Label adminPasswordLabel = new Label("Admin Password: ");
-        adminSetupGrid.add(adminPasswordLabel, 0, 3);
+        adminSetupGrid.add(adminPasswordLabel, 0, 6);
         adminPasswordField.getStyleClass().add("password-field");
-        adminSetupGrid.add(adminPasswordField, 0, 4);
+        adminSetupGrid.add(adminPasswordField, 0, 7);
 
-        adminSetupGrid.add(new Label("Confirm Password: "), 0, 5);
-        adminSetupGrid.add(adminConfirmPasswordField, 0, 6);
+        adminSetupGrid.add(new Label("Confirm Password: "), 0, 8);
+        adminSetupGrid.add(adminConfirmPasswordField, 0, 9);
         adminConfirmPasswordField.getStyleClass().add("password-field");
-        adminSetupGrid.add(setupAdminButton, 0, 7);
+        adminSetupGrid.add(setupAdminButton, 0, 10);
 
         VBox container = new VBox();
         container.setAlignment(Pos.CENTER);
@@ -181,10 +186,11 @@ public class MyJavaFXApp extends Application {
         Button loginButton = new Button("Login");
         loginButton.getStyleClass().add("login_button");
 
-
-
         Button registerButton = new Button("Register");
         registerButton.getStyleClass().add("register_button");
+
+        Button testButton = new Button("");
+        testButton.getStyleClass().add("test_button");
 
         Button resetDatabaseButton = new Button("Reset Database");
         resetDatabaseButton.getStyleClass().add("resetDb_button");
@@ -212,7 +218,42 @@ public class MyJavaFXApp extends Application {
         loginGrid.add(passwordField, 0, 4);  // Add password field to GridPane
         loginGrid.add(loginButton, 0, 5, 2, 1); // Span 2 columns for proper alignment
         loginGrid.add(buttonBox, 0, 6, 2, 1); // Add HBox to GridPane, spanning 2 columns
+        loginGrid.add(testButton,1, 6, 2, 1); // Span 2 columns for proper alignment
         //loginGrid.add(new Label("Invitation Code"), 0, 5);
+
+
+        testButton.setOnAction(e -> {
+            // Create an Alert of type INFORMATION
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+
+            // Set the title and header text
+            alert.setTitle("You found the Easter Egg!");
+            alert.setHeaderText(null);
+
+
+            Image image = new Image("file:C:/Users/Gabriel/IdeaProjects/HelpSystem/public/monkey.png");
+            ImageView imageView = new ImageView(image);
+
+            // Set properties for the image view to adjust size
+            imageView.setFitWidth(200);  // Set the width
+            imageView.setFitHeight(200); // Set the height
+            imageView.setPreserveRatio(true); // Keep aspect ratio
+
+            // Create a VBox to hold both the image and the text
+            VBox vbox = new VBox();
+            vbox.setSpacing(10); // Optional: Set spacing between image and text
+
+
+            Label label = new Label("Project by: Luan, Meadow, Isabella, Smit and Gabriel <3");
+            vbox.getChildren().addAll(imageView, label);
+
+            // Add the VBox to the alert dialog
+            alert.getDialogPane().setContent(vbox);
+
+            // Show the alert dialog and wait for user response
+            alert.showAndWait();
+        });
+
 
 
         loginButton.setOnAction(e -> {
@@ -295,15 +336,16 @@ public class MyJavaFXApp extends Application {
 
         registerGrid.setPadding(new Insets(10, 10, 10, 10));
         registerGrid.setHgap(5);
-        registerGrid.setVgap(10);
+        registerGrid.setVgap(3);
         registerGrid.setAlignment(Pos.CENTER);
 
         //Invitation code
         TextField invitationCodeField = new TextField();
         invitationCodeField.setPromptText("Enter invitation code");
+        invitationCodeField.getStyleClass().add("invitation-code-field");
         // Welcome label postioning and styling
         Label welcomeLabel = new Label("Create an Account");
-        registerGrid.add(welcomeLabel, 0, 3); // Add welcome label to GridPane
+        registerGrid.add(welcomeLabel, 0, 1); // Add welcome label to GridPane
         welcomeLabel.getStyleClass().add("register-label");
         // Username field positioning and styling
         TextField registerUserNameField = new TextField();
@@ -340,20 +382,21 @@ public class MyJavaFXApp extends Application {
         Label requirementLength = new Label("❌ Have 8 characters minimum");
         Label requirementMatches = new Label("❌ Passwords match");
         VBox requirementsBox = new VBox(4, requirementUpperCase, requirementLowerCase, requirementSpecialChar, requirementLength, requirementMatches);
-        registerGrid.add(requirementsBox, 0, 6, 1, 1);
+        registerGrid.add(requirementsBox, 0, 5, 1, 1);
         // Add all components to the registerContainer VBox
-        VBox registerContainer = new VBox(4, new Label("New Username: "),
+        VBox registerContainer = new VBox(3, new Label("New Username: "),
                 registerUserNameField, new Label("Password: "),
                 registerPasswordField, new Label("Confirm Password: "),
                 registerConfirmPasswordField);
 
         // Positioning of all components
-        registerGrid.add(registerContainer, 0, 5, 1, 1);
-        registerGrid.add(roleComboBox, 0, 7);
-        registerGrid.add(createAccountButton, 0, 9);
-        registerGrid.add(backToLoginButton, 1, 9);
+        registerGrid.add(registerContainer, 0, 4, 1, 1);
+        registerGrid.add(roleComboBox, 0, 6);
+        registerGrid.add(createAccountButton, 0, 7);
+        registerGrid.add(backToLoginButton, 0, 10);
         registerGrid.add(errorMessageLabel, 1, 5);
-        registerGrid.add(invitationCodeField, 0 , 8);
+        registerGrid.add(invitationCodeField, 0 , 3);
+        registerGrid.add(new Label("Invitation Code:"), 0, 2);
 
 
 
@@ -705,7 +748,7 @@ public class MyJavaFXApp extends Application {
         });
         // Return the scene
         Scene finishSetupScene = new Scene(finishSetupGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
-        //finishSetupScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("finishSetup.css")).toExternalForm());
+        finishSetupScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("finishSetup.css")).toExternalForm());
         return finishSetupScene;
     }
 

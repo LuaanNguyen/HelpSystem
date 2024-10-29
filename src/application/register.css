@@ -31,6 +31,10 @@
 .border-container {
     -fx-background-color: linear-gradient(to top right, #FFDEE9, #B5FFFC);
     -fx-border-color: #ffffff;
+    -fx-border-width: 0px;
+    -fx-border-radius: 0px;
+    -fx-background-radius: 0px;
+    -fx-padding: 5px;
 }
 
 .create-account-button {
@@ -71,6 +75,15 @@
     -fx-font-size: 14px;
 }
 .username-field {
+    -fx-min-width: 220px;
+    -fx-max-width: 220px; /* Set preferred width */
+    -fx-border-radius: 0px; /* Set the border radius */
+    -fx-background-radius: 5px;
+    -fx-border-color: rgba(255, 255, 255, 0.65);
+    -fx-padding: 4px;
+    -fx-font-size: 14px;
+}
+.invitation-code-field {
     -fx-min-width: 220px;
     -fx-max-width: 220px; /* Set preferred width */
     -fx-border-radius: 0px; /* Set the border radius */

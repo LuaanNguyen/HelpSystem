@@ -240,7 +240,7 @@ public class MyJavaFXApp extends Application {
             alert.setHeaderText(null);
 
             // Load the GIF image
-            Image gifImage = new Image("file:C:/Users/Gabriel/IdeaProjects/HelpSystem/public/twerk.gif");
+            Image gifImage = new Image("file:src/twerk.gif");
             ImageView gifImageView = new ImageView(gifImage);
 
             // Set properties for the image view to adjust size

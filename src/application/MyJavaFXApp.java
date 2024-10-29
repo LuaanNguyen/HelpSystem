@@ -115,6 +115,13 @@ public class MyJavaFXApp extends Application {
         adminPasswordField.getStyleClass().add("password-field");
         adminSetupGrid.add(adminPasswordField, 0, 7);
 
+
+        Label AdminErrorMessage = new Label();
+        adminSetupGrid.add(AdminErrorMessage, 0, 11);
+        AdminErrorMessage.getStyleClass().add("error-message");
+        GridPane.setColumnSpan(AdminErrorMessage, GridPane.REMAINING);
+        GridPane.setHalignment(AdminErrorMessage, HPos.CENTER);
+
         adminSetupGrid.add(new Label("Confirm Password: "), 0, 8);
         adminSetupGrid.add(adminConfirmPasswordField, 0, 9);
         adminConfirmPasswordField.getStyleClass().add("password-field");
@@ -134,8 +141,10 @@ public class MyJavaFXApp extends Application {
 
             if (password.isEmpty() || username.isEmpty()) {
                 System.out.println("Username or password cannot be empty!");
+                AdminErrorMessage.setText("Invalid username or password");
             } else if (!password.equals(confirmPassword)) {
                 System.out.println("Password doesn't match");
+                AdminErrorMessage.setText("Passwords do not match");
             } else {
                 try {
                     dbUtil.register( username, password, "Admin");

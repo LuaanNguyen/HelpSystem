@@ -441,18 +441,22 @@ public class MyJavaFXApp extends Application {
             String confirmPassword = registerConfirmPasswordField.getText();
             String selectedRole = roleComboBox.getValue();
             // Check if the invitation code is valid
-           try {
-               System.out.println(dbUtil.isValidInvitationCode(invitationCode));
-           } catch(SQLException s) {
-               System.out.println("cooked");
-           }
+            try {
+                System.out.println(dbUtil.isValidInvitationCode(invitationCode));
+            } catch (SQLException s) {
+                System.out.println("cooked");
+            }
 
             // Check if the username, password, email, and invitation code are empty
-            if (password.isEmpty() || username.isEmpty()  || invitationCode.isEmpty()) {
+            if (password.isEmpty() || username.isEmpty() || invitationCode.isEmpty()) {
                 System.out.println("Username, password, invitation code cannot be empty!");
                 errorMessageLabel.setText("Username, password, invite code cannot be empty!");
-            // Check if the password meets the requirements
-            } else if (!password.matches(".*[!@#$%^&*].*")) {
+                // Check if the password meets the requirements
+            }
+            else if(!password.isEmpty() && !username.isEmpty() && !invitationCode.isEmpty()){
+                errorMessageLabel.setText("");
+            }
+            else if (!password.matches(".*[!@#$%^&*].*")) {
                 System.out.println("Password must contain at least 1 Special Character");
             }
             else if (!password.matches(".*[a-z].*")) {

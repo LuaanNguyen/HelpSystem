@@ -513,6 +513,7 @@ public class MyJavaFXApp extends Application {
         Button inviteUserButton = new Button("Invite User");
         Button createHelpItemButton = new Button("Create Help Item");
         Button logoutButton = new Button("Log Out");
+        Button viewHelpItemsButton = new Button("View Help Items");
         // Positioning of all components
         adminGrid.add(userListView, 0, 0, 2, 1);
         adminGrid.add(deleteUserButton, 0, 1);
@@ -521,7 +522,7 @@ public class MyJavaFXApp extends Application {
         adminGrid.add(inviteUserButton, 0, 3);
         adminGrid.add(logoutButton, 0, 4, 2, 1);
         adminGrid.add(createHelpItemButton, 1, 1);
-
+        adminGrid.add(viewHelpItemsButton, 1, 3);
 
         // Delete user button, prompts user to confirm deleting user
         deleteUserButton.setOnAction(e -> {
@@ -699,13 +700,31 @@ public class MyJavaFXApp extends Application {
                 return null;
             });
 
-            dialog.showAndWait().ifPresent(titleDescription -> {
+            String shortDescription = descriptionField.getText().substring(0, Math.min(descriptionField.getText().length(), 50));
+
+            dialog.showAndWait().ifPresent(title -> {
                 try {
-                    System.out.println("Help item created successfully");
+                    dbUtil.addHelpItem(
+                            titleField.getText(),
+                            descriptionField.getText(),
+                            shortDescription,
+                            authorField.getText(),
+                            keywordsField.getText(),
+                            referencesField.getText()
+                    );
                 } catch (Exception ex) {
                     System.out.println("Error creating help item");
                 }
             });
+        });
+
+        // View help items button, prompts user to view all help items
+        viewHelpItemsButton.setOnAction(e -> {
+            // Go to the help items scene
+            System.out.println("Viewing help items...");
+            primaryStage.setScene(helpItemsScene(primaryStage));
+
+
         });
         // Logout button, returns to the login scene
         logoutButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
@@ -713,6 +732,7 @@ public class MyJavaFXApp extends Application {
         adminScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("adminScene.css")).toExternalForm());
         return adminScene;
     }
+
 
     // Update the user list view
     private void updateUserListView(ListView<String> userListView) {
@@ -830,6 +850,58 @@ public class MyJavaFXApp extends Application {
         return finishSetupScene;
     }
 
+    /**
+     * This method creates the scene for viewing the help items
+     * In this scene, the user can view all the help items
+     * It gets the help items from the database and displays them in a list view
+     * The user can click on a help item to view more details
+     *
+     * @param primaryStage primaryStage
+     * @return
+     */
+    private Scene helpItemsScene(Stage primaryStage) {
+        GridPane helpItemsGrid = new GridPane();
+        helpItemsGrid.setPadding(new Insets(20, 20, 20, 20));
+        helpItemsGrid.setHgap(H_GAP);
+        helpItemsGrid.setVgap(V_GAP);
+        // Create all the components for the help items scene
+        ListView<String> helpItemsListView = new ListView<>();
+        // Get all help items from DB using getAllHelpItems method in DBUtil
+        try {
+            List<helpItem> helpItems = dbUtil.getAllHelpItems();
+            for (helpItem helpItem : helpItems) {
+                helpItemsListView.getItems().add(helpItem.getTitle());
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        Button viewHelpItemButton = new Button("View Help Item");
+        Button backToLoginButton = new Button("Back to login");
+        // Positioning of all components
+        helpItemsGrid.add(new Label("Help Items"), 0, 0);
+        helpItemsGrid.add(helpItemsListView, 0, 1);
+        helpItemsGrid.add(viewHelpItemButton, 0, 2);
+        helpItemsGrid.add(backToLoginButton, 0, 3);
+        // View help item button, prompts user to view a help item
+        viewHelpItemButton.setOnAction(e -> {
+            String selectedHelpItem = helpItemsListView.getSelectionModel().getSelectedItem();
+            if (selectedHelpItem != null) {
+                try {
+                    helpItem helpItem = dbUtil.getHelpItemByTitle(selectedHelpItem);
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle(helpItem.getTitle());
+                    alert.setHeaderText(helpItem.getShortDescription());
+                    alert.setContentText(helpItem.getDescription());
+                    alert.showAndWait();
+                } catch (Exception ex) {
+                    System.out.println("Error viewing help item");
+                }
+            }
+        });
+        // Back to login button, returns to the login scene
+        backToLoginButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
+        return new Scene(helpItemsGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
+    }
 
     /*******************************************************************************************************/
     /*******************************************************************************************************

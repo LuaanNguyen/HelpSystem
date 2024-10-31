@@ -45,7 +45,7 @@ public class MyJavaFXApp extends Application {
     public static final int H_GAP = 20;
     public static final int V_GAP = 20;
 
-    public static String currentUser ="";
+    public static String currentUser = "";
 
     /**
      * Create a DB instance to interact with the database
@@ -998,18 +998,15 @@ public class MyJavaFXApp extends Application {
      * @return Scene for viewing help items.
      */
     private Scene helpItemsScene(Stage primaryStage) {
-        // Root layout for the help items view
         GridPane helpItemsGrid = new GridPane();
         helpItemsGrid.setPadding(new Insets(20));
         helpItemsGrid.setHgap(15);
         helpItemsGrid.setVgap(10);
         helpItemsGrid.getStyleClass().add("root");
 
-        // Title and styling for the main label
         Label titleLabel = new Label("Help Items 📚");
         titleLabel.setStyle("-fx-font-weight: bold; -fx-padding: 0 0 10 0;");
 
-        // List view to display help items from the database
         ListView<String> helpItemsListView = new ListView<>();
         try {
             List<helpItem> helpItems = dbUtil.getAllHelpItems();
@@ -1020,7 +1017,6 @@ public class MyJavaFXApp extends Application {
             ex.printStackTrace();
         }
 
-        // Action buttons with styling for navigation
         Button viewHelpItemButton = new Button("View Help Item");
         Button backToDashboard = new Button("Back to Dashboard");
         Button backToLoginButton = new Button("Back to Login");
@@ -1028,23 +1024,22 @@ public class MyJavaFXApp extends Application {
         backToLoginButton.setMinWidth(150);
         viewHelpItemButton.setMinWidth(150);
 
-        // VBox layout for buttons at the bottom
         VBox buttonBox = new VBox(10, viewHelpItemButton, backToDashboard, backToLoginButton);
         buttonBox.setAlignment(Pos.CENTER);
         buttonBox.setPadding(new Insets(10));
 
-        // Border for the list view section
         VBox listViewBox = new VBox(10, titleLabel, helpItemsListView, buttonBox);
         listViewBox.setPadding(new Insets(10));
         listViewBox.setStyle("-fx-border-color: #ddd; -fx-border-width: 1px; -fx-border-radius: 5px;");
         helpItemsGrid.add(listViewBox, 0, 0);
 
-        // VBox for item details display on the right with editable fields
         VBox itemDetailsBox = new VBox(10);
         itemDetailsBox.setPrefSize(500, 500);
         itemDetailsBox.setPadding(new Insets(10));
         itemDetailsBox.setStyle("-fx-border-color: #ccc; -fx-border-width: 1px; -fx-border-radius: 5px;");
 
+        Label itemIDLabel = new Label("ID:");
+        Label itemID = new Label(); // Display the ID here, non-editable
         TextField titleField = new TextField();
         TextArea descriptionField = new TextArea();
         TextField authorsField = new TextField();
@@ -1053,6 +1048,7 @@ public class MyJavaFXApp extends Application {
         Button saveButton = new Button("Save Changes");
 
         itemDetailsBox.getChildren().addAll(
+                itemIDLabel, itemID,
                 new Label("Title:"), titleField,
                 new Label("Description:"), descriptionField,
                 new Label("Authors:"), authorsField,
@@ -1062,24 +1058,24 @@ public class MyJavaFXApp extends Application {
         );
         helpItemsGrid.add(itemDetailsBox, 1, 0);
 
-        // Update item details on selection
         helpItemsListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 helpItem selectedHelpItem = dbUtil.getHelpItem(newValue);
+                itemID.setText(String.valueOf(selectedHelpItem.getId())); // Display ID
                 titleField.setText(selectedHelpItem.getTitle());
                 descriptionField.setText(selectedHelpItem.getDescription());
-                authorsField.setText(selectedHelpItem.getAuthors().toString());
-                keywordsField.setText(selectedHelpItem.getKeywords().toString());
-                referencesField.setText(selectedHelpItem.getReferences().toString());
+                authorsField.setText(selectedHelpItem.getAuthors());
+                keywordsField.setText(selectedHelpItem.getKeywords());
+                referencesField.setText(selectedHelpItem.getReferences());
             }
         });
 
-        // Save button action to update the help item
         saveButton.setOnAction(e -> {
             String selectedTitle = helpItemsListView.getSelectionModel().getSelectedItem();
             if (selectedTitle != null) {
                 String shortDescription = descriptionField.getText().substring(0, Math.min(descriptionField.getText().length(), 50));
                 helpItem updatedItem = new helpItem(
+                        Integer.parseInt(itemID.getText()), // Pass the ID for update
                         titleField.getText(),
                         descriptionField.getText(),
                         shortDescription,
@@ -1088,7 +1084,7 @@ public class MyJavaFXApp extends Application {
                         referencesField.getText()
                 );
                 try {
-                    dbUtil.updateHelpItem(selectedTitle, updatedItem); // Assume `updateHelpItem` is a method in dbUtil
+                    dbUtil.updateHelpItem(Integer.parseInt(itemID.getText()), updatedItem); // Update by ID
                     helpItemsListView.getItems().set(
                             helpItemsListView.getSelectionModel().getSelectedIndex(),
                             updatedItem.getTitle()
@@ -1099,7 +1095,6 @@ public class MyJavaFXApp extends Application {
             }
         });
 
-        // Actions for back buttons
         backToLoginButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
         backToDashboard.setOnAction(e -> {
             if (currentUser.equals("admin")) {
@@ -1110,10 +1105,12 @@ public class MyJavaFXApp extends Application {
                 primaryStage.setScene(studentScene(primaryStage));
             }
         });
+
         Scene helpItemsScene = new Scene(helpItemsGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
         helpItemsScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("helpItems.css")).toExternalForm());
         return helpItemsScene;
     }
+
 
     /**********
      * private void backupArticles()

@@ -1,7 +1,8 @@
 package application;
 
 public class helpItem {
-    private Integer id;
+    /* Instance Variables */
+    private final Integer id;
     private String title;
     private String description;
     private String shortDescription;
@@ -21,7 +22,6 @@ public class helpItem {
     }
 
     /* Constructor for creating new Help Item */
-
     public helpItem(Integer id,
                     String title,
                     String description,
@@ -38,31 +38,37 @@ public class helpItem {
         this.references = reference;
     }
 
-    /* Getter Methods */
+    /* Get title */
     public String getTitle() {
         return title;
     }
 
+    /* Get Description */
     public String getDescription() {
         return description;
     }
 
+    /* Get Short Description */
     public String getShortDescription() {
         return shortDescription;
     }
 
+    /* Get Authors */
     public String getAuthors() {
         return authors;
     }
 
+    /* Get Keywords */
     public String getKeywords() {
         return keywords;
     }
 
+    /* Get References */
     public String getReferences() {
         return references;
     }
 
+    /* Get ID */
     public Integer getId() {
         return id;
     }
@@ -72,22 +78,27 @@ public class helpItem {
         this.title = title;
     }
 
+    /* Set Description */
     public void setDescription(String description) {
         this.description = description;
     }
 
+    /* Set Short Description */
     public void setShortDescription(String shortdescription) {
         this.shortDescription = shortdescription;
     }
 
+    /* Set Authors */
     public void setAuthors(String authors) {
         this.authors = authors;
     }
 
+    /* Set Keywords */
     public void setKeywords(String keywords) {
         this.keywords = keywords;
     }
 
+    /* Set References */
     public void setreferences(String references) {
         this.references = references;
     }
@@ -97,10 +108,12 @@ public class helpItem {
         this.authors = author;
     }
 
+    /* Add Keywords */
     public void addKeyword(String keyword) {
         this.keywords = keyword;
     }
 
+    /* Add References */
     public void addreference(String reference) {
         this.references = reference;
     }
@@ -110,14 +123,17 @@ public class helpItem {
         this.authors = author;
     }
 
+    /* Remove Keywords */
     public void removeKeyword(String keyword) {
         this.keywords = keyword;
     }
 
+    /* Remove References */
     public void removereference(String reference) {
         this.references = reference;
     }
 
+    /* Delete Item */
     public void deleteItem() {
         this.title = null;
         this.description = null;
@@ -127,6 +143,7 @@ public class helpItem {
         this.references = null;
     }
 
+    /* Print Method */
     public void print() {
         System.out.println("Title: " + this.title);
         System.out.println("Description: " + this.description);

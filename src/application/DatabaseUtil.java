@@ -328,11 +328,13 @@ public class DatabaseUtil {
         }
     }
 
+
+    /* Create table for all the help items */
     private void createHelpItemTable() throws SQLException {
         String helpItemTableQuery = "CREATE TABLE IF NOT EXISTS helpsystem_helpitems ("
                 + "title VARCHAR(255), "
-                + "id INT AUTO_INCREMENT PRIMARY KEY, "
-                + "description VARCHAR (255), "
+                + "id BIGINT AUTO_INCREMENT PRIMARY KEY, "
+                + "description VARCHAR(255), "
                 + "short_description VARCHAR(255), "
                 + "authors VARCHAR(255), "
                 + "keywords VARCHAR(255), "
@@ -340,6 +342,8 @@ public class DatabaseUtil {
         statement.execute(helpItemTableQuery);
     }
 
+
+    /* Get all help items */
     public List<helpItem> getAllHelpItems() throws SQLException {
         String query = "SELECT * FROM helpsystem_helpitems";
         // create list of help items
@@ -361,6 +365,7 @@ public class DatabaseUtil {
         return helpItems;
     }
 
+    /* Add new help item */
     public void addHelpItem(String title, String description, String shortDescription, String author, String keyword, String reference) throws SQLException {
         String query = "INSERT INTO helpsystem_helpitems (title, description, short_description, authors, keywords, references) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
@@ -374,12 +379,14 @@ public class DatabaseUtil {
         }
     }
 
+    /* Reset help item database */
     public void resetHelpItemDatabase() throws SQLException {
         String dropHelpItemTableQuery = "DROP TABLE IF EXISTS helpsystem_helpitems";
         statement.execute(dropHelpItemTableQuery);
         createHelpItemTable();  // Recreate the tables
     }
 
+    /* Get help item by title */
     public helpItem getHelpItem(String title) {
         String query = "SELECT * FROM helpsystem_helpitems WHERE title = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
@@ -402,7 +409,7 @@ public class DatabaseUtil {
         return null;
     }
 
-
+    /* Get help item by id */
     public void deleteHelpItem(String title) throws SQLException {
         String query = "DELETE FROM helpsystem_helpitems WHERE title = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
@@ -411,6 +418,7 @@ public class DatabaseUtil {
         }
     }
 
+    /* Get help item by id */
     public void updateHelpItem(Integer id, helpItem newItem) throws SQLException {
         String query = "UPDATE helpsystem_helpitems SET title = ?, description = ?, short_description = ?, authors = ?, keywords = ?, references = ? WHERE id = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
@@ -426,7 +434,7 @@ public class DatabaseUtil {
     }
 
 
-    /**********
+    /**
      * Backup encrypted information into a file
      */
     public void backupHelpItemsToFile(String fileName) throws SQLException, IOException, Exception {

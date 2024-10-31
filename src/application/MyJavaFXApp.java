@@ -999,12 +999,13 @@ public class MyJavaFXApp extends Application {
      */
 
     private Scene helpItemsScene(Stage primaryStage) {
+        // GridPane for layout
         GridPane helpItemsGrid = new GridPane();
         helpItemsGrid.setPadding(new Insets(20));
         helpItemsGrid.setHgap(15);
         helpItemsGrid.setVgap(10);
         helpItemsGrid.getStyleClass().add("root");
-
+        // Title for the scene
         Label titleLabel = new Label("Help Items 📚");
         titleLabel.setStyle("-fx-font-weight: bold; -fx-padding: 0 0 10 0;");
 
@@ -1034,7 +1035,7 @@ public class MyJavaFXApp extends Application {
         searchBox.textProperty().addListener((observable, oldValue, newValue) -> {
             filteredHelpItems.setPredicate(title -> {
                 if (newValue == null || newValue.isEmpty()) {
-                    return true; // Show all if search is empty
+                    return true;
                 }
                 String lowerCaseFilter = newValue.toLowerCase();
                 return title.toLowerCase().contains(lowerCaseFilter); // Filter based on title
@@ -1071,6 +1072,7 @@ public class MyJavaFXApp extends Application {
         TextField referencesField = new TextField();
         Button saveButton = new Button("Save Changes");
         Label confirmationMessage = new Label();
+
 
         itemDetailsBox.getChildren().addAll(
                 itemIDLabel, itemID,

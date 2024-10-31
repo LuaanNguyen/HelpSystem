@@ -24,6 +24,7 @@ import java.util.Objects;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import org.h2.command.dml.Insert;
 
 
 /**
@@ -43,6 +44,8 @@ public class MyJavaFXApp extends Application {
     public static final int WINDOW_HEIGHT = 900;
     public static final int H_GAP = 20;
     public static final int V_GAP = 20;
+
+    public static String currentUser ="";
 
     /**
      * Create a DB instance to interact with the database
@@ -278,6 +281,7 @@ public class MyJavaFXApp extends Application {
 
                     // Proceed to the next scene or functionality
                     if (user.getRole().contains("Admin")) {
+                        currentUser = "admin";
                         primaryStage.setScene(adminScene(primaryStage));
                     } else if (user.getRole().contains("Student")) {
                         //Set other scene depending on user role
@@ -286,9 +290,11 @@ public class MyJavaFXApp extends Application {
                                 primaryStage.setScene(finishSetupScene(primaryStage, user.getUsername()));
                             }
                         } else {
+                            currentUser = "student";
                             primaryStage.setScene(studentScene(primaryStage));
                         }
                     } else if (user.getRole().contains("Instructor")) {
+                        currentUser = "instructor";
                         primaryStage.setScene(instructorScene(primaryStage));
                     } else {
                         System.out.println("Error finding a right role.");
@@ -508,7 +514,7 @@ public class MyJavaFXApp extends Application {
         adminGrid.setAlignment(Pos.CENTER);
 
         // Header
-        Label headerLabel = new Label("Dashboard 📊");
+        Label headerLabel = new Label("Admin Dashboard 📊");
         headerLabel.setAlignment((Pos.CENTER));
         headerLabel.getStyleClass().add("header-label");
         adminGrid.add(headerLabel, 0, 0, 2, 1);
@@ -547,7 +553,6 @@ public class MyJavaFXApp extends Application {
         adminGrid.add(buttonGroup1, 0, 2);
         adminGrid.add(buttonGroup2, 1, 2);
         adminGrid.add(logoutButton, 0, 3, 2, 1);
-
 
         // Delete user button, prompts user to confirm deleting user
         deleteUserButton.setOnAction(e -> {
@@ -748,8 +753,6 @@ public class MyJavaFXApp extends Application {
             // Go to the help items scene
             System.out.println("Viewing help items...");
             primaryStage.setScene(helpItemsScene(primaryStage));
-
-
         });
         // Logout button, returns to the login scene
         logoutButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
@@ -801,18 +804,124 @@ public class MyJavaFXApp extends Application {
      * @return instructor scene after successfully login
      */
     private Scene instructorScene(Stage primaryStage) {
-        GridPane instructorSceneGrid = new GridPane();
-        instructorSceneGrid.setPadding(new Insets(20, 20, 20, 20));
-        instructorSceneGrid.setHgap(H_GAP);
-        instructorSceneGrid.setVgap(V_GAP);
-        // Create all the components for the instructor scene
-        Button backToLoginButton = new Button("Back to login");
-        instructorSceneGrid.add(new Label("Instructor Scene"), 0, 0);
-        instructorSceneGrid.add(backToLoginButton, 0, 1);
-        // Back to login button, returns to the login scene
-        backToLoginButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
-        return new Scene(instructorSceneGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
+        GridPane instructorGrid = new GridPane();
+        instructorGrid.getStyleClass().add("root");
+        instructorGrid.setPadding(new Insets(30, 30, 30, 30));
+        instructorGrid.setHgap(15);
+        instructorGrid.setVgap(15);
+        instructorGrid.setAlignment(Pos.CENTER);
+
+        // Header Label
+        Label headerLabel = new Label("Instructor Dashboard 🧑‍🏫");
+        headerLabel.setAlignment(Pos.CENTER);
+        instructorGrid.add(headerLabel, 0, 0, 2, 1);
+
+        // User List View
+        ListView<String> userListView = new ListView<>();
+        updateUserListView(userListView);
+        userListView.setPrefHeight(200);
+        instructorGrid.add(userListView, 0, 1, 2, 1);
+
+        // Buttons
+        Button createHelpItemButton = new Button("Create Help Item");
+        Button viewHelpItemsButton = new Button("View Help Items");
+        Button logoutButton = new Button("Log Out");
+
+        createHelpItemButton.setPrefWidth(150);
+        viewHelpItemsButton.setPrefWidth(150);
+        logoutButton.setPrefWidth(150);
+
+        VBox buttonGroup = new VBox(10, createHelpItemButton, viewHelpItemsButton, logoutButton);
+        instructorGrid.add(buttonGroup, 0, 2, 2, 1); // Corrected to span only 2 columns
+
+        // Logout button action
+        logoutButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
+        viewHelpItemsButton.setOnAction(e -> {
+            // Go to the help items scene
+            System.out.println("Viewing help items...");
+            primaryStage.setScene(helpItemsScene(primaryStage));
+        });
+
+        // Create help item button, prompts user to create a help item
+        createHelpItemButton.setOnAction(e -> {
+            Dialog<Pair<String, String>> dialog = new Dialog<>();
+            dialog.setTitle("Create Help Item");
+            dialog.setHeaderText("Create a new help item");
+
+            // Set the button types
+            ButtonType createButtonType = new ButtonType("Create", ButtonBar.ButtonData.OK_DONE);
+            dialog.getDialogPane().getButtonTypes().addAll(createButtonType, ButtonType.CANCEL);
+
+            TextField titleField = new TextField();
+            titleField.setPromptText("Enter title");
+            TextField descriptionField = new TextField();
+            descriptionField.setPromptText("Enter description");
+            TextField authorField = new TextField();
+            authorField.setPromptText("Enter authors seperated by commas");
+            TextField keywordsField = new TextField();
+            keywordsField.setPromptText("Enter keywords seperated by commas");
+            TextField referencesField = new TextField();
+            referencesField.setPromptText("Enter references seperated by commas");
+
+            GridPane grid = new GridPane();
+            grid.setHgap(10);
+            grid.setVgap(10);
+            grid.setPadding(new Insets(20, 150, 10, 10));
+
+            grid.add(new Label("Title:"), 0, 0);
+            grid.add(titleField, 1, 0);
+            grid.add(new Label("Description:"), 0, 1);
+            grid.add(descriptionField, 1, 1);
+            grid.add(new Label("Authors:"), 0, 2);
+            grid.add(authorField, 1, 2);
+            grid.add(new Label("Keywords:"), 0, 3);
+            grid.add(keywordsField, 1, 3);
+            grid.add(new Label("References:"), 0, 4);
+            grid.add(referencesField, 1, 4);
+
+
+            // Enable/Disable the create button depending on whether a title was entered.
+            Node createButton = dialog.getDialogPane().lookupButton(createButtonType);
+            createButton.setDisable(true);
+
+            titleField.textProperty().addListener((observable, oldValue, newValue) -> {
+                createButton.setDisable(newValue.trim().isEmpty());
+            });
+
+            dialog.getDialogPane().setContent(grid);
+
+            Platform.runLater(titleField::requestFocus);
+
+            dialog.setResultConverter(dialogButton -> {
+                if (dialogButton == createButtonType) {
+                    return new Pair<>(titleField.getText(), descriptionField.getText());
+                }
+                return null;
+            });
+
+            String shortDescription = descriptionField.getText().substring(0, Math.min(descriptionField.getText().length(), 50));
+
+            dialog.showAndWait().ifPresent(title -> {
+                try {
+                    dbUtil.addHelpItem(
+                            titleField.getText(),
+                            descriptionField.getText(),
+                            shortDescription,
+                            authorField.getText(),
+                            keywordsField.getText(),
+                            referencesField.getText()
+                    );
+                } catch (Exception ex) {
+                    System.out.println("Error creating help item");
+                }
+            });
+        });
+
+        Scene instructorScene = new Scene(instructorGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
+        instructorScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("instructorScene.css")).toExternalForm());
+        return instructorScene;
     }
+
 
     /**********
      * FINISH SETUP COMPONENT
@@ -987,8 +1096,15 @@ public class MyJavaFXApp extends Application {
 
         // Actions for back buttons
         backToLoginButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
-        backToDashboard.setOnAction(e -> primaryStage.setScene(adminScene(primaryStage)));
-
+        backToDashboard.setOnAction(e -> {
+            if (currentUser.equals("admin")) {
+                primaryStage.setScene(adminScene(primaryStage));
+            } else if (currentUser.equals("instructor")) {
+                primaryStage.setScene(instructorScene(primaryStage));
+            } else {
+                primaryStage.setScene(studentScene(primaryStage));
+            }
+        });
         Scene helpItemsScene = new Scene(helpItemsGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
         helpItemsScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("helpItems.css")).toExternalForm());
         return helpItemsScene;

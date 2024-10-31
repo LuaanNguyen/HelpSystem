@@ -1,9 +1,7 @@
 package application;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class helpItem {
+    private Integer id;
     private String title;
     private String description;
     private String shortDescription;
@@ -13,6 +11,7 @@ public class helpItem {
 
     /* Default Constructor */
     public helpItem() {
+        this.id = 0;
         this.title = "Default Title";
         this.description = "Default Description";
         this.shortDescription = "Default Short Description";
@@ -23,12 +22,14 @@ public class helpItem {
 
     /* Constructor for creating new Help Item */
 
-    public helpItem(String title,
+    public helpItem(Integer id,
+                    String title,
                     String description,
                     String shortDescription,
                     String author,
                     String keyword,
                     String reference) {
+        this.id = id;
         this.title = title;
         this.description = description;
         this.shortDescription = shortDescription;
@@ -60,6 +61,10 @@ public class helpItem {
 
     public String getReferences() {
         return references;
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     /* Setter Methods */

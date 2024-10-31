@@ -347,7 +347,14 @@ public class DatabaseUtil {
         try (Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
             while (rs.next()) {
-                helpItem helpItem = new helpItem(rs.getString("title"), rs.getString("description"), rs.getString("short_description"), rs.getString("authors"), rs.getString("keywords"), rs.getString("references"));
+                helpItem helpItem = new helpItem(
+                        rs.getInt("id"),
+                        rs.getString("title"),
+                        rs.getString("description"),
+                        rs.getString("short_description"),
+                        rs.getString("authors"),
+                        rs.getString("keywords"),
+                        rs.getString("references"));
                 helpItems.add(helpItem);
             }
         }
@@ -379,7 +386,9 @@ public class DatabaseUtil {
             pstmt.setString(1, title);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    return new helpItem(rs.getString("title"),
+                    return new helpItem(
+                            rs.getInt("id"),
+                            rs.getString("title"),
                             rs.getString("description"),
                             rs.getString("short_description"),
                             rs.getString("authors"),
@@ -402,15 +411,16 @@ public class DatabaseUtil {
         }
     }
 
-    public void updateHelpItem(String title, helpItem newItem) throws SQLException {
-        String query = "UPDATE helpsystem_helpitems SET description = ?, short_description = ?, authors = ?, keywords = ?, references = ? WHERE title = ?";
+    public void updateHelpItem(Integer id, helpItem newItem) throws SQLException {
+        String query = "UPDATE helpsystem_helpitems SET title = ?, description = ?, short_description = ?, authors = ?, keywords = ?, references = ? WHERE id = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
-            pstmt.setString(1, newItem.getDescription());
-            pstmt.setString(2, newItem.getShortDescription());
-            pstmt.setString(3, newItem.getAuthors().toString());
-            pstmt.setString(4, newItem.getKeywords().toString());
-            pstmt.setString(5, newItem.getReferences().toString());
-            pstmt.setString(6, title);
+            pstmt.setString(1, newItem.getTitle());
+            pstmt.setString(2, newItem.getDescription());
+            pstmt.setString(3, newItem.getShortDescription());
+            pstmt.setString(4, newItem.getAuthors());
+            pstmt.setString(5, newItem.getKeywords());
+            pstmt.setString(6, newItem.getReferences());
+            pstmt.setInt(7, id);
             pstmt.executeUpdate();
         }
     }
@@ -433,13 +443,13 @@ public class DatabaseUtil {
                 String references = resultSet.getString("references");
 
                 writer.write(resultSet.getInt("id") + ",");
-                writer.write( title + ",");
+                writer.write(title + ",");
                 writer.write(description + ",");
                 writer.write(short_description + ",");
                 writer.write(authors + ",");
                 writer.write(references + "\n");
             }
-        }   catch (SQLException | IOException e) {
+        } catch (SQLException | IOException e) {
             System.out.println("Error backing up articles.");
             e.printStackTrace();
         }

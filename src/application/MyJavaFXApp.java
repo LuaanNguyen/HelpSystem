@@ -879,12 +879,14 @@ public class MyJavaFXApp extends Application {
         }
 
         Button viewHelpItemButton = new Button("View Help Item");
+        Button backToDashboard = new Button("Back to Dash Board");
         Button backToLoginButton = new Button("Back to Login");
 
         // Add a label and list view to the left side
         helpItemsGrid.add(new Label("Help Items"), 0, 0);
         helpItemsGrid.add(helpItemsListView, 0, 1);
-        helpItemsGrid.add(backToLoginButton, 0, 3);
+        helpItemsGrid.add(backToDashboard, 0, 3);
+        helpItemsGrid.add(backToLoginButton, 0, 4);
 
         // Create a VBox to show selected item details on the right
         VBox itemDetailsBox = new VBox(10);
@@ -914,6 +916,7 @@ public class MyJavaFXApp extends Application {
 
         // Set the back button action to return to the login scene
         backToLoginButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
+        backToDashboard.setOnAction(e -> primaryStage.setScene(adminScene(primaryStage)));
 
         return new Scene(helpItemsGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
     }

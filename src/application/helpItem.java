@@ -7,18 +7,18 @@ public class helpItem {
     private String title;
     private String description;
     private String shortDescription;
-    private List<String> authors = new ArrayList<>();
-    private List<String> keywords = new ArrayList<>();
-    private List<String> references = new ArrayList<>();
+    private String authors;
+    private String keywords;
+    private String references;
 
     /* Default Constructor */
     public helpItem() {
         this.title = "Default Title";
         this.description = "Default Description";
         this.shortDescription = "Default Short Description";
-        this.authors.add("Default Author");
-        this.keywords.add("Default Keyword");
-        this.references.add("Default Reference");
+        this.authors = "Default Author";
+        this.keywords = "Default Keyword";
+        this.references = "Default Reference";
     }
 
     /* Constructor for creating new Help Item */
@@ -32,9 +32,9 @@ public class helpItem {
         this.title = title;
         this.description = description;
         this.shortDescription = shortDescription;
-        this.authors.add(author);
-        this.keywords.add(keyword);
-        this.references.add(reference);
+        this.authors = author;
+        this.keywords = keyword;
+        this.references = reference;
     }
 
     /* Getter Methods */
@@ -50,15 +50,15 @@ public class helpItem {
         return shortDescription;
     }
 
-    public List<String> getAuthors() {
+    public String getAuthors() {
         return authors;
     }
 
-    public List<String> getKeywords() {
+    public String getKeywords() {
         return keywords;
     }
 
-    public List<String> getReferences() {
+    public String getReferences() {
         return references;
     }
 
@@ -75,42 +75,42 @@ public class helpItem {
         this.shortDescription = shortdescription;
     }
 
-    public void setAuthors(List<String> authors) {
+    public void setAuthors(String authors) {
         this.authors = authors;
     }
 
-    public void setKeywords(List<String> keywords) {
+    public void setKeywords(String keywords) {
         this.keywords = keywords;
     }
 
-    public void setreferences(List<String> references) {
+    public void setreferences(String references) {
         this.references = references;
     }
 
     /* Add Methods */
     public void addAuthor(String author) {
-        this.authors.add(author);
+        this.authors = author;
     }
 
     public void addKeyword(String keyword) {
-        this.keywords.add(keyword);
+        this.keywords = keyword;
     }
 
     public void addreference(String reference) {
-        this.references.add(reference);
+        this.references = reference;
     }
 
     /* Remove Methods */
     public void removeAuthor(String author) {
-        this.authors.remove(author);
+        this.authors = author;
     }
 
     public void removeKeyword(String keyword) {
-        this.keywords.remove(keyword);
+        this.keywords = keyword;
     }
 
     public void removereference(String reference) {
-        this.references.remove(reference);
+        this.references = reference;
     }
 
     public void deleteItem() {

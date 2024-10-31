@@ -328,6 +328,7 @@ public class DatabaseUtil {
 
     private void createHelpItemTable() throws SQLException {
         String helpItemTableQuery = "CREATE TABLE IF NOT EXISTS helpsystem_helpitems ("
+                + "id INT AUTO_INCREMENT PRIMARY KEY, "
                 + "title VARCHAR(255) PRIMARY KEY, "
                 + "description VARCHAR (255), "
                 + "short_description VARCHAR(255), "

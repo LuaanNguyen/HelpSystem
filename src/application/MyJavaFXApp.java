@@ -1019,8 +1019,6 @@ public class MyJavaFXApp extends Application {
         Button viewHelpItemButton = new Button("View Help Item");
         Button backToDashboard = new Button("Back to Dashboard");
         Button backToLoginButton = new Button("Back to Login");
-
-
         backToDashboard.setMinWidth(150);
         backToLoginButton.setMinWidth(150);
         viewHelpItemButton.setMinWidth(150);
@@ -1036,28 +1034,63 @@ public class MyJavaFXApp extends Application {
         listViewBox.setStyle("-fx-border-color: #ddd; -fx-border-width: 1px; -fx-border-radius: 5px;");
         helpItemsGrid.add(listViewBox, 0, 0);
 
-        // VBox for item details display on the right
+        // VBox for item details display on the right with editable fields
         VBox itemDetailsBox = new VBox(10);
         itemDetailsBox.setPrefSize(500, 500);
         itemDetailsBox.setPadding(new Insets(10));
         itemDetailsBox.setStyle("-fx-border-color: #ccc; -fx-border-width: 1px; -fx-border-radius: 5px;");
-        itemDetailsBox.getChildren().add(new Label("Select a help item to view details."));
+
+        TextField titleField = new TextField();
+        TextArea descriptionField = new TextArea();
+        TextField authorsField = new TextField();
+        TextField keywordsField = new TextField();
+        TextField referencesField = new TextField();
+        Button saveButton = new Button("Save Changes");
+
+        itemDetailsBox.getChildren().addAll(
+                new Label("Title:"), titleField,
+                new Label("Description:"), descriptionField,
+                new Label("Authors:"), authorsField,
+                new Label("Keywords:"), keywordsField,
+                new Label("References:"), referencesField,
+                saveButton
+        );
         helpItemsGrid.add(itemDetailsBox, 1, 0);
 
         // Update item details on selection
         helpItemsListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            itemDetailsBox.getChildren().clear(); // Clear old details
             if (newValue != null) {
                 helpItem selectedHelpItem = dbUtil.getHelpItem(newValue);
-                Label selectedItemTitle = new Label("Title: " + selectedHelpItem.getTitle());
-                Label selectedItemDescription = new Label("Description: " + selectedHelpItem.getDescription());
-                Label selectedItemAuthors = new Label("Authors: " + selectedHelpItem.getAuthors());
-                Label selectedItemKeywords = new Label("Keywords: " + selectedHelpItem.getKeywords());
-                Label selectedItemReferences = new Label("References: " + selectedHelpItem.getReferences());
-                itemDetailsBox.getChildren().addAll(
-                        selectedItemTitle, selectedItemDescription, selectedItemAuthors,
-                        selectedItemKeywords, selectedItemReferences
+                titleField.setText(selectedHelpItem.getTitle());
+                descriptionField.setText(selectedHelpItem.getDescription());
+                authorsField.setText(selectedHelpItem.getAuthors().toString());
+                keywordsField.setText(selectedHelpItem.getKeywords().toString());
+                referencesField.setText(selectedHelpItem.getReferences().toString());
+            }
+        });
+
+        // Save button action to update the help item
+        saveButton.setOnAction(e -> {
+            String selectedTitle = helpItemsListView.getSelectionModel().getSelectedItem();
+            if (selectedTitle != null) {
+                String shortDescription = descriptionField.getText().substring(0, Math.min(descriptionField.getText().length(), 50));
+                helpItem updatedItem = new helpItem(
+                        titleField.getText(),
+                        descriptionField.getText(),
+                        shortDescription,
+                        authorsField.getText(),
+                        keywordsField.getText(),
+                        referencesField.getText()
                 );
+                try {
+                    dbUtil.updateHelpItem(selectedTitle, updatedItem); // Assume `updateHelpItem` is a method in dbUtil
+                    helpItemsListView.getItems().set(
+                            helpItemsListView.getSelectionModel().getSelectedIndex(),
+                            updatedItem.getTitle()
+                    );
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
             }
         });
 
@@ -1076,7 +1109,6 @@ public class MyJavaFXApp extends Application {
         helpItemsScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("helpItems.css")).toExternalForm());
         return helpItemsScene;
     }
-
 
 
     /*******************************************************************************************************/

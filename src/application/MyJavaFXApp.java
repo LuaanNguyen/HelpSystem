@@ -514,7 +514,7 @@ public class MyJavaFXApp extends Application {
         adminGrid.setAlignment(Pos.CENTER);
 
         // Header
-        Label headerLabel = new Label("Admin Dashboard 📊");
+        Label headerLabel = new Label("Admin Dashboard \uD83E\uDDD1\uD83C\uDFFC\u200D\uD83D\uDCBB");
         headerLabel.setAlignment((Pos.CENTER));
         headerLabel.getStyleClass().add("header-label");
         adminGrid.add(headerLabel, 0, 0, 2, 1);

@@ -248,7 +248,7 @@ public class MyJavaFXApp extends Application {
             alert.setHeaderText(null);
 
             // Load the GIF image
-            Image gifImage = new Image("file:src/twerk.gif");
+            Image gifImage = new Image("file:src/amougus.gif");
             ImageView gifImageView = new ImageView(gifImage);
 
             // Set properties for the image view to adjust size
@@ -1016,15 +1016,13 @@ public class MyJavaFXApp extends Application {
         }
 
         // Action buttons with styling for navigation
-        Button viewHelpItemButton = new Button("View Help Item");
         Button backToDashboard = new Button("Back to Dashboard");
         Button backToLoginButton = new Button("Back to Login");
         backToDashboard.setMinWidth(150);
         backToLoginButton.setMinWidth(150);
-        viewHelpItemButton.setMinWidth(150);
 
         // VBox layout for buttons at the bottom
-        VBox buttonBox = new VBox(10, viewHelpItemButton, backToDashboard, backToLoginButton);
+        VBox buttonBox = new VBox(10, backToDashboard, backToLoginButton);
         buttonBox.setAlignment(Pos.CENTER);
         buttonBox.setPadding(new Insets(10));
 
@@ -1046,6 +1044,9 @@ public class MyJavaFXApp extends Application {
         TextField keywordsField = new TextField();
         TextField referencesField = new TextField();
         Button saveButton = new Button("Save Changes");
+        Label confirmationMessage = new Label();
+
+
 
         itemDetailsBox.getChildren().addAll(
                 new Label("Title:"), titleField,
@@ -1053,7 +1054,7 @@ public class MyJavaFXApp extends Application {
                 new Label("Authors:"), authorsField,
                 new Label("Keywords:"), keywordsField,
                 new Label("References:"), referencesField,
-                saveButton
+                saveButton, confirmationMessage
         );
         helpItemsGrid.add(itemDetailsBox, 1, 0);
 
@@ -1073,6 +1074,7 @@ public class MyJavaFXApp extends Application {
         saveButton.setOnAction(e -> {
             String selectedTitle = helpItemsListView.getSelectionModel().getSelectedItem();
             if (selectedTitle != null) {
+                confirmationMessage.setText("Changes saved successfully!");
                 String shortDescription = descriptionField.getText().substring(0, Math.min(descriptionField.getText().length(), 50));
                 helpItem updatedItem = new helpItem(
                         titleField.getText(),

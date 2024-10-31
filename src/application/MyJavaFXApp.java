@@ -533,9 +533,8 @@ public class MyJavaFXApp extends Application {
         Button createHelpItemButton = new Button("Create Help Item");
         Button viewHelpItemsButton = new Button("View Help Items");
         Button logoutButton = new Button("Log Out");
-
         Button backupButton = new Button("Backup Articles");
-        backupButton.setOnAction(e -> backupArticles());
+
 
         // Set preferred width for buttons
         deleteUserButton.setPrefWidth(150);
@@ -547,7 +546,7 @@ public class MyJavaFXApp extends Application {
         logoutButton.setPrefWidth(150);
 
         // Grouped button layout
-        VBox buttonGroup1 = new VBox(10, deleteUserButton, addRoleButton, removeRoleButton);
+        VBox buttonGroup1 = new VBox(10, deleteUserButton, addRoleButton, removeRoleButton, logoutButton);
         VBox buttonGroup2 = new VBox(10, inviteUserButton, createHelpItemButton, viewHelpItemsButton, backupButton);
         buttonGroup1.setAlignment(Pos.TOP_CENTER);
         buttonGroup2.setAlignment(Pos.TOP_CENTER);
@@ -555,8 +554,8 @@ public class MyJavaFXApp extends Application {
         // Add to grid
         adminGrid.add(buttonGroup1, 0, 2);
         adminGrid.add(buttonGroup2, 1, 2);
-        adminGrid.add(logoutButton, 0, 3, 2, 1);
 
+        backupButton.setOnAction(e -> backupArticles());
         // Delete user button, prompts user to confirm deleting user
         deleteUserButton.setOnAction(e -> {
             String selectedUser = userListView.getSelectionModel().getSelectedItem();

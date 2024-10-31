@@ -1,7 +1,4 @@
 package application;
-import javafx.scene.layout.StackPane;
-import application.User;
-import javafx.util.Pair;
 import javafx.application.Application;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
@@ -453,9 +450,6 @@ public class MyJavaFXApp extends Application {
                 errorMessageLabel.setText("Username, password, invite code cannot be empty!");
                 // Check if the password meets the requirements
             }
-            else if(!password.isEmpty() && !username.isEmpty() && !invitationCode.isEmpty()){
-                errorMessageLabel.setText("");
-            }
             else if (!password.matches(".*[!@#$%^&*].*")) {
                 System.out.println("Password must contain at least 1 Special Character");
             }
@@ -765,6 +759,10 @@ public class MyJavaFXApp extends Application {
         Scene finishSetupScene = new Scene(finishSetupGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
         finishSetupScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("finishSetup.css")).toExternalForm());
         return finishSetupScene;
+    }
+
+    private Scene articleViewScene(Stage primaryStage){
+        return null;
     }
 
 

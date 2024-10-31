@@ -248,7 +248,7 @@ public class MyJavaFXApp extends Application {
             alert.setHeaderText(null);
 
             // Load the GIF image
-            Image gifImage = new Image("file:src/amougus.gif");
+            Image gifImage = new Image("file:src/squidy.gif");
             ImageView gifImageView = new ImageView(gifImage);
 
             // Set properties for the image view to adjust size

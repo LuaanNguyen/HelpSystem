@@ -534,6 +534,9 @@ public class MyJavaFXApp extends Application {
         Button viewHelpItemsButton = new Button("View Help Items");
         Button logoutButton = new Button("Log Out");
 
+        Button backupButton = new Button("Backup Articles");
+        backupButton.setOnAction(e -> backupArticles());
+
         // Set preferred width for buttons
         deleteUserButton.setPrefWidth(150);
         addRoleButton.setPrefWidth(150);
@@ -545,7 +548,7 @@ public class MyJavaFXApp extends Application {
 
         // Grouped button layout
         VBox buttonGroup1 = new VBox(10, deleteUserButton, addRoleButton, removeRoleButton);
-        VBox buttonGroup2 = new VBox(10, inviteUserButton, createHelpItemButton, viewHelpItemsButton);
+        VBox buttonGroup2 = new VBox(10, inviteUserButton, createHelpItemButton, viewHelpItemsButton, backupButton);
         buttonGroup1.setAlignment(Pos.TOP_CENTER);
         buttonGroup2.setAlignment(Pos.TOP_CENTER);
 
@@ -826,12 +829,14 @@ public class MyJavaFXApp extends Application {
         Button createHelpItemButton = new Button("Create Help Item");
         Button viewHelpItemsButton = new Button("View Help Items");
         Button logoutButton = new Button("Log Out");
+        Button backupButton = new Button("Backup Articles");
+        backupButton.setOnAction(e -> backupArticles());
 
         createHelpItemButton.setPrefWidth(150);
         viewHelpItemsButton.setPrefWidth(150);
         logoutButton.setPrefWidth(150);
 
-        VBox buttonGroup = new VBox(10, createHelpItemButton, viewHelpItemsButton, logoutButton);
+        VBox buttonGroup = new VBox(10, createHelpItemButton, viewHelpItemsButton, logoutButton, backupButton);
         instructorGrid.add(buttonGroup, 0, 2, 2, 1); // Corrected to span only 2 columns
 
         // Logout button action
@@ -1108,6 +1113,36 @@ public class MyJavaFXApp extends Application {
         Scene helpItemsScene = new Scene(helpItemsGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
         helpItemsScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("helpItems.css")).toExternalForm());
         return helpItemsScene;
+    }
+
+    /**********
+     * private void backupArticles()
+     *
+     *The program shall provide commands to back up the set of articles to a secondary storage file
+     *with an operator-specified file name and to load a backed-up set of articles from an operator-specified file.
+     *The restore operation first resets the application's set of articles to empty before loading the backed-up set.
+     */
+    private void backupArticles() {
+        TextInputDialog dialog = new TextInputDialog("backup.csv");
+        dialog.setTitle("Backup Articles");
+        dialog.setHeaderText("Enter the file name for the backup:");
+        dialog.setContentText("File Name:");
+
+        dialog.showAndWait().ifPresent(fileName -> {
+            try {
+                dbUtil.backupHelpItemsToFile(fileName.trim());
+                showAlert("Success", "Articles backed up to " + fileName);
+            } catch (Exception e) {
+                showAlert("Error", "Failed to backup articles: " + e.getMessage());
+            }
+        });
+    }
+
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
 

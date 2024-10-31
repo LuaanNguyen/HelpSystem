@@ -6,7 +6,6 @@ import java.util.UUID;
 
 public class helpItem {
     private String title;
-    private String uuid;
     private String description;
     private String shortDescription;
     private List<String> authors = new ArrayList<>();
@@ -16,7 +15,6 @@ public class helpItem {
     /* Default Constructor */
     public helpItem() {
         this.title = "Default Title";
-        this.uuid = "Default UUID";
         this.description = "Default Description";
         this.shortDescription = "Default Short Description";
         this.authors.add("Default Author");
@@ -33,7 +31,6 @@ public class helpItem {
                     String keyword,
                     String reference) {
         this.title = title;
-        this.uuid = UUID.randomUUID().toString();
         this.description = description;
         this.shortDescription = shortDescription;
         this.authors.add(author);
@@ -62,7 +59,7 @@ public class helpItem {
         return keywords;
     }
 
-    public List<String> getreferences() {
+    public List<String> getReferences() {
         return references;
     }
 
@@ -132,11 +129,5 @@ public class helpItem {
         System.out.println("Short Description: " + this.shortDescription);
     }
 
-    public String getUuid() {
-        return uuid;
-    }
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
 }

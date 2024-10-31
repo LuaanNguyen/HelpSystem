@@ -328,9 +328,8 @@ public class DatabaseUtil {
 
     private void createHelpItemTable() throws SQLException {
         String helpItemTableQuery = "CREATE TABLE IF NOT EXISTS helpsystem_helpitems ("
-                + "id INT AUTO_INCREMENT PRIMARY KEY, "
-                + "title VARCHAR(255), "
-                + "description VARCHAR(255), "
+                + "title VARCHAR(255) PRIMARY KEY, "
+                + "description VARCHAR (255), "
                 + "short_description VARCHAR(255), "
                 + "authors VARCHAR(255), "
                 + "keywords VARCHAR(255), "
@@ -363,6 +362,32 @@ public class DatabaseUtil {
             pstmt.setString(6, reference);
             pstmt.executeUpdate();
         }
+    }
+
+    public void resetHelpItemDatabase() throws SQLException {
+        String dropHelpItemTableQuery = "DROP TABLE IF EXISTS helpsystem_helpitems";
+        statement.execute(dropHelpItemTableQuery);
+        createHelpItemTable();  // Recreate the tables
+    }
+
+    public helpItem getHelpItem(String title) {
+        String query = "SELECT * FROM helpsystem_helpitems WHERE title = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setString(1, title);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return new helpItem(rs.getString("title"),
+                            rs.getString("description"),
+                            rs.getString("short_description"),
+                            rs.getString("authors"),
+                            rs.getString("keywords"),
+                            rs.getString("references"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

@@ -316,6 +316,7 @@ public class MyJavaFXApp extends Application {
                     try {
                         dbUtil.resetUserDatabase();
                         dbUtil.resetInvitationDatabase();
+                        dbUtil.resetHelpItemDatabase();
                         System.out.println("All databases reset successfully. Going back to Admin scene...");
                         primaryStage.setScene(createAdminSetupScene(primaryStage));
                     } catch (SQLException ex) {
@@ -862,46 +863,61 @@ public class MyJavaFXApp extends Application {
     private Scene helpItemsScene(Stage primaryStage) {
         GridPane helpItemsGrid = new GridPane();
         helpItemsGrid.setPadding(new Insets(20, 20, 20, 20));
-        helpItemsGrid.setHgap(H_GAP);
-        helpItemsGrid.setVgap(V_GAP);
-        // Create all the components for the help items scene
+        helpItemsGrid.setHgap(10); // Adjust gaps for cleaner layout
+        helpItemsGrid.setVgap(10);
+
         ListView<String> helpItemsListView = new ListView<>();
-        // Get all help items from DB using getAllHelpItems method in DBUtil
+
+        // Fetch and populate help items
         try {
             List<helpItem> helpItems = dbUtil.getAllHelpItems();
-            for (helpItem helpItem : helpItems) {
-                helpItemsListView.getItems().add(helpItem.getTitle());
+            for (helpItem item : helpItems) {
+                helpItemsListView.getItems().add(item.getTitle());
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
+
         Button viewHelpItemButton = new Button("View Help Item");
-        Button backToLoginButton = new Button("Back to login");
-        // Positioning of all components
+        Button backToLoginButton = new Button("Back to Login");
+
+        // Add a label and list view to the left side
         helpItemsGrid.add(new Label("Help Items"), 0, 0);
         helpItemsGrid.add(helpItemsListView, 0, 1);
-        helpItemsGrid.add(viewHelpItemButton, 0, 2);
         helpItemsGrid.add(backToLoginButton, 0, 3);
-        // View help item button, prompts user to view a help item
-        viewHelpItemButton.setOnAction(e -> {
-            String selectedHelpItem = helpItemsListView.getSelectionModel().getSelectedItem();
-            if (selectedHelpItem != null) {
-                try {
-                    helpItem helpItem = dbUtil.getHelpItemByTitle(selectedHelpItem);
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle(helpItem.getTitle());
-                    alert.setHeaderText(helpItem.getShortDescription());
-                    alert.setContentText(helpItem.getDescription());
-                    alert.showAndWait();
-                } catch (Exception ex) {
-                    System.out.println("Error viewing help item");
-                }
+
+        // Create a VBox to show selected item details on the right
+        VBox itemDetailsBox = new VBox(10);
+        itemDetailsBox.setPadding(new Insets(10));
+        itemDetailsBox.setStyle("-fx-border-color: #ccc; -fx-border-width: 1px;");
+
+        helpItemsGrid.add(itemDetailsBox, 1, 1, 1, 5); // Span rows for a clean look
+
+        // Update item details when a new item is selected
+        helpItemsListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            itemDetailsBox.getChildren().clear(); // Clear old details
+
+            if (newValue != null) {
+                helpItem selectedHelpItem = dbUtil.getHelpItem(newValue);
+
+                Label titleLabel = new Label("Title: " + selectedHelpItem.getTitle());
+                Label descriptionLabel = new Label("Description: " + selectedHelpItem.getDescription());
+                Label authorsLabel = new Label("Authors: " + selectedHelpItem.getAuthors());
+                Label keywordsLabel = new Label("Keywords: " + selectedHelpItem.getKeywords());
+                Label referencesLabel = new Label("References: " + selectedHelpItem.getReferences());
+
+                itemDetailsBox.getChildren().addAll(
+                        titleLabel, descriptionLabel, authorsLabel, keywordsLabel, referencesLabel
+                );
             }
         });
-        // Back to login button, returns to the login scene
+
+        // Set the back button action to return to the login scene
         backToLoginButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
+
         return new Scene(helpItemsGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
     }
+
 
     /*******************************************************************************************************/
     /*******************************************************************************************************

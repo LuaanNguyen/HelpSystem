@@ -1,5 +1,4 @@
 package application;
-
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
@@ -17,11 +16,9 @@ import javafx.scene.layout.GridPane;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.ComboBox;
-
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
-
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.h2.command.dml.Insert;

@@ -33,10 +33,10 @@
     -fx-background-radius: 5px;
 }
 
-.button:  hover {
-    -fx-background-color: rgba(44, 44, 44, 0.75);
-    -fx-cursor: hand;
-}
+/*.button:  hover {*/
+/*    -fx-background-color: rgba(44, 44, 44, 0.75);*/
+/*    -fx-cursor: hand;*/
+/*}*/
 
 /* List view style */
 .list-view {

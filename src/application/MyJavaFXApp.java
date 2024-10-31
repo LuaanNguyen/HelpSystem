@@ -39,8 +39,8 @@ import javafx.scene.image.ImageView;
 
 public class MyJavaFXApp extends Application {
     //Global Window sizes
-    public static final int WINDOW_HEIGHT = 900;
     public static final int WINDOW_WIDTH = 600;
+    public static final int WINDOW_HEIGHT = 900;
     public static final int H_GAP = 20;
     public static final int V_GAP = 20;
 
@@ -495,35 +495,60 @@ public class MyJavaFXApp extends Application {
 
     /**********
      * ADMIN SCENE
-     *
+     * both instructor and admin can access this
      * @param primaryStage primaryStage
      * @return admin scene after successfully login as admin
      */
     private Scene adminScene(Stage primaryStage) {
         GridPane adminGrid = new GridPane();
-        adminGrid.setPadding(new Insets(20, 20, 20, 20));
-        adminGrid.setHgap(10);
-        adminGrid.setVgap(10);
+        adminGrid.getStyleClass().add("root");
+        adminGrid.setPadding(new Insets(30, 30, 30, 30));
+        adminGrid.setHgap(15);
+        adminGrid.setVgap(15);
+        adminGrid.setAlignment(Pos.CENTER);
 
+        // Header
+        Label headerLabel = new Label("Dashboard 📊");
+        headerLabel.setAlignment((Pos.CENTER));
+        headerLabel.getStyleClass().add("header-label");
+        adminGrid.add(headerLabel, 0, 0, 2, 1);
+
+        // User List
         ListView<String> userListView = new ListView<>();
         updateUserListView(userListView);
-        // Create buttons for admin scene
+        userListView.setPrefHeight(200);
+        adminGrid.add(userListView, 0, 1, 2, 1);
+
+        // Button styles
         Button deleteUserButton = new Button("Delete User");
         Button addRoleButton = new Button("Add Role");
         Button removeRoleButton = new Button("Remove Role");
         Button inviteUserButton = new Button("Invite User");
         Button createHelpItemButton = new Button("Create Help Item");
-        Button logoutButton = new Button("Log Out");
         Button viewHelpItemsButton = new Button("View Help Items");
-        // Positioning of all components
-        adminGrid.add(userListView, 0, 0, 2, 1);
-        adminGrid.add(deleteUserButton, 0, 1);
-        adminGrid.add(addRoleButton, 0, 2);
-        adminGrid.add(removeRoleButton, 1, 2);
-        adminGrid.add(inviteUserButton, 0, 3);
-        adminGrid.add(logoutButton, 0, 4, 2, 1);
-        adminGrid.add(createHelpItemButton, 1, 1);
-        adminGrid.add(viewHelpItemsButton, 1, 3);
+        Button logoutButton = new Button("Log Out");
+
+        // Set preferred width for buttons
+        deleteUserButton.setPrefWidth(150);
+        addRoleButton.setPrefWidth(150);
+        removeRoleButton.setPrefWidth(150);
+        inviteUserButton.setPrefWidth(150);
+        createHelpItemButton.setPrefWidth(150);
+        viewHelpItemsButton.setPrefWidth(150);
+        logoutButton.setPrefWidth(150);
+
+        // Grouped button layout
+        VBox buttonGroup1 = new VBox(10, deleteUserButton, addRoleButton, removeRoleButton);
+        VBox buttonGroup2 = new VBox(10, inviteUserButton, createHelpItemButton, viewHelpItemsButton);
+        buttonGroup1.setAlignment(Pos.TOP_CENTER);
+        buttonGroup2.setAlignment(Pos.TOP_CENTER);
+
+        // Add to grid
+        adminGrid.add(buttonGroup1, 0, 2);
+        adminGrid.add(buttonGroup2, 1, 2);
+        adminGrid.add(logoutButton, 0, 3, 2, 1);
+
+
 
         // Delete user button, prompts user to confirm deleting user
         deleteUserButton.setOnAction(e -> {
@@ -729,6 +754,7 @@ public class MyJavaFXApp extends Application {
         });
         // Logout button, returns to the login scene
         logoutButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
+        // Set scene and stylesheet
         Scene adminScene = new Scene(adminGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
         adminScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("adminScene.css")).toExternalForm());
         return adminScene;
@@ -852,23 +878,26 @@ public class MyJavaFXApp extends Application {
     }
 
     /**
-     * This method creates the scene for viewing the help items
-     * In this scene, the user can view all the help items
-     * It gets the help items from the database and displays them in a list view
-     * The user can click on a help item to view more details
+     * Creates the scene for viewing help items.
+     * Users can view all help items in a list and click on an item to see more details.
      *
-     * @param primaryStage primaryStage
-     * @return
+     * @param primaryStage The main stage.
+     * @return Scene for viewing help items.
      */
     private Scene helpItemsScene(Stage primaryStage) {
+        // Root layout for the help items view
         GridPane helpItemsGrid = new GridPane();
-        helpItemsGrid.setPadding(new Insets(20, 20, 20, 20));
-        helpItemsGrid.setHgap(10); // Adjust gaps for cleaner layout
+        helpItemsGrid.setPadding(new Insets(20));
+        helpItemsGrid.setHgap(15);
         helpItemsGrid.setVgap(10);
+        helpItemsGrid.getStyleClass().add("root");
 
+        // Title and styling for the main label
+        Label titleLabel = new Label("Help Items 📚");
+        titleLabel.setStyle("-fx-font-weight: bold; -fx-padding: 0 0 10 0;");
+
+        // List view to display help items from the database
         ListView<String> helpItemsListView = new ListView<>();
-
-        // Fetch and populate help items
         try {
             List<helpItem> helpItems = dbUtil.getAllHelpItems();
             for (helpItem item : helpItems) {
@@ -878,48 +907,61 @@ public class MyJavaFXApp extends Application {
             ex.printStackTrace();
         }
 
+        // Action buttons with styling for navigation
         Button viewHelpItemButton = new Button("View Help Item");
-        Button backToDashboard = new Button("Back to Dash Board");
+        Button backToDashboard = new Button("Back to Dashboard");
         Button backToLoginButton = new Button("Back to Login");
 
-        // Add a label and list view to the left side
-        helpItemsGrid.add(new Label("Help Items"), 0, 0);
-        helpItemsGrid.add(helpItemsListView, 0, 1);
-        helpItemsGrid.add(backToDashboard, 0, 3);
-        helpItemsGrid.add(backToLoginButton, 0, 4);
 
-        // Create a VBox to show selected item details on the right
+        backToDashboard.setMinWidth(150);
+        backToLoginButton.setMinWidth(150);
+        viewHelpItemButton.setMinWidth(150);
+
+        // VBox layout for buttons at the bottom
+        VBox buttonBox = new VBox(10, viewHelpItemButton, backToDashboard, backToLoginButton);
+        buttonBox.setAlignment(Pos.CENTER);
+        buttonBox.setPadding(new Insets(10));
+
+        // Border for the list view section
+        VBox listViewBox = new VBox(10, titleLabel, helpItemsListView, buttonBox);
+        listViewBox.setPadding(new Insets(10));
+        listViewBox.setStyle("-fx-border-color: #ddd; -fx-border-width: 1px; -fx-border-radius: 5px;");
+        helpItemsGrid.add(listViewBox, 0, 0);
+
+        // VBox for item details display on the right
         VBox itemDetailsBox = new VBox(10);
+        itemDetailsBox.setPrefSize(500, 500);
         itemDetailsBox.setPadding(new Insets(10));
-        itemDetailsBox.setStyle("-fx-border-color: #ccc; -fx-border-width: 1px;");
+        itemDetailsBox.setStyle("-fx-border-color: #ccc; -fx-border-width: 1px; -fx-border-radius: 5px;");
+        itemDetailsBox.getChildren().add(new Label("Select a help item to view details."));
+        helpItemsGrid.add(itemDetailsBox, 1, 0);
 
-        helpItemsGrid.add(itemDetailsBox, 1, 1, 1, 5); // Span rows for a clean look
-
-        // Update item details when a new item is selected
+        // Update item details on selection
         helpItemsListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             itemDetailsBox.getChildren().clear(); // Clear old details
-
             if (newValue != null) {
                 helpItem selectedHelpItem = dbUtil.getHelpItem(newValue);
-
-                Label titleLabel = new Label("Title: " + selectedHelpItem.getTitle());
-                Label descriptionLabel = new Label("Description: " + selectedHelpItem.getDescription());
-                Label authorsLabel = new Label("Authors: " + selectedHelpItem.getAuthors());
-                Label keywordsLabel = new Label("Keywords: " + selectedHelpItem.getKeywords());
-                Label referencesLabel = new Label("References: " + selectedHelpItem.getReferences());
-
+                Label selectedItemTitle = new Label("Title: " + selectedHelpItem.getTitle());
+                Label selectedItemDescription = new Label("Description: " + selectedHelpItem.getDescription());
+                Label selectedItemAuthors = new Label("Authors: " + selectedHelpItem.getAuthors());
+                Label selectedItemKeywords = new Label("Keywords: " + selectedHelpItem.getKeywords());
+                Label selectedItemReferences = new Label("References: " + selectedHelpItem.getReferences());
                 itemDetailsBox.getChildren().addAll(
-                        titleLabel, descriptionLabel, authorsLabel, keywordsLabel, referencesLabel
+                        selectedItemTitle, selectedItemDescription, selectedItemAuthors,
+                        selectedItemKeywords, selectedItemReferences
                 );
             }
         });
 
-        // Set the back button action to return to the login scene
+        // Actions for back buttons
         backToLoginButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
         backToDashboard.setOnAction(e -> primaryStage.setScene(adminScene(primaryStage)));
 
-        return new Scene(helpItemsGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
+        Scene helpItemsScene = new Scene(helpItemsGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
+        helpItemsScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("helpItems.css")).toExternalForm());
+        return helpItemsScene;
     }
+
 
 
     /*******************************************************************************************************/

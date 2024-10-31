@@ -1,0 +1,47 @@
+.root {
+    -fx-background-color: linear-gradient(to top right, #FFDEE9, #B5FFFC);
+    -fx-border-color: rgba(0, 0, 0, 0.24);
+    -fx-border-width: 2px;
+    -fx-min-width: 300;
+    -fx-max-width: 300;
+    -fx-min-height: 380;
+    -fx-max-height: 380;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-padding: 5px;
+}
+
+/* Header label style */
+.header-label {
+    -fx-font-family: "JetBrains Mono SemiBold";
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-padding: 10px;
+    -fx-text-fill: #000000; /* Text color consistent with the theme */
+}
+
+/* Button style */
+.button {
+    -fx-background-color: #2c2c2c;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-min-width: 220;
+    -fx-max-width: 220;
+    -fx-min-height: 32;
+    -fx-max-height: 32;
+    -fx-border-radius: 0px; /* Set the border radius */
+    -fx-background-radius: 5px;
+}
+
+/*.button:  hover {*/
+/*    -fx-background-color: rgba(44, 44, 44, 0.75);*/
+/*    -fx-cursor: hand;*/
+/*}*/
+
+/* List view style */
+.list-view {
+    -fx-border-color: #ccc; /* Light gray border color */
+    -fx-border-radius: 5px;
+    -fx-padding: 5px;
+    -fx-background-radius: 5px;
+}

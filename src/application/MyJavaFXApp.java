@@ -1,4 +1,5 @@
 package application;
+
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
@@ -16,12 +17,18 @@ import javafx.scene.layout.GridPane;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.ComboBox;
+
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
+
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.h2.command.dml.Insert;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.scene.control.TextField;
 
 
 /**
@@ -993,6 +1000,7 @@ public class MyJavaFXApp extends Application {
      * @param primaryStage The main stage.
      * @return Scene for viewing help items.
      */
+
     private Scene helpItemsScene(Stage primaryStage) {
         GridPane helpItemsGrid = new GridPane();
         helpItemsGrid.setPadding(new Insets(20));
@@ -1003,31 +1011,55 @@ public class MyJavaFXApp extends Application {
         Label titleLabel = new Label("Help Items 📚");
         titleLabel.setStyle("-fx-font-weight: bold; -fx-padding: 0 0 10 0;");
 
+        // Search box for filtering help items
+        TextField searchBox = new TextField();
+        searchBox.setPromptText("Search help items...");
+
+        // ListView for displaying help items
         ListView<String> helpItemsListView = new ListView<>();
+
+        // Load help items into an observable list
+        ObservableList<String> helpItemsList = FXCollections.observableArrayList();
         try {
             List<helpItem> helpItems = dbUtil.getAllHelpItems();
             for (helpItem item : helpItems) {
-                helpItemsListView.getItems().add(item.getTitle());
+                helpItemsList.add(item.getTitle());
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
+
+        // Wrap the helpItemsList with a FilteredList for search functionality
+        FilteredList<String> filteredHelpItems = new FilteredList<>(helpItemsList, s -> true);
+        helpItemsListView.setItems(filteredHelpItems);
+
+        // Update filter whenever the search box text changes
+        searchBox.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredHelpItems.setPredicate(title -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true; // Show all if search is empty
+                }
+                String lowerCaseFilter = newValue.toLowerCase();
+                return title.toLowerCase().contains(lowerCaseFilter); // Filter based on title
+            });
+        });
 
         Button backToDashboard = new Button("Back to Dashboard");
         Button backToLoginButton = new Button("Back to Login");
         backToDashboard.setMinWidth(150);
         backToLoginButton.setMinWidth(150);
 
-        // VBox layout for buttons at the bottom
+        // Layout for buttons and ListView
         VBox buttonBox = new VBox(10, backToDashboard, backToLoginButton);
         buttonBox.setAlignment(Pos.CENTER);
         buttonBox.setPadding(new Insets(10));
 
-        VBox listViewBox = new VBox(10, titleLabel, helpItemsListView, buttonBox);
+        VBox listViewBox = new VBox(10, titleLabel, searchBox, helpItemsListView, buttonBox);
         listViewBox.setPadding(new Insets(10));
         listViewBox.setStyle("-fx-border-color: #ddd; -fx-border-width: 1px; -fx-border-radius: 5px;");
         helpItemsGrid.add(listViewBox, 0, 0);
 
+        // Details section
         VBox itemDetailsBox = new VBox(10);
         itemDetailsBox.setPrefSize(500, 500);
         itemDetailsBox.setPadding(new Insets(10));
@@ -1043,8 +1075,6 @@ public class MyJavaFXApp extends Application {
         Button saveButton = new Button("Save Changes");
         Label confirmationMessage = new Label();
 
-
-
         itemDetailsBox.getChildren().addAll(
                 itemIDLabel, itemID,
                 new Label("Title:"), titleField,
@@ -1056,6 +1086,7 @@ public class MyJavaFXApp extends Application {
         );
         helpItemsGrid.add(itemDetailsBox, 1, 0);
 
+        // ListView selection listener for displaying details
         helpItemsListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 helpItem selectedHelpItem = dbUtil.getHelpItem(newValue);

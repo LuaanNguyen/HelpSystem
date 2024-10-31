@@ -390,5 +390,26 @@ public class DatabaseUtil {
         return null;
     }
 
+    public void deleteHelpItem(String title) throws SQLException {
+        String query = "DELETE FROM helpsystem_helpitems WHERE title = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setString(1, title);
+            pstmt.executeUpdate();
+        }
+    }
+
+    public void updateHelpItem(String title, helpItem newItem) throws SQLException {
+        String query = "UPDATE helpsystem_helpitems SET description = ?, short_description = ?, authors = ?, keywords = ?, references = ? WHERE title = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setString(1, newItem.getDescription());
+            pstmt.setString(2, newItem.getShortDescription());
+            pstmt.setString(3, newItem.getAuthors().toString());
+            pstmt.setString(4, newItem.getKeywords().toString());
+            pstmt.setString(5, newItem.getReferences().toString());
+            pstmt.setString(6, title);
+            pstmt.executeUpdate();
+        }
+    }
+
 }
 

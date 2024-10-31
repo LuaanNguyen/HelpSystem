@@ -8,6 +8,8 @@ import java.sql.Statement;
 import java.security.SecureRandom;
 import java.util.List;
 import java.util.ArrayList;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  * <p> DatabaseUtil </p>
@@ -391,6 +393,7 @@ public class DatabaseUtil {
         return null;
     }
 
+
     public void deleteHelpItem(String title) throws SQLException {
         String query = "DELETE FROM helpsystem_helpitems WHERE title = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
@@ -409,6 +412,36 @@ public class DatabaseUtil {
             pstmt.setString(5, newItem.getReferences().toString());
             pstmt.setString(6, title);
             pstmt.executeUpdate();
+        }
+    }
+
+
+    /**********
+     * Backup encrypted information into a file
+     */
+    public void backupHelpItemsToFile(String fileName) throws SQLException, IOException, Exception {
+        String query = "SELECT * FROM helpsystem_helpitems";
+
+        try (ResultSet resultSet = statement.executeQuery(query);
+             FileWriter writer = new FileWriter(fileName)) {
+
+            while (resultSet.next()) {
+                String title = resultSet.getString("title");
+                String description = resultSet.getString("description");
+                String short_description = resultSet.getString("short_description");
+                String authors = resultSet.getString("authors");
+                String references = resultSet.getString("references");
+
+                writer.write(resultSet.getInt("id") + ",");
+                writer.write( title + ",");
+                writer.write(description + ",");
+                writer.write(short_description + ",");
+                writer.write(authors + ",");
+                writer.write(references + "\n");
+            }
+        }   catch (SQLException | IOException e) {
+            System.out.println("Error backing up articles.");
+            e.printStackTrace();
         }
     }
 

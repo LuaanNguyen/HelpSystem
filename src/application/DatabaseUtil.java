@@ -17,9 +17,7 @@ import java.util.ArrayList;
  * <p> Copyright: Lynn Robert Carter © 2024 </p>
  *
  * @author Luan Nguyen, Smit Devrukhkar, Gabriel Clark, Meadow Kubanski, Isabella Paschal
- *
  * @version 1.00
- *
  */
 
 public class DatabaseUtil {
@@ -58,6 +56,7 @@ public class DatabaseUtil {
             statement = connection.createStatement();
             createUserTables();  // Create the necessary tables if they don't exist
             createInvitationsTable(); // Create the invitations table
+            createHelpItemTable(); // Create the help items table
             System.out.println("Database initialized successfully!");
         } catch (ClassNotFoundException e) {
             System.err.println("JDBC Driver not found: " + e.getMessage());
@@ -115,7 +114,7 @@ public class DatabaseUtil {
     }
 
     /* Register a new user*/
-    public void register( String username, String password, String role) throws SQLException {
+    public void register(String username, String password, String role) throws SQLException {
         String query = "INSERT INTO helpsystem_users ( username, password, roles) VALUES ( ?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
             pstmt.setString(1, username);
@@ -157,7 +156,7 @@ public class DatabaseUtil {
                 if (rs.next()) {
                     String email = rs.getString("email");
                     String role = rs.getString("role");
-                    register( username, password, role);
+                    register(username, password, role);
                     deleteInvitationCode(code);
                     return true;
                 }
@@ -178,7 +177,7 @@ public class DatabaseUtil {
     /* Get user by username */
     public User getUserByUsername(String username) throws SQLException {
         String query = "SELECT * FROM helpsystem_users WHERE username = ?";
-        try ( PreparedStatement pstmt = connection.prepareStatement(query)) {
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
             pstmt.setString(1, username);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
@@ -243,7 +242,6 @@ public class DatabaseUtil {
         }
         return users;
     }
-
 
 
     /* Check if the user exists */
@@ -316,16 +314,81 @@ public class DatabaseUtil {
 
     /* Shut down DB */
     public void closeConnection() {
-        try{
-            if(statement!=null) statement.close();
-        } catch(SQLException se2) {
+        try {
+            if (statement != null) statement.close();
+        } catch (SQLException se2) {
             se2.printStackTrace();
         }
         try {
-            if(connection!=null) connection.close();
-        } catch(SQLException se){
+            if (connection != null) connection.close();
+        } catch (SQLException se) {
             se.printStackTrace();
         }
     }
+
+    private void createHelpItemTable() throws SQLException {
+        String helpItemTableQuery = "CREATE TABLE IF NOT EXISTS helpsystem_helpitems ("
+                + "title VARCHAR(255) PRIMARY KEY, "
+                + "description VARCHAR (255), "
+                + "short_description VARCHAR(255), "
+                + "authors VARCHAR(255), "
+                + "keywords VARCHAR(255), "
+                + "references VARCHAR(255))";
+        statement.execute(helpItemTableQuery);
+    }
+
+    public List<helpItem> getAllHelpItems() throws SQLException {
+        String query = "SELECT * FROM helpsystem_helpitems";
+        // create list of help items
+        List<helpItem> helpItems = new ArrayList<>();
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+            while (rs.next()) {
+                helpItem helpItem = new helpItem(rs.getString("title"), rs.getString("description"), rs.getString("short_description"), rs.getString("authors"), rs.getString("keywords"), rs.getString("references"));
+                helpItems.add(helpItem);
+            }
+        }
+        return helpItems;
+    }
+
+    public void addHelpItem(String title, String description, String shortDescription, String author, String keyword, String reference) throws SQLException {
+        String query = "INSERT INTO helpsystem_helpitems (title, description, short_description, authors, keywords, references) VALUES (?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setString(1, title);
+            pstmt.setString(2, description);
+            pstmt.setString(3, shortDescription);
+            pstmt.setString(4, author);
+            pstmt.setString(5, keyword);
+            pstmt.setString(6, reference);
+            pstmt.executeUpdate();
+        }
+    }
+
+    public void resetHelpItemDatabase() throws SQLException {
+        String dropHelpItemTableQuery = "DROP TABLE IF EXISTS helpsystem_helpitems";
+        statement.execute(dropHelpItemTableQuery);
+        createHelpItemTable();  // Recreate the tables
+    }
+
+    public helpItem getHelpItem(String title) {
+        String query = "SELECT * FROM helpsystem_helpitems WHERE title = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setString(1, title);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return new helpItem(rs.getString("title"),
+                            rs.getString("description"),
+                            rs.getString("short_description"),
+                            rs.getString("authors"),
+                            rs.getString("keywords"),
+                            rs.getString("references"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }
 

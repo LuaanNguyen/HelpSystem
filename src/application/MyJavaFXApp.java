@@ -2,8 +2,6 @@ package application;
 
 import javafx.application.Platform;
 import javafx.scene.Node;
-import javafx.scene.layout.StackPane;
-import application.User;
 import javafx.util.Pair;
 import javafx.application.Application;
 import javafx.geometry.HPos;
@@ -24,7 +22,6 @@ import java.util.Objects;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import org.h2.command.dml.Insert;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;

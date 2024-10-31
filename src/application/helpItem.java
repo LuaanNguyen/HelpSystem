@@ -8,32 +8,37 @@ public class helpItem {
     private String title;
     private String uuid;
     private String description;
-    private String shortdescription;
+    private String shortDescription;
     private List<String> authors = new ArrayList<>();
     private List<String> keywords = new ArrayList<>();
-    private List<String> refrences = new ArrayList<>();
+    private List<String> references = new ArrayList<>();
 
     /* Default Constructor */
     public helpItem() {
         this.title = "Default Title";
         this.uuid = "Default UUID";
         this.description = "Default Description";
-        this.shortdescription = "Default Short Description";
+        this.shortDescription = "Default Short Description";
         this.authors.add("Default Author");
         this.keywords.add("Default Keyword");
-        this.refrences.add("Default Refrence");
+        this.references.add("Default Reference");
     }
 
     /* Constructor for creating new Help Item */
 
-    public helpItem(String title, String description, String shortdescription, String author, String keyword, String refrence) {
+    public helpItem(String title,
+                    String description,
+                    String shortDescription,
+                    String author,
+                    String keyword,
+                    String reference) {
         this.title = title;
         this.uuid = UUID.randomUUID().toString();
         this.description = description;
-        this.shortdescription = shortdescription;
+        this.shortDescription = shortDescription;
         this.authors.add(author);
         this.keywords.add(keyword);
-        this.refrences.add(refrence);
+        this.references.add(reference);
     }
 
     /* Getter Methods */
@@ -46,7 +51,7 @@ public class helpItem {
     }
 
     public String getShortDescription() {
-        return shortdescription;
+        return shortDescription;
     }
 
     public List<String> getAuthors() {
@@ -57,8 +62,8 @@ public class helpItem {
         return keywords;
     }
 
-    public List<String> getRefrences() {
-        return refrences;
+    public List<String> getreferences() {
+        return references;
     }
 
     /* Setter Methods */
@@ -71,7 +76,7 @@ public class helpItem {
     }
 
     public void setShortDescription(String shortdescription) {
-        this.shortdescription = shortdescription;
+        this.shortDescription = shortdescription;
     }
 
     public void setAuthors(List<String> authors) {
@@ -82,8 +87,8 @@ public class helpItem {
         this.keywords = keywords;
     }
 
-    public void setRefrences(List<String> refrences) {
-        this.refrences = refrences;
+    public void setreferences(List<String> references) {
+        this.references = references;
     }
 
     /* Add Methods */
@@ -95,8 +100,8 @@ public class helpItem {
         this.keywords.add(keyword);
     }
 
-    public void addRefrence(String refrence) {
-        this.refrences.add(refrence);
+    public void addreference(String reference) {
+        this.references.add(reference);
     }
 
     /* Remove Methods */
@@ -108,23 +113,23 @@ public class helpItem {
         this.keywords.remove(keyword);
     }
 
-    public void removeRefrence(String refrence) {
-        this.refrences.remove(refrence);
+    public void removereference(String reference) {
+        this.references.remove(reference);
     }
 
     public void deleteItem() {
         this.title = null;
         this.description = null;
-        this.shortdescription = null;
+        this.shortDescription = null;
         this.authors = null;
         this.keywords = null;
-        this.refrences = null;
+        this.references = null;
     }
 
     public void print() {
         System.out.println("Title: " + this.title);
         System.out.println("Description: " + this.description);
-        System.out.println("Short Description: " + this.shortdescription);
+        System.out.println("Short Description: " + this.shortDescription);
     }
 
     public String getUuid() {

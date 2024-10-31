@@ -1,4 +1,10 @@
 package application;
+
+import javafx.application.Platform;
+import javafx.scene.Node;
+import javafx.scene.layout.StackPane;
+import application.User;
+import javafx.util.Pair;
 import javafx.application.Application;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
@@ -11,9 +17,11 @@ import javafx.scene.layout.GridPane;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.ComboBox;
+
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
+
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -26,9 +34,7 @@ import javafx.scene.image.ImageView;
  * <p> Copyright: Lynn Robert Carter © 2024 </p>
  *
  * @author Luan Nguyen, Smit Devrukhkar, Gabriel Clark, Meadow Kubanski, Isabella Paschal
- *
  * @version 1.00
- *
  */
 
 public class MyJavaFXApp extends Application {
@@ -38,7 +44,9 @@ public class MyJavaFXApp extends Application {
     public static final int H_GAP = 20;
     public static final int V_GAP = 20;
 
-    /** Create a DB instance to interact with the database */
+    /**
+     * Create a DB instance to interact with the database
+     */
     private static final DatabaseUtil dbUtil = new DatabaseUtil();
 
     @Override
@@ -144,7 +152,7 @@ public class MyJavaFXApp extends Application {
                 AdminErrorMessage.setText("Passwords do not match");
             } else {
                 try {
-                    dbUtil.register( username, password, "Admin");
+                    dbUtil.register(username, password, "Admin");
                     System.out.println("Admin user registered successfully");
                     primaryStage.setScene(createLoginScene(primaryStage));
                 } catch (SQLException ex) {
@@ -224,7 +232,7 @@ public class MyJavaFXApp extends Application {
         loginGrid.add(passwordField, 0, 4);  // Add password field to GridPane
         loginGrid.add(loginButton, 0, 5, 2, 1); // Span 2 columns for proper alignment
         loginGrid.add(buttonBox, 0, 6, 2, 1); // Add HBox to GridPane, spanning 2 columns
-        loginGrid.add(testButton,1, 6, 2, 1); // Span 2 columns for proper alignment
+        loginGrid.add(testButton, 1, 6, 2, 1); // Span 2 columns for proper alignment
         //loginGrid.add(new Label("Invitation Code"), 0, 5);
 
 
@@ -260,7 +268,6 @@ public class MyJavaFXApp extends Application {
         });
 
 
-
         loginButton.setOnAction(e -> {
             String username = userNameField.getText();
             String password = passwordField.getText();
@@ -274,15 +281,14 @@ public class MyJavaFXApp extends Application {
                         primaryStage.setScene(adminScene(primaryStage));
                     } else if (user.getRole().contains("Student")) {
                         //Set other scene depending on user role
-                        if (user.getFirstName().isEmpty()  || user.getLastName().isEmpty() || user.getMiddleName().isEmpty()  ) {
-                           if (!user.getUsername().isEmpty()) {
-                               primaryStage.setScene(finishSetupScene(primaryStage, user.getUsername()));
-                           }
-                        }
-                        else {
+                        if (user.getFirstName().isEmpty() || user.getLastName().isEmpty() || user.getMiddleName().isEmpty()) {
+                            if (!user.getUsername().isEmpty()) {
+                                primaryStage.setScene(finishSetupScene(primaryStage, user.getUsername()));
+                            }
+                        } else {
                             primaryStage.setScene(studentScene(primaryStage));
                         }
-                    } else if  (user.getRole().contains("Instructor")) {
+                    } else if (user.getRole().contains("Instructor")) {
                         primaryStage.setScene(instructorScene(primaryStage));
                     } else {
                         System.out.println("Error finding a right role.");
@@ -310,6 +316,7 @@ public class MyJavaFXApp extends Application {
                     try {
                         dbUtil.resetUserDatabase();
                         dbUtil.resetInvitationDatabase();
+                        dbUtil.resetHelpItemDatabase();
                         System.out.println("All databases reset successfully. Going back to Admin scene...");
                         primaryStage.setScene(createAdminSetupScene(primaryStage));
                     } catch (SQLException ex) {
@@ -401,9 +408,8 @@ public class MyJavaFXApp extends Application {
         registerGrid.add(createAccountButton, 0, 7);
         registerGrid.add(backToLoginButton, 0, 10);
         registerGrid.add(errorMessageLabel, 0, 11);
-        registerGrid.add(invitationCodeField, 0 , 3);
+        registerGrid.add(invitationCodeField, 0, 3);
         registerGrid.add(new Label("Invitation Code:"), 0, 2);
-
 
 
         // Add listeners to both password fields to validate password and match requirements
@@ -449,21 +455,17 @@ public class MyJavaFXApp extends Application {
                 System.out.println("Username, password, invitation code cannot be empty!");
                 errorMessageLabel.setText("Username, password, invite code cannot be empty!");
                 // Check if the password meets the requirements
-            }
-            else if (!password.matches(".*[!@#$%^&*].*")) {
+            } else if (!password.matches(".*[!@#$%^&*].*")) {
                 System.out.println("Password must contain at least 1 Special Character");
-            }
-            else if (!password.matches(".*[a-z].*")) {
+            } else if (!password.matches(".*[a-z].*")) {
                 System.out.println("Password must contain at least 1 Lower Case letter");
-            }
-            else if (!password.matches(".*[A-Z].*")) {
+            } else if (!password.matches(".*[A-Z].*")) {
                 System.out.println("Password must contain at least 1 Upper Case letter");
-            }
-            else if (!password.equals(confirmPassword)) {
-            // Check if the password and confirm password match
+            } else if (!password.equals(confirmPassword)) {
+                // Check if the password and confirm password match
                 System.out.println("Password doesn't match");
             } else if (selectedRole == null || selectedRole.isEmpty()) {
-            // Check if the selected role is empty
+                // Check if the selected role is empty
                 System.out.println("Selected Role is empty");
             } else {
                 try {
@@ -471,7 +473,7 @@ public class MyJavaFXApp extends Application {
                         System.out.println("User already exists!");
                         errorMessageLabel.setText("User already exists!");
                     } else if (dbUtil.isValidInvitationCode(invitationCode)) {
-                        dbUtil.register( username, password, selectedRole);
+                        dbUtil.register(username, password, selectedRole);
                         System.out.println("User registered successfully");
                         dbUtil.invalidateInvitationCode(invitationCode);
                         primaryStage.setScene(createLoginScene(primaryStage));
@@ -483,7 +485,7 @@ public class MyJavaFXApp extends Application {
         });
 
         // Back to login button, returns to the login scene
-        Scene registerScene = new Scene(container,  WINDOW_HEIGHT ,  WINDOW_WIDTH);
+        Scene registerScene = new Scene(container, WINDOW_HEIGHT, WINDOW_WIDTH);
         backToLoginButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
         registerScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("register.css")).toExternalForm());
         createAccountButton.requestFocus(); // Set focus on the create account button, prevents highlight on text field
@@ -510,7 +512,9 @@ public class MyJavaFXApp extends Application {
         Button addRoleButton = new Button("Add Role");
         Button removeRoleButton = new Button("Remove Role");
         Button inviteUserButton = new Button("Invite User");
+        Button createHelpItemButton = new Button("Create Help Item");
         Button logoutButton = new Button("Log Out");
+        Button viewHelpItemsButton = new Button("View Help Items");
         // Positioning of all components
         adminGrid.add(userListView, 0, 0, 2, 1);
         adminGrid.add(deleteUserButton, 0, 1);
@@ -518,6 +522,8 @@ public class MyJavaFXApp extends Application {
         adminGrid.add(removeRoleButton, 1, 2);
         adminGrid.add(inviteUserButton, 0, 3);
         adminGrid.add(logoutButton, 0, 4, 2, 1);
+        adminGrid.add(createHelpItemButton, 1, 1);
+        adminGrid.add(viewHelpItemsButton, 1, 3);
 
         // Delete user button, prompts user to confirm deleting user
         deleteUserButton.setOnAction(e -> {
@@ -638,13 +644,97 @@ public class MyJavaFXApp extends Application {
             });
         });
 
+        // Create help item button, prompts user to create a help item
+        createHelpItemButton.setOnAction(e -> {
+            Dialog<Pair<String, String>> dialog = new Dialog<>();
+            dialog.setTitle("Create Help Item");
+            dialog.setHeaderText("Create a new help item");
 
+            // Set the button types
+            ButtonType createButtonType = new ButtonType("Create", ButtonBar.ButtonData.OK_DONE);
+            dialog.getDialogPane().getButtonTypes().addAll(createButtonType, ButtonType.CANCEL);
+
+            TextField titleField = new TextField();
+            titleField.setPromptText("Enter title");
+            TextField descriptionField = new TextField();
+            descriptionField.setPromptText("Enter description");
+            TextField authorField = new TextField();
+            authorField.setPromptText("Enter authors seperated by commas");
+            TextField keywordsField = new TextField();
+            keywordsField.setPromptText("Enter keywords seperated by commas");
+            TextField referencesField = new TextField();
+            referencesField.setPromptText("Enter references seperated by commas");
+
+            GridPane grid = new GridPane();
+            grid.setHgap(10);
+            grid.setVgap(10);
+            grid.setPadding(new Insets(20, 150, 10, 10));
+
+            grid.add(new Label("Title:"), 0, 0);
+            grid.add(titleField, 1, 0);
+            grid.add(new Label("Description:"), 0, 1);
+            grid.add(descriptionField, 1, 1);
+            grid.add(new Label("Authors:"), 0, 2);
+            grid.add(authorField, 1, 2);
+            grid.add(new Label("Keywords:"), 0, 3);
+            grid.add(keywordsField, 1, 3);
+            grid.add(new Label("References:"), 0, 4);
+            grid.add(referencesField, 1, 4);
+
+
+            // Enable/Disable the create button depending on whether a title was entered.
+            Node createButton = dialog.getDialogPane().lookupButton(createButtonType);
+            createButton.setDisable(true);
+
+            titleField.textProperty().addListener((observable, oldValue, newValue) -> {
+                createButton.setDisable(newValue.trim().isEmpty());
+            });
+
+            dialog.getDialogPane().setContent(grid);
+
+            Platform.runLater(titleField::requestFocus);
+
+            dialog.setResultConverter(dialogButton -> {
+                if (dialogButton == createButtonType) {
+                    return new Pair<>(titleField.getText(), descriptionField.getText());
+                }
+                return null;
+            });
+
+            String shortDescription = descriptionField.getText().substring(0, Math.min(descriptionField.getText().length(), 50));
+
+            dialog.showAndWait().ifPresent(title -> {
+                try {
+                    dbUtil.addHelpItem(
+                            titleField.getText(),
+                            descriptionField.getText(),
+                            shortDescription,
+                            authorField.getText(),
+                            keywordsField.getText(),
+                            referencesField.getText()
+                    );
+                } catch (Exception ex) {
+                    System.out.println("Error creating help item");
+                }
+            });
+        });
+
+        // View help items button, prompts user to view all help items
+        viewHelpItemsButton.setOnAction(e -> {
+            // Go to the help items scene
+            System.out.println("Viewing help items...");
+            primaryStage.setScene(helpItemsScene(primaryStage));
+
+
+        });
         // Logout button, returns to the login scene
         logoutButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
         Scene adminScene = new Scene(adminGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
         adminScene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("adminScene.css")).toExternalForm());
-        return  adminScene;
+        return adminScene;
     }
+
+
     // Update the user list view
     private void updateUserListView(ListView<String> userListView) {
         try {
@@ -672,8 +762,8 @@ public class MyJavaFXApp extends Application {
         studentSceneGrid.setVgap(V_GAP);
         // Create all the components for the student scene
         Button backToLoginButton = new Button("Back to login");
-        studentSceneGrid.add(new Label("Student Scene"), 0 , 0);
-        studentSceneGrid.add(backToLoginButton, 0 ,1 );
+        studentSceneGrid.add(new Label("Student Scene"), 0, 0);
+        studentSceneGrid.add(backToLoginButton, 0, 1);
         // Back to login button, returns to the login scene
         backToLoginButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
         return new Scene(studentSceneGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
@@ -693,7 +783,7 @@ public class MyJavaFXApp extends Application {
         // Create all the components for the instructor scene
         Button backToLoginButton = new Button("Back to login");
         instructorSceneGrid.add(new Label("Instructor Scene"), 0, 0);
-        instructorSceneGrid.add(backToLoginButton, 0 ,1 );
+        instructorSceneGrid.add(backToLoginButton, 0, 1);
         // Back to login button, returns to the login scene
         backToLoginButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
         return new Scene(instructorSceneGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
@@ -719,7 +809,7 @@ public class MyJavaFXApp extends Application {
         TextField preferredFirstNameField = new TextField();
         Button finishSetupButton = new Button("Finish Setup");
         // Positioning of all components
-        finishSetupGrid.add(new Label("Finish setting up your account"), 0, 0, 4 , 1);
+        finishSetupGrid.add(new Label("Finish setting up your account"), 0, 0, 4, 1);
         finishSetupGrid.add(new Label("Email: "), 0, 1);
         finishSetupGrid.add(emailField, 1, 1);
         finishSetupGrid.add(new Label("First Name: "), 0, 2);
@@ -761,8 +851,74 @@ public class MyJavaFXApp extends Application {
         return finishSetupScene;
     }
 
-    private Scene articleViewScene(Stage primaryStage){
-        return null;
+    /**
+     * This method creates the scene for viewing the help items
+     * In this scene, the user can view all the help items
+     * It gets the help items from the database and displays them in a list view
+     * The user can click on a help item to view more details
+     *
+     * @param primaryStage primaryStage
+     * @return
+     */
+    private Scene helpItemsScene(Stage primaryStage) {
+        GridPane helpItemsGrid = new GridPane();
+        helpItemsGrid.setPadding(new Insets(20, 20, 20, 20));
+        helpItemsGrid.setHgap(10); // Adjust gaps for cleaner layout
+        helpItemsGrid.setVgap(10);
+
+        ListView<String> helpItemsListView = new ListView<>();
+
+        // Fetch and populate help items
+        try {
+            List<helpItem> helpItems = dbUtil.getAllHelpItems();
+            for (helpItem item : helpItems) {
+                helpItemsListView.getItems().add(item.getTitle());
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        Button viewHelpItemButton = new Button("View Help Item");
+        Button backToDashboard = new Button("Back to Dash Board");
+        Button backToLoginButton = new Button("Back to Login");
+
+        // Add a label and list view to the left side
+        helpItemsGrid.add(new Label("Help Items"), 0, 0);
+        helpItemsGrid.add(helpItemsListView, 0, 1);
+        helpItemsGrid.add(backToDashboard, 0, 3);
+        helpItemsGrid.add(backToLoginButton, 0, 4);
+
+        // Create a VBox to show selected item details on the right
+        VBox itemDetailsBox = new VBox(10);
+        itemDetailsBox.setPadding(new Insets(10));
+        itemDetailsBox.setStyle("-fx-border-color: #ccc; -fx-border-width: 1px;");
+
+        helpItemsGrid.add(itemDetailsBox, 1, 1, 1, 5); // Span rows for a clean look
+
+        // Update item details when a new item is selected
+        helpItemsListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            itemDetailsBox.getChildren().clear(); // Clear old details
+
+            if (newValue != null) {
+                helpItem selectedHelpItem = dbUtil.getHelpItem(newValue);
+
+                Label titleLabel = new Label("Title: " + selectedHelpItem.getTitle());
+                Label descriptionLabel = new Label("Description: " + selectedHelpItem.getDescription());
+                Label authorsLabel = new Label("Authors: " + selectedHelpItem.getAuthors());
+                Label keywordsLabel = new Label("Keywords: " + selectedHelpItem.getKeywords());
+                Label referencesLabel = new Label("References: " + selectedHelpItem.getReferences());
+
+                itemDetailsBox.getChildren().addAll(
+                        titleLabel, descriptionLabel, authorsLabel, keywordsLabel, referencesLabel
+                );
+            }
+        });
+
+        // Set the back button action to return to the login scene
+        backToLoginButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
+        backToDashboard.setOnAction(e -> primaryStage.setScene(adminScene(primaryStage)));
+
+        return new Scene(helpItemsGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
     }
 
 

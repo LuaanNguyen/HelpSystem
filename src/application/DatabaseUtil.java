@@ -328,12 +328,8 @@ public class DatabaseUtil {
 
     private void createHelpItemTable() throws SQLException {
         String helpItemTableQuery = "CREATE TABLE IF NOT EXISTS helpsystem_helpitems ("
-<<<<<<< Updated upstream
-                + "title VARCHAR(255) PRIMARY KEY, "
-=======
-                + "id INT AUTO_INCREMENT PRIMARY KEY, "
                 + "title VARCHAR(255), "
->>>>>>> Stashed changes
+                + "id INT AUTO_INCREMENT PRIMARY KEY, "
                 + "description VARCHAR (255), "
                 + "short_description VARCHAR(255), "
                 + "authors VARCHAR(255), "

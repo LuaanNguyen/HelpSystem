@@ -1,5 +1,4 @@
 package application;
-
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
@@ -17,11 +16,9 @@ import javafx.scene.layout.GridPane;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.ComboBox;
-
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
-
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.h2.command.dml.Insert;
@@ -248,7 +245,7 @@ public class MyJavaFXApp extends Application {
             alert.setHeaderText(null);
 
             // Load the GIF image
-            Image gifImage = new Image("file:src/twerk.gif");
+            Image gifImage = new Image("file:src/squidy.gif");
             ImageView gifImageView = new ImageView(gifImage);
 
             // Set properties for the image view to adjust size
@@ -514,7 +511,7 @@ public class MyJavaFXApp extends Application {
         adminGrid.setAlignment(Pos.CENTER);
 
         // Header
-        Label headerLabel = new Label("Admin Dashboard 📊");
+        Label headerLabel = new Label("Admin Dashboard \uD83E\uDDD1\uD83C\uDFFC\u200D\uD83D\uDCBB");
         headerLabel.setAlignment((Pos.CENTER));
         headerLabel.getStyleClass().add("header-label");
         adminGrid.add(headerLabel, 0, 0, 2, 1);
@@ -533,9 +530,8 @@ public class MyJavaFXApp extends Application {
         Button createHelpItemButton = new Button("Create Help Item");
         Button viewHelpItemsButton = new Button("View Help Items");
         Button logoutButton = new Button("Log Out");
-
         Button backupButton = new Button("Backup Articles");
-        backupButton.setOnAction(e -> backupArticles());
+
 
         // Set preferred width for buttons
         deleteUserButton.setPrefWidth(150);
@@ -547,7 +543,7 @@ public class MyJavaFXApp extends Application {
         logoutButton.setPrefWidth(150);
 
         // Grouped button layout
-        VBox buttonGroup1 = new VBox(10, deleteUserButton, addRoleButton, removeRoleButton);
+        VBox buttonGroup1 = new VBox(10, deleteUserButton, addRoleButton, removeRoleButton, logoutButton);
         VBox buttonGroup2 = new VBox(10, inviteUserButton, createHelpItemButton, viewHelpItemsButton, backupButton);
         buttonGroup1.setAlignment(Pos.TOP_CENTER);
         buttonGroup2.setAlignment(Pos.TOP_CENTER);
@@ -555,8 +551,8 @@ public class MyJavaFXApp extends Application {
         // Add to grid
         adminGrid.add(buttonGroup1, 0, 2);
         adminGrid.add(buttonGroup2, 1, 2);
-        adminGrid.add(logoutButton, 0, 3, 2, 1);
 
+        backupButton.setOnAction(e -> backupArticles());
         // Delete user button, prompts user to confirm deleting user
         deleteUserButton.setOnAction(e -> {
             String selectedUser = userListView.getSelectionModel().getSelectedItem();
@@ -1017,14 +1013,13 @@ public class MyJavaFXApp extends Application {
             ex.printStackTrace();
         }
 
-        Button viewHelpItemButton = new Button("View Help Item");
         Button backToDashboard = new Button("Back to Dashboard");
         Button backToLoginButton = new Button("Back to Login");
         backToDashboard.setMinWidth(150);
         backToLoginButton.setMinWidth(150);
-        viewHelpItemButton.setMinWidth(150);
 
-        VBox buttonBox = new VBox(10, viewHelpItemButton, backToDashboard, backToLoginButton);
+        // VBox layout for buttons at the bottom
+        VBox buttonBox = new VBox(10, backToDashboard, backToLoginButton);
         buttonBox.setAlignment(Pos.CENTER);
         buttonBox.setPadding(new Insets(10));
 
@@ -1046,6 +1041,9 @@ public class MyJavaFXApp extends Application {
         TextField keywordsField = new TextField();
         TextField referencesField = new TextField();
         Button saveButton = new Button("Save Changes");
+        Label confirmationMessage = new Label();
+
+
 
         itemDetailsBox.getChildren().addAll(
                 itemIDLabel, itemID,
@@ -1054,7 +1052,7 @@ public class MyJavaFXApp extends Application {
                 new Label("Authors:"), authorsField,
                 new Label("Keywords:"), keywordsField,
                 new Label("References:"), referencesField,
-                saveButton
+                saveButton, confirmationMessage
         );
         helpItemsGrid.add(itemDetailsBox, 1, 0);
 
@@ -1073,6 +1071,7 @@ public class MyJavaFXApp extends Application {
         saveButton.setOnAction(e -> {
             String selectedTitle = helpItemsListView.getSelectionModel().getSelectedItem();
             if (selectedTitle != null) {
+                confirmationMessage.setText("Changes saved successfully!");
                 String shortDescription = descriptionField.getText().substring(0, Math.min(descriptionField.getText().length(), 50));
                 helpItem updatedItem = new helpItem(
                         Integer.parseInt(itemID.getText()), // Pass the ID for update

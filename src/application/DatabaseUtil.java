@@ -10,7 +10,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.io.FileWriter;
 import java.io.IOException;
-
+import Encryption.EncryptionHelper;
+import Encryption.EncryptionUtils;
 /**
  * <p> DatabaseUtil </p>
  *
@@ -39,6 +40,11 @@ public class DatabaseUtil {
     private Connection connection = null;
     private Statement statement = null;
 
+    private EncryptionHelper encryptionHelper;
+
+    public DatabaseUtil() throws Exception {
+        encryptionHelper = new EncryptionHelper();
+    }
 
     /* Generate random string for 1 time passcode */
     public String generateInvitationCode() {

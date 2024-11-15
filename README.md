@@ -45,48 +45,80 @@ We already know that methods for backing up and restoring these articles are nee
 Two screencasts must be provided.  The first screencast is technical.  It explains the flow from the requirements through to the working application.  The second is a how-to-use screencast aimed at two separate groups: admins and instructional team members.
 
 
-### The Third Phase  (TBD)
+### The Third Phase  🥉
+
+The main enhancement for this phase is the interface for student users and the methods to facilitate searching, displaying, and asking the system operations team for assistance when the student is not able to find what is needed.
+
+The third phase also adds encrypting data that must be kept private.  When determining whether or not an article should appear in the returned list, an access protocol must be used to determine if this user belongs to a group of users who have been granted access or if this user has been given individual access.
+
+The user interface was responsible for security and privacy in the previous two deliverables.  It was written so that a user role can only see data that is appropriate for that user.  The implementation in this phase is enhanced to ensure that even if memory is dumped and analyzed, private and sensitive data will not be visible.  From the beginning, the architecture and the design must be performed knowing that encryption will be added in this third phase. Significant rewriting of code to implement encryption in this phase must be avoided.  The third phase also requires an initial set of JUnit tests. The team must demonstrate their understanding of automated test suites and their ability to create and use them.
+
+Two screencasts must be provided.  The first is an internal technical screencast.  It explains the flow from the requirements through design to the working code.  The second is a how-to-use screencast targeting students, admins, and instructional team members.
+
 ### The Fourth Phase (TBD)
 
 ## Phase One Requirements ✅
+## Phase Two Requirements  ✅
+## Phase Two Requirements  ( In Progress )
 
-1. The very first person to log into the application (e.g., the list of users is empty) is assumed to be an Admin.  The system requires the first user to specify a username and password.  An account is created for that username and password, and that user is assigned the role of Admin.  At that point, the user is directed back to the original login.
-2. When creating a password, the password must be entered two times, and they must match.
-3. Before a user can use the system, when logging in again they are first taken to a "Finish setting up your account" page.  The "Finish setting up your account" page requires the user to specify an email address and their name.  There are four fields associated with a name: first, middle, last, and optionally preferred first name.  (If the user specifies an optional preferred first name, this name will be used when displaying messages to that user from the application.)
-4. The system must support multiple roles.  The following are required minimum roles: Admin, Student, Instructor.
-5. A user may have more than one role.  If a user has more than one role, after signing in, the user must specify which role is appropriate for this session.  If the user has just one role, the user is taken to a page to the home page for that role.  For Phase 1, the Student and Instructor role home pages have only one option, and that is to log out.
-6. An Admin can perform the following:
-     1. Invite an individual to join the application.  A one-time code is provided that allows a new user to create an account.  The standard login page allows the user to provide a username to start the login process or a different input field in which they can enter the invitation code.  The Admin must specify which role(s) this invited user is being given when producing the invitation.
-     2. Reset a user account.  A one-time password and an expiration date and time is set.  The next time the user tries to log in, they must use the one-time password, and the only action possible is to set up a new password.  Before being given access to set up a new password, the system checks to see if the date and time are proper given the deadline.  Once the new password has been set, the user is directed back to the login page. Logging in with the one-time password resets the flag so it can't be used again.
-     3. Delete a user account.  An "Are you sure?" message must be answered with "Yes" to do the delete.
-     4. List the user accounts. A list of all the user accounts with the user name, the individual's name, and a set of codes for the roles is displayed.
-     5. Add or remove a role from a user.
-     6. Log out.
-7. All other users can perform the following:
-     1. At the login page, fill in the one-time invitation code to be allowed to establish an account.  The only action allowed when establishing an account is to specify a username and password.  An account is created for that username and password with the role(s) associated with the one-time invitation.  At that point, the user is directed back to the original login.
-     2. As described above, they must finish setting up their account.  Once the account is set up, they then have access to the home page to which they have been assigned or to the page where they can select which role is appropriate for this session and then the home page for that role.
-     3. For Phase 1, after logging in, finishing the account setup, and selecting a role for this session (if they have multiple roles) they are taken to a home page for that role where the only option is to log out.
+- [ ] This phase builds on, extends, and may require minor implementation refinements to the first two phases.  All the requirements for Phases One and Two continue into this phase. Any changes in requirements will be explicitly described in this assignment.
+- [ ] No role has the right to remove admin rights if that means no one will have admin rights for the whole help system, a general group, or a special access group.
+- The system supports special access groups consisting of:
+  - [ ] A list of articles in the group where the body of the article is encrypted and decrypted access is limited.  (E.g., A collection of help articles that contains proprietary, private, or other kinds of sensitive information.
+  - [ ] A list of admins given admin rights to create, read, update, and delete access rights to this group.  (Admins do not automatically have admin rights to special access groups and do not have the right to view the bodies of articles in this group.)
+  - [ ] The first instructor added to a special access group is given the right to view the bodies of articles in the group and admin rights for this group.
+  - [ ] The default rights for new instructors added to this group do not include admin rights for this group.
+  - [ ] A list of instructors who have been given rights to view the decrypted bodies of articles in this group.
+  - [ ] A list of instructors given admin rights for this group.
+  - [ ] A list of students given viewing rights to the decrypted bodies of articles in the group.
+- The student role is enhanced with additional commands:
+  - [ ] Students may always perform a set of actions, including quitting the application, sending a generic message to the help system, and sending a specific message to the help system.  Generic messages are used to express confusion about how to use the tool.  Specific messages are those where the student cannot find the help information they need.  In this last case, the student specifies what they need and cannot find.  The system adds a list of the search requests the student has made.  This information can be used to identify new help articles that need to be created and added to the system.
+  Set the content level of the articles to be returned (e.g., beginner, intermediate, advanced, expert).  The student may also specify an "all" level to see all the articles independent of the level.  The default is "all".
+  Specify a group of articles to limit returned articles to just those items in a group (e.g., a group may be help articles for a particular assignment). The student may request a list of the currently active group, specify which group to use, or "all".
+  Searching uses words, names, or phrases in the title, author, or abstract.  Searching for words or phrases in the body of the help articles is currently not supported.  In addition, a search can be performed using the unique long identifier.  Search can be limited to a specific group of papers.
+  When a search is performed, the system will display the following.
+  - [ ] The first line displayed specifies the group that is currently active,
+  - [ ] The number of articles that match each level,
+  - [ ] A list of articles matching the search criteria in a short form.  The short form includes a sequence number (1 - n), the title, the author(s), and the abstract.
+  - After a search, the student can perform the following:
+    - [ ] a different search
+    - [ ] a request to view an entire article in detail using the sequence number,
+    - [ ] one of the actions that are always available.
+  - After viewing a specific article, the student can perform the following:
+    - [ ] a different search,
+    - [ ] a request to view an entire article in detail using the sequence number,
+    - [ ] one of the actions that are always available.
+  - [ ] Students may not create, edit, or delete help articles.
+- The instructor role is enhanced with additional commands.
+  - The instructor is provided the same set of search and view commands as a student.
+    - [ ] Instructors may specify a group or a special access group to reduce the length of returned items
+    - [ ] Instructors may specify content levels to reduce the length of returned items.
+    - [ ] Instructors may view the details of a help article from the returned list of items.
+  - [ ] Instructors may create, view, edit, and delete help articles.
+  - [ ]  Instructors may create, view, edit, and delete general article groups.  (See above about instructors' rights concerning general groups.)
+  - [ ] Instructors may create, view, edit, and delete special access article groups.  (See above about instructor's rights concerning special access groups.)
+  - [ ] Instructors may back up and restore articles and groups of articles. 
+  - [ ] Instructors may add, view, and delete students from the help system and general groups. 
+  - [ ] Instructors with special group rights for a group may add, view, and delete students from that group. 
+- The admin role is enhanced with additional commands. 
+  - [ ] Admins may create, delete, back up, and restore help articles. (They do not have the right to view or edit the body of any help system article.)
+  - [ ] Admins may be given admin rights over general article groups.  (See above about admin rights concerning general article groups.)
+  - [ ] Admins may be given admin rights over special access article groups.  (See above about admin rights concerning special access article groups.)
+  - [ ] Admins may back up and restore articles, groups of articles, and special access groups of articles.
+  -  [ ] Admin may add, view, and remove students, instructors, and admins from general groups. (See the limitation above that requires at least one admin to have admin rights to every group or special access group.)
 
-## Phase Two Requirements  ⚙️
-
-- This phase builds on, extends, and may require refinements to your Phase One implementation.  Unless explicitly stated otherwise, all the requirements for Phase One continue into this phase.
-- Each article is given a unique long integer identifier when created, so duplicates can be easily detected.
-- The admin and the instruction team roles are enhanced by providing commands to back up and restore the help system data to an admin/instructor-named external data file.  When a restore command is issued, an option is provided to remove all the existing help articles or merge the backed-up copies with the current help articles.  When the unique long integer identifiers match, the backed-up copy will not be added.
-- The system shall support a mechanism to support multiple groups of help articles.  Grouped articles can be backed up, so only the articles in the group are in the backup.  For example, articles for a CSE360 implementation might have one group for Eclipse articles and another for IntelliJ articles.  This allows instructors or admins to set up the help system for two different help systems based on which IDE is used in the course.  Similarly, there may be a group for H2 database articles and another for SQL Fiddle articles.  It is also possible for a single article to belong to more than one group (e.g., Eclipse and H2).
-- Both admins and instructors may create, update, view, and delete help articles.
-- Both admins and instructors may list all the help articles and subsets of the help articles in a group or multiple groups.
-
-## Phase Two Deliverables 🎁
+## Phase Three Deliverables 🎁
 
 A GitHub repository must be established, and a private project in that repository must include all the code required to build and test the application.  All the members of the team, a specified member of the grading team, must be given access to the repository.  If a Grader must ask for access after the deadline, 5% will be deducted from the project grade.
+
 A PDF document must be produced that covers the following items:
 - Cover page (with an appropriate title and list of the members of the team): 5%
-- Project overview (updated with change bars showing the updates): 15%
+- Project overview (updated with change bars showing the updates): 10%
 - Requirements (User stories with change bars showing any updates): 10%
 - Architecture and major architectural components using UML (e.g., Use Case diagram) with explanatory text): 10%
-- Design (Class Responsibility Collaborator and Class Diagrams with explanatory text): 10%
-- Code (nicely formatted with internal documentation (e.g., HW #4): 25%
-- Basic Testing: 5%
+- Design UML Diagrams (e.g., Class Responsibility Collaborator Diagram, Class Diagrams, Sequence Diagrams, State Diagrams, and State diagrams with explanatory text for those aspects): 10%
+- Code (nicely formatted with internal documentation and reference to the UML models that explain how the design flowed to this code (e.g., HW #4): 25%
+- Basic Testing, including automated testing, as shown in HW #5: 10%
 - Two Screencasts (The first is a technical screencast that must show the code, and the code must be readable.  The second is aimed at all potential users and shows how the execution of the application and how each requirement is satisfied.): 10%
 - URL to the project in GitHub: 5%
-- A Credit Page is provided at the end of the PDF.  This sheet lists every member of the team and what they accomplished.  All team members must participate in, support, or contribute to the production of all of the above items, especially the code and test cases.  No entry is longer than six lines.  The entire team must agree to the contents of this credit page.
+- A Credit Page is provided at the end of the PDF.  This sheet lists every member of the team and what they accomplished.  All team members must participate in support and contribute to the creation of all the above items, especially the code and test cases.  No entry is longer than six lines.  The entire team must agree to the contents of this credit page.

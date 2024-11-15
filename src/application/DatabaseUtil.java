@@ -60,6 +60,7 @@ public class DatabaseUtil {
             createInvitationsTable(); // Create the invitations table
             createHelpItemTable(); // Create the help items table
             createSpecialAccessTable();//Create special access groups
+            addSpecialAccessColumnsToHelpItems();
             System.out.println("Database initialized successfully!");
         } catch (ClassNotFoundException e) {
             System.err.println("JDBC Driver not found: " + e.getMessage());
@@ -124,6 +125,32 @@ public class DatabaseUtil {
                 "FOREIGN KEY (user_id) REFERENCES helpsystem_users(id)" +
                 ")";
         statement.execute(permissionsQuery);
+    }
+
+    /* Alter Help Items table to match with new requirements  */
+    public void addSpecialAccessColumnsToHelpItems() throws SQLException {
+        // Add columns one at a time to ensure compatibility
+        String[] alterQueries = {
+                "ALTER TABLE helpsystem_helpitems ADD COLUMN IF NOT EXISTS encrypted_body CLOB",
+                "ALTER TABLE helpsystem_helpitems ADD COLUMN IF NOT EXISTS content_level VARCHAR(20)",
+                "ALTER TABLE helpsystem_helpitems ADD COLUMN IF NOT EXISTS group_id INT",
+                "ALTER TABLE helpsystem_helpitems ADD COLUMN IF NOT EXISTS is_encrypted BOOLEAN DEFAULT FALSE"
+        };
+
+        // Execute each ALTER TABLE statement separately
+        for (String query : alterQueries) {
+            statement.execute(query);
+        }
+
+        // Add foreign key in a separate statement
+        try {
+            String foreignKeyQuery = "ALTER TABLE helpsystem_helpitems ADD CONSTRAINT IF NOT EXISTS fk_group_id " +
+                    "FOREIGN KEY (group_id) REFERENCES special_access_group(group_id)";
+            statement.execute(foreignKeyQuery);
+        } catch (SQLException e) {
+            // Handle the case where the foreign key addition fails
+            System.err.println("Warning: Could not add foreign key constraint: " + e.getMessage());
+        }
     }
 
 

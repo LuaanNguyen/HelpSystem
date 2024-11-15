@@ -51,7 +51,15 @@ public class MyJavaFXApp extends Application {
     /**
      * Create a DB instance to interact with the database
      */
-    private static final DatabaseUtil dbUtil = new DatabaseUtil();
+    private static final DatabaseUtil dbUtil;
+
+    static {
+        try {
+            dbUtil = new DatabaseUtil();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override
     public void start(Stage primaryStage) {

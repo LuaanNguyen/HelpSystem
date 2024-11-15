@@ -10,7 +10,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.io.FileWriter;
 import java.io.IOException;
-
+import Encryption.EncryptionHelper;
+import Encryption.EncryptionUtils;
 /**
  * <p> DatabaseUtil </p>
  *
@@ -39,6 +40,11 @@ public class DatabaseUtil {
     private Connection connection = null;
     private Statement statement = null;
 
+    private EncryptionHelper encryptionHelper;
+
+    public DatabaseUtil() throws Exception {
+        encryptionHelper = new EncryptionHelper();
+    }
 
     /* Generate random string for 1 time passcode */
     public String generateInvitationCode() {
@@ -59,6 +65,8 @@ public class DatabaseUtil {
             createUserTables();  // Create the necessary tables if they don't exist
             createInvitationsTable(); // Create the invitations table
             createHelpItemTable(); // Create the help items table
+            createSpecialAccessTable();//Create special access groups
+            addSpecialAccessColumnsToHelpItems();
             System.out.println("Database initialized successfully!");
         } catch (ClassNotFoundException e) {
             System.err.println("JDBC Driver not found: " + e.getMessage());
@@ -104,6 +112,53 @@ public class DatabaseUtil {
                 + "code VARCHAR(255))";
         statement.execute(createTableQuery);
     }
+
+    public void createSpecialAccessTable() throws SQLException {
+        String query = "CREATE TABLE IF NOT EXISTS special_access_group (" +
+                "group_id INT AUTO_INCREMENT PRIMARY KEY, " +
+                "group_name VARCHAR(255), " +
+                "created_by VARCHAR(255), " +
+                "created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
+                ")";
+        statement.execute(query);
+
+        // Create the permissions table as well
+        String permissionsQuery = "CREATE TABLE IF NOT EXISTS group_permissions (" +
+                "group_id INT, " +
+                "user_id INT, " +
+                "permission_type VARCHAR(50), " +
+                "FOREIGN KEY (group_id) REFERENCES special_access_group(group_id), " +
+                "FOREIGN KEY (user_id) REFERENCES helpsystem_users(id)" +
+                ")";
+        statement.execute(permissionsQuery);
+    }
+
+    /* Alter Help Items table to match with new requirements  */
+    public void addSpecialAccessColumnsToHelpItems() throws SQLException {
+        // Add columns one at a time to ensure compatibility
+        String[] alterQueries = {
+                "ALTER TABLE helpsystem_helpitems ADD COLUMN IF NOT EXISTS encrypted_body CLOB",
+                "ALTER TABLE helpsystem_helpitems ADD COLUMN IF NOT EXISTS content_level VARCHAR(20)",
+                "ALTER TABLE helpsystem_helpitems ADD COLUMN IF NOT EXISTS group_id INT",
+                "ALTER TABLE helpsystem_helpitems ADD COLUMN IF NOT EXISTS is_encrypted BOOLEAN DEFAULT FALSE"
+        };
+
+        // Execute each ALTER TABLE statement separately
+        for (String query : alterQueries) {
+            statement.execute(query);
+        }
+
+        // Add foreign key in a separate statement
+        try {
+            String foreignKeyQuery = "ALTER TABLE helpsystem_helpitems ADD CONSTRAINT IF NOT EXISTS fk_group_id " +
+                    "FOREIGN KEY (group_id) REFERENCES special_access_group(group_id)";
+            statement.execute(foreignKeyQuery);
+        } catch (SQLException e) {
+            // Handle the case where the foreign key addition fails
+            System.err.println("Warning: Could not add foreign key constraint: " + e.getMessage());
+        }
+    }
+
 
     /* Check if DB is empty */
     public boolean isDBEmpty() throws SQLException {
@@ -409,7 +464,7 @@ public class DatabaseUtil {
         return null;
     }
 
-    /* Get help item by id */
+    /* delete item by id */
     public void deleteHelpItem(String title) throws SQLException {
         String query = "DELETE FROM helpsystem_helpitems WHERE title = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
@@ -418,7 +473,7 @@ public class DatabaseUtil {
         }
     }
 
-    /* Get help item by id */
+    /* Update item by id */
     public void updateHelpItem(Integer id, helpItem newItem) throws SQLException {
         String query = "UPDATE helpsystem_helpitems SET title = ?, description = ?, short_description = ?, authors = ?, keywords = ?, references = ? WHERE id = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
@@ -432,6 +487,8 @@ public class DatabaseUtil {
             pstmt.executeUpdate();
         }
     }
+
+
 
 
     /**

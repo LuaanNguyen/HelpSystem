@@ -507,6 +507,9 @@ public class DatabaseUtil {
     }
 
 
+    /****************************** SPECIAL ACCESS DB FUNCTIONS ****************************** */
+
+    /**** ADD ARTICLE TO SPECIAL ACCESS GROUP *****/
     public void addArticleToGroup(int groupId, int articleId, String content) throws Exception {
         // Convert content to bytes and get IV
         byte[] contentBytes = EncryptionUtils.toByteArray(content.toCharArray());
@@ -529,7 +532,7 @@ public class DatabaseUtil {
         }
     }
 
-    /* Get group details */
+    /**** GET SPECIAL ACCESS GROUP  DETAILS*****/
     public Map<String, Object> getGroupDetails(int groupId) throws SQLException {
         Map<String, Object> groupDetails = new HashMap<>();
         String query = "SELECT * FROM special_access_groups WHERE group_id = ?";
@@ -551,6 +554,7 @@ public class DatabaseUtil {
         return groupDetails;
     }
 
+    /**** GET ARTICLE CONTENT*****/
     public String getGroupArticleContent(int groupId, int articleId, String username) throws Exception {
         // First check if user has permission
         if (!hasViewPermission(groupId, username)) {
@@ -579,6 +583,7 @@ public class DatabaseUtil {
         return null;
     }
 
+    /**** CHECK IF A USER HAS VIEW PERMISSION *****/
     private boolean hasViewPermission(int groupId, String username) throws SQLException {
         String query = "SELECT 1 FROM group_permissions WHERE group_id = ? AND username = ? "
                 + "AND permission_type = 'VIEW'";
@@ -591,7 +596,7 @@ public class DatabaseUtil {
         }
     }
 
-    /* Add instructor to group with default rights */
+    /**** ADD INSTRUCTOR TO GROUP WITH A DEFAULT RIGHT *****/
     public void addInstructorToGroup(int groupId, String username) throws SQLException {
         // Instructors by default only get VIEW permission, not ADMIN
         if (!hasViewPermission(groupId, username)) {
@@ -599,7 +604,7 @@ public class DatabaseUtil {
         }
     }
 
-    /* Add first instructor with full rights */
+    /**** ADD FIRST INSTRUCTOR WITH FULL RIGHT*****/
     public void addFirstInstructor(int groupId, String username) throws SQLException {
         // Check if this is the first instructor
         if (getGroupAdmins(groupId).isEmpty()) {
@@ -612,7 +617,7 @@ public class DatabaseUtil {
         }
     }
 
-    /* Add student to group */
+    /**** ADD A STUDENT TO SPECIAL ACCESS GROUP *****/
     public void addStudentToGroup(int groupId, String username) throws SQLException {
         // Students only get VIEW permission
         if (!hasViewPermission(groupId, username)) {
@@ -620,7 +625,7 @@ public class DatabaseUtil {
         }
     }
 
-    /* Get all students in a group */
+    /**** GET ALL STUDENTS FROM A GROUP *****/
     public List<String> getGroupStudents(int groupId) throws SQLException {
         List<String> students = new ArrayList<>();
         String query = "SELECT username FROM group_permissions gp " +
@@ -639,7 +644,7 @@ public class DatabaseUtil {
         return students;
     }
 
-    /* Add admin to special access group */
+    /**** ADD ADMIN TO SPECIAL ACCESS GROUP *****/
     public void addAdminToGroup(int groupId, String username) throws SQLException {
         // Check if user already has admin permission
         if (!hasAdminPermission(groupId, username)) {
@@ -647,7 +652,7 @@ public class DatabaseUtil {
         }
     }
 
-    /* Add viewer to special access group */
+    /**** ADD VIEWER TO SPECIAL ACCESS GROUP *****/
     public void addViewerToGroup(int groupId, String username) throws SQLException {
         // Check if user already has view permission
         if (!hasViewPermission(groupId, username)) {
@@ -655,7 +660,7 @@ public class DatabaseUtil {
         }
     }
 
-    /* Remove admin from special access group */
+    /**** REMOVE ADMIN TO SPECIAL ACCESS GROUP *****/
     public void removeAdminFromGroup(int groupId, String username) throws SQLException {
         String query = "DELETE FROM group_permissions WHERE group_id = ? AND username = ? AND permission_type = 'ADMIN'";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
@@ -665,7 +670,7 @@ public class DatabaseUtil {
         }
     }
 
-    /* Remove viewer from special access group */
+    /**** REMOVE VIEWER FROM SPECIAL ACCESS GROUP *****/
     public void removeViewerFromGroup(int groupId, String username) throws SQLException {
         String query = "DELETE FROM group_permissions WHERE group_id = ? AND username = ? AND permission_type = 'VIEW'";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
@@ -675,7 +680,7 @@ public class DatabaseUtil {
         }
     }
 
-    /* Check if user has admin permission */
+    /**** CHECK IF USER HAS ADMIN PERMISSION *****/
     public boolean hasAdminPermission(int groupId, String username) throws SQLException {
         String query = "SELECT 1 FROM group_permissions WHERE group_id = ? AND username = ? AND permission_type = 'ADMIN'";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
@@ -687,7 +692,7 @@ public class DatabaseUtil {
         }
     }
 
-    /* Get all admins for a group */
+    /**** GET ALL ADMINS FOR A GROUP *****/
     public List<String> getGroupAdmins(int groupId) throws SQLException {
         List<String> admins = new ArrayList<>();
         String query = "SELECT username FROM group_permissions WHERE group_id = ? AND permission_type = 'ADMIN'";
@@ -702,7 +707,7 @@ public class DatabaseUtil {
         return admins;
     }
 
-    /* Get all viewers for a group */
+    /**** GET ALL VIEWERS FROM A GROUP *****/
     public List<String> getGroupViewers(int groupId) throws SQLException {
         List<String> viewers = new ArrayList<>();
         String query = "SELECT username FROM group_permissions WHERE group_id = ? AND permission_type = 'VIEW'";
@@ -717,7 +722,7 @@ public class DatabaseUtil {
         return viewers;
     }
 
-    /* Get all groups where user has admin permission */
+    /**** GET ADMIN FOR ALL GROUP WHERE USER HAS ADMIN PERMISSION *****/
     public List<Integer> getUserAdminGroups(String username) throws SQLException {
         List<Integer> groups = new ArrayList<>();
         String query = "SELECT group_id FROM group_permissions WHERE username = ? AND permission_type = 'ADMIN'";
@@ -732,7 +737,7 @@ public class DatabaseUtil {
         return groups;
     }
 
-    /* Get all groups where user has view permission */
+    /**** GET ADMIN FOR ALL GROUP WHERE USER HAS VIEW PERMISSION *****/
     public List<Integer> getUserViewGroups(String username) throws SQLException {
         List<Integer> groups = new ArrayList<>();
         String query = "SELECT group_id FROM group_permissions WHERE username = ? AND permission_type = 'VIEW'";
@@ -767,7 +772,7 @@ public class DatabaseUtil {
     }
 
 
-    /* Get all articles in a group */
+    /**** GET ALL ARTICLES IN A GROUP *****/
     public List<Integer> getGroupArticles(int groupId) throws SQLException {
         List<Integer> articles = new ArrayList<>();
         String query = "SELECT article_id FROM group_articles WHERE group_id = ?";
@@ -782,7 +787,7 @@ public class DatabaseUtil {
         return articles;
     }
 
-    /* Remove article from group */
+    /**** REMOVE AN ARTICLE FROM A GROUP *****/
     public void removeArticleFromGroup(int groupId, int articleId) throws SQLException {
         String query = "DELETE FROM group_articles WHERE group_id = ? AND article_id = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
@@ -792,7 +797,7 @@ public class DatabaseUtil {
         }
     }
 
-    /* Delete special access group */
+    /**** DELETE A SPECIAL ACCESS GROUP *****/
     public void deleteSpecialAccessGroup(int groupId) throws SQLException {
         // First delete all permissions
         String deletePermissions = "DELETE FROM group_permissions WHERE group_id = ?";
@@ -830,7 +835,7 @@ public class DatabaseUtil {
         return false;
     }
 
-    /* Check if user is a student */
+    /**** CHECK IF A USER IS A STUDENT *****/
     public boolean isStudent(String username) throws SQLException {
         String query = "SELECT roles FROM helpsystem_users WHERE username = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {

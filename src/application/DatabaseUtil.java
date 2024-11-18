@@ -11,6 +11,10 @@ import java.util.List;
 import java.util.ArrayList;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Map;
+import java.util.HashMap;
+
+
 import Encryption.EncryptionHelper;
 import Encryption.EncryptionUtils;
 /**
@@ -525,6 +529,28 @@ public class DatabaseUtil {
         }
     }
 
+    /* Get group details */
+    public Map<String, Object> getGroupDetails(int groupId) throws SQLException {
+        Map<String, Object> groupDetails = new HashMap<>();
+        String query = "SELECT * FROM special_access_groups WHERE group_id = ?";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, groupId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    groupDetails.put("group_id", rs.getInt("group_id"));
+                    groupDetails.put("group_name", rs.getString("group_name"));
+                    groupDetails.put("created_by", rs.getString("created_by"));
+                    groupDetails.put("created_at", rs.getTimestamp("created_at"));
+                    groupDetails.put("admins", getGroupAdmins(groupId));
+                    groupDetails.put("viewers", getGroupViewers(groupId));
+                    groupDetails.put("articles", getGroupArticles(groupId));
+                }
+            }
+        }
+        return groupDetails;
+    }
+
     public String getGroupArticleContent(int groupId, int articleId, String username) throws Exception {
         // First check if user has permission
         if (!hasViewPermission(groupId, username)) {
@@ -563,6 +589,54 @@ public class DatabaseUtil {
                 return rs.next();
             }
         }
+    }
+
+    /* Add instructor to group with default rights */
+    public void addInstructorToGroup(int groupId, String username) throws SQLException {
+        // Instructors by default only get VIEW permission, not ADMIN
+        if (!hasViewPermission(groupId, username)) {
+            addGroupPermission(groupId, username, "VIEW");
+        }
+    }
+
+    /* Add first instructor with full rights */
+    public void addFirstInstructor(int groupId, String username) throws SQLException {
+        // Check if this is the first instructor
+        if (getGroupAdmins(groupId).isEmpty()) {
+            // First instructor gets both admin and view rights
+            addGroupPermission(groupId, username, "ADMIN");
+            addGroupPermission(groupId, username, "VIEW");
+        } else {
+            // Not first instructor, add with default rights
+            addInstructorToGroup(groupId, username);
+        }
+    }
+
+    /* Add student to group */
+    public void addStudentToGroup(int groupId, String username) throws SQLException {
+        // Students only get VIEW permission
+        if (!hasViewPermission(groupId, username)) {
+            addGroupPermission(groupId, username, "VIEW");
+        }
+    }
+
+    /* Get all students in a group */
+    public List<String> getGroupStudents(int groupId) throws SQLException {
+        List<String> students = new ArrayList<>();
+        String query = "SELECT username FROM group_permissions gp " +
+                "JOIN helpsystem_users u ON gp.username = u.username " +
+                "WHERE group_id = ? AND permission_type = 'VIEW' " +
+                "AND u.roles LIKE '%student%'";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, groupId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    students.add(rs.getString("username"));
+                }
+            }
+        }
+        return students;
     }
 
     /* Add admin to special access group */
@@ -671,6 +745,103 @@ public class DatabaseUtil {
             }
         }
         return groups;
+    }
+
+    /* Get all special access groups */
+    public List<Map<String, Object>> getAllSpecialAccessGroups() throws SQLException {
+        List<Map<String, Object>> groups = new ArrayList<>();
+        String query = "SELECT * FROM special_access_groups";
+
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+            while (rs.next()) {
+                Map<String, Object> group = new HashMap<>();
+                group.put("group_id", rs.getInt("group_id"));
+                group.put("group_name", rs.getString("group_name"));
+                group.put("created_by", rs.getString("created_by"));
+                group.put("created_at", rs.getTimestamp("created_at"));
+                groups.add(group);
+            }
+        }
+        return groups;
+    }
+
+
+    /* Get all articles in a group */
+    public List<Integer> getGroupArticles(int groupId) throws SQLException {
+        List<Integer> articles = new ArrayList<>();
+        String query = "SELECT article_id FROM group_articles WHERE group_id = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, groupId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    articles.add(rs.getInt("article_id"));
+                }
+            }
+        }
+        return articles;
+    }
+
+    /* Remove article from group */
+    public void removeArticleFromGroup(int groupId, int articleId) throws SQLException {
+        String query = "DELETE FROM group_articles WHERE group_id = ? AND article_id = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, groupId);
+            pstmt.setInt(2, articleId);
+            pstmt.executeUpdate();
+        }
+    }
+
+    /* Delete special access group */
+    public void deleteSpecialAccessGroup(int groupId) throws SQLException {
+        // First delete all permissions
+        String deletePermissions = "DELETE FROM group_permissions WHERE group_id = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(deletePermissions)) {
+            pstmt.setInt(1, groupId);
+            pstmt.executeUpdate();
+        }
+
+        // Then delete all articles
+        String deleteArticles = "DELETE FROM group_articles WHERE group_id = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(deleteArticles)) {
+            pstmt.setInt(1, groupId);
+            pstmt.executeUpdate();
+        }
+
+        // Finally delete the group
+        String deleteGroup = "DELETE FROM special_access_groups WHERE group_id = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(deleteGroup)) {
+            pstmt.setInt(1, groupId);
+            pstmt.executeUpdate();
+        }
+    }
+
+    /* Check if user is an instructor */
+    public boolean isInstructor(String username) throws SQLException {
+        String query = "SELECT roles FROM helpsystem_users WHERE username = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setString(1, username);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("roles").contains("instructor");
+                }
+            }
+        }
+        return false;
+    }
+
+    /* Check if user is a student */
+    public boolean isStudent(String username) throws SQLException {
+        String query = "SELECT roles FROM helpsystem_users WHERE username = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setString(1, username);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("roles").contains("student");
+                }
+            }
+        }
+        return false;
     }
 
     /**

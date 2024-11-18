@@ -62,15 +62,15 @@ Two screencasts must be provided.  The first is an internal technical screencast
 ## Phase Three Requirements  ( In Progress )
 
 - [ ] This phase builds on, extends, and may require minor implementation refinements to the first two phases.  All the requirements for Phases One and Two continue into this phase. Any changes in requirements will be explicitly described in this assignment.
-- [ ] No role has the right to remove admin rights if that means no one will have admin rights for the whole help system, a general group, or a special access group.
-- The system supports special access groups consisting of:
-  - [ ] A list of articles in the group where the body of the article is encrypted and decrypted access is limited.  (E.g., A collection of help articles that contains proprietary, private, or other kinds of sensitive information.
-  - [ ] A list of admins given admin rights to create, read, update, and delete access rights to this group.  (Admins do not automatically have admin rights to special access groups and do not have the right to view the bodies of articles in this group.)
-  - [ ] The first instructor added to a special access group is given the right to view the bodies of articles in the group and admin rights for this group.
-  - [ ] The default rights for new instructors added to this group do not include admin rights for this group.
-  - [ ] A list of instructors who have been given rights to view the decrypted bodies of articles in this group.
-  - [ ] A list of instructors given admin rights for this group.
-  - [ ] A list of students given viewing rights to the decrypted bodies of articles in the group.
+- [ x ] No role has the right to remove admin rights if that means no one will have admin rights for the whole help system, a general group, or a special access group.
+- The system supports special access groups consisting of: (Needs Front-End Work)
+  - [ x ] A list of articles in the group where the body of the article is encrypted and decrypted access is limited.  (E.g., A collection of help articles that contains proprietary, private, or other kinds of sensitive information.
+  - [ x ] A list of admins given admin rights to create, read, update, and delete access rights to this group.  (Admins do not automatically have admin rights to special access groups and do not have the right to view the bodies of articles in this group.)
+  - [ x ] The first instructor added to a special access group is given the right to view the bodies of articles in the group and admin rights for this group.
+  - [ x ] The default rights for new instructors added to this group do not include admin rights for this group.
+  - [ x ] A list of instructors who have been given rights to view the decrypted bodies of articles in this group.
+  - [ x ] A list of instructors given admin rights for this group.
+  - [  x ] A list of students given viewing rights to the decrypted bodies of articles in the group.
 - The student role is enhanced with additional commands:
   - [ ] Students may always perform a set of actions, including quitting the application, sending a generic message to the help system, and sending a specific message to the help system.  Generic messages are used to express confusion about how to use the tool.  Specific messages are those where the student cannot find the help information they need.  In this last case, the student specifies what they need and cannot find.  The system adds a list of the search requests the student has made.  This information can be used to identify new help articles that need to be created and added to the system.
   Set the content level of the articles to be returned (e.g., beginner, intermediate, advanced, expert).  The student may also specify an "all" level to see all the articles independent of the level.  The default is "all".

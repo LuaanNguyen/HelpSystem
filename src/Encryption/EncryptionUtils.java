@@ -12,7 +12,7 @@ public class EncryptionUtils {
         return Arrays.copyOf(charBuffer.array(), charBuffer.limit());
     }
 
-    static byte[] toByteArray(char[] chars) {
+    public static byte[] toByteArray(char[] chars) {
         ByteBuffer byteBuffer = Charset.defaultCharset().encode(CharBuffer.wrap(chars));
         return Arrays.copyOf(byteBuffer.array(), byteBuffer.limit());
     }

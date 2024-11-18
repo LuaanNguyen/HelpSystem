@@ -6,10 +6,15 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.security.SecureRandom;
+import java.util.Base64;
 import java.util.List;
 import java.util.ArrayList;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Map;
+import java.util.HashMap;
+
+
 import Encryption.EncryptionHelper;
 import Encryption.EncryptionUtils;
 /**
@@ -65,8 +70,7 @@ public class DatabaseUtil {
             createUserTables();  // Create the necessary tables if they don't exist
             createInvitationsTable(); // Create the invitations table
             createHelpItemTable(); // Create the help items table
-            createSpecialAccessTable();//Create special access groups
-            addSpecialAccessColumnsToHelpItems();
+            createSpecialAccessGroupTables();
             System.out.println("Database initialized successfully!");
         } catch (ClassNotFoundException e) {
             System.err.println("JDBC Driver not found: " + e.getMessage());
@@ -113,49 +117,63 @@ public class DatabaseUtil {
         statement.execute(createTableQuery);
     }
 
-    public void createSpecialAccessTable() throws SQLException {
-        String query = "CREATE TABLE IF NOT EXISTS special_access_group (" +
-                "group_id INT AUTO_INCREMENT PRIMARY KEY, " +
-                "group_name VARCHAR(255), " +
-                "created_by VARCHAR(255), " +
-                "created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
-                ")";
-        statement.execute(query);
+    /* Create table for special access group */
+    public void createSpecialAccessGroupTables() throws SQLException {
+        // Create the main special access groups table
+        String specialAccessGroupsTable = "CREATE TABLE IF NOT EXISTS special_access_groups ("
+                + "group_id INT AUTO_INCREMENT PRIMARY KEY, "
+                + "group_name VARCHAR(255) UNIQUE, "
+                + "created_by VARCHAR(255), "
+                + "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)";
+        statement.execute(specialAccessGroupsTable);
 
-        // Create the permissions table as well
-        String permissionsQuery = "CREATE TABLE IF NOT EXISTS group_permissions (" +
-                "group_id INT, " +
-                "user_id INT, " +
-                "permission_type VARCHAR(50), " +
-                "FOREIGN KEY (group_id) REFERENCES special_access_group(group_id), " +
-                "FOREIGN KEY (user_id) REFERENCES helpsystem_users(id)" +
-                ")";
-        statement.execute(permissionsQuery);
+        // Create table for encrypted articles in groups
+        String groupArticlesTable = "CREATE TABLE IF NOT EXISTS group_articles ("
+                + "article_id INT, "
+                + "group_id INT, "
+                + "encrypted_content TEXT, "
+                + "PRIMARY KEY (article_id, group_id), "
+                + "FOREIGN KEY (group_id) REFERENCES special_access_groups(group_id))";
+        statement.execute(groupArticlesTable);
+
+        // Create table for group permissions
+        String groupPermissionsTable = "CREATE TABLE IF NOT EXISTS group_permissions ("
+                + "group_id INT, "
+                + "username VARCHAR(255), "
+                + "permission_type VARCHAR(50), "  // 'ADMIN' or 'VIEW'
+                + "PRIMARY KEY (group_id, username, permission_type), "
+                + "FOREIGN KEY (group_id) REFERENCES special_access_groups(group_id))";
+        statement.execute(groupPermissionsTable);
     }
 
-    /* Alter Help Items table to match with new requirements  */
-    public void addSpecialAccessColumnsToHelpItems() throws SQLException {
-        // Add columns one at a time to ensure compatibility
-        String[] alterQueries = {
-                "ALTER TABLE helpsystem_helpitems ADD COLUMN IF NOT EXISTS encrypted_body CLOB",
-                "ALTER TABLE helpsystem_helpitems ADD COLUMN IF NOT EXISTS content_level VARCHAR(20)",
-                "ALTER TABLE helpsystem_helpitems ADD COLUMN IF NOT EXISTS group_id INT",
-                "ALTER TABLE helpsystem_helpitems ADD COLUMN IF NOT EXISTS is_encrypted BOOLEAN DEFAULT FALSE"
-        };
+    /* Create a special access group */
+    public void createSpecialAccessGroup(String groupName, String creatorUsername) throws SQLException {
+        String query = "INSERT INTO special_access_groups (group_name, created_by) VALUES (?, ?)";
+        try (PreparedStatement pstmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+            pstmt.setString(1, groupName);
+            pstmt.setString(2, creatorUsername);
+            pstmt.executeUpdate();
 
-        // Execute each ALTER TABLE statement separately
-        for (String query : alterQueries) {
-            statement.execute(query);
+            // Get the generated group ID
+            try (ResultSet rs = pstmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    int groupId = rs.getInt(1);
+                    // Add creator as both admin and viewer
+                    addGroupPermission(groupId, creatorUsername, "ADMIN");
+                    addGroupPermission(groupId, creatorUsername, "VIEW");
+                }
+            }
         }
+    }
 
-        // Add foreign key in a separate statement
-        try {
-            String foreignKeyQuery = "ALTER TABLE helpsystem_helpitems ADD CONSTRAINT IF NOT EXISTS fk_group_id " +
-                    "FOREIGN KEY (group_id) REFERENCES special_access_group(group_id)";
-            statement.execute(foreignKeyQuery);
-        } catch (SQLException e) {
-            // Handle the case where the foreign key addition fails
-            System.err.println("Warning: Could not add foreign key constraint: " + e.getMessage());
+    /* Add permission to special access group*/
+    private void addGroupPermission(int groupId, String username, String permissionType) throws SQLException {
+        String query = "INSERT INTO group_permissions (group_id, username, permission_type) VALUES (?, ?, ?)";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, groupId);
+            pstmt.setString(2, username);
+            pstmt.setString(3, permissionType);
+            pstmt.executeUpdate();
         }
     }
 
@@ -489,7 +507,347 @@ public class DatabaseUtil {
     }
 
 
+    /****************************** SPECIAL ACCESS DB FUNCTIONS ****************************** */
 
+    /**** ADD ARTICLE TO SPECIAL ACCESS GROUP *****/
+    public void addArticleToGroup(int groupId, int articleId, String content) throws Exception {
+        // Convert content to bytes and get IV
+        byte[] contentBytes = EncryptionUtils.toByteArray(content.toCharArray());
+        byte[] iv = EncryptionUtils.getInitializationVector(content.toCharArray());
+
+        // Encrypt the content using existing encryptionHelper
+        byte[] encryptedBytes = encryptionHelper.encrypt(contentBytes, iv);
+
+        // Store both IV and encrypted content in Base64 format
+        String encryptedContent = Base64.getEncoder().encodeToString(iv) +
+                ":" +
+                Base64.getEncoder().encodeToString(encryptedBytes);
+
+        String query = "INSERT INTO group_articles (article_id, group_id, encrypted_content) VALUES (?, ?, ?)";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, articleId);
+            pstmt.setInt(2, groupId);
+            pstmt.setString(3, encryptedContent);
+            pstmt.executeUpdate();
+        }
+    }
+
+    /**** GET SPECIAL ACCESS GROUP  DETAILS*****/
+    public Map<String, Object> getGroupDetails(int groupId) throws SQLException {
+        Map<String, Object> groupDetails = new HashMap<>();
+        String query = "SELECT * FROM special_access_groups WHERE group_id = ?";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, groupId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    groupDetails.put("group_id", rs.getInt("group_id"));
+                    groupDetails.put("group_name", rs.getString("group_name"));
+                    groupDetails.put("created_by", rs.getString("created_by"));
+                    groupDetails.put("created_at", rs.getTimestamp("created_at"));
+                    groupDetails.put("admins", getGroupAdmins(groupId));
+                    groupDetails.put("viewers", getGroupViewers(groupId));
+                    groupDetails.put("articles", getGroupArticles(groupId));
+                }
+            }
+        }
+        return groupDetails;
+    }
+
+    /**** GET ARTICLE CONTENT*****/
+    public String getGroupArticleContent(int groupId, int articleId, String username) throws Exception {
+        // First check if user has permission
+        if (!hasViewPermission(groupId, username)) {
+            throw new SecurityException("User does not have permission to view this article");
+        }
+
+        String query = "SELECT encrypted_content FROM group_articles WHERE group_id = ? AND article_id = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, groupId);
+            pstmt.setInt(2, articleId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    String encryptedContent = rs.getString("encrypted_content");
+
+                    // Split the stored string to get IV and encrypted content
+                    String[] parts = encryptedContent.split(":");
+                    byte[] iv = Base64.getDecoder().decode(parts[0]);
+                    byte[] encrypted = Base64.getDecoder().decode(parts[1]);
+
+                    // Decrypt using existing encryptionHelper
+                    byte[] decryptedBytes = encryptionHelper.decrypt(encrypted, iv);
+                    return new String(EncryptionUtils.toCharArray(decryptedBytes));
+                }
+            }
+        }
+        return null;
+    }
+
+    /**** CHECK IF A USER HAS VIEW PERMISSION *****/
+    private boolean hasViewPermission(int groupId, String username) throws SQLException {
+        String query = "SELECT 1 FROM group_permissions WHERE group_id = ? AND username = ? "
+                + "AND permission_type = 'VIEW'";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, groupId);
+            pstmt.setString(2, username);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
+    /**** ADD INSTRUCTOR TO GROUP WITH A DEFAULT RIGHT *****/
+    public void addInstructorToGroup(int groupId, String username) throws SQLException {
+        // Instructors by default only get VIEW permission, not ADMIN
+        if (!hasViewPermission(groupId, username)) {
+            addGroupPermission(groupId, username, "VIEW");
+        }
+    }
+
+    /**** ADD FIRST INSTRUCTOR WITH FULL RIGHT*****/
+    public void addFirstInstructor(int groupId, String username) throws SQLException {
+        // Check if this is the first instructor
+        if (getGroupAdmins(groupId).isEmpty()) {
+            // First instructor gets both admin and view rights
+            addGroupPermission(groupId, username, "ADMIN");
+            addGroupPermission(groupId, username, "VIEW");
+        } else {
+            // Not first instructor, add with default rights
+            addInstructorToGroup(groupId, username);
+        }
+    }
+
+    /**** ADD A STUDENT TO SPECIAL ACCESS GROUP *****/
+    public void addStudentToGroup(int groupId, String username) throws SQLException {
+        // Students only get VIEW permission
+        if (!hasViewPermission(groupId, username)) {
+            addGroupPermission(groupId, username, "VIEW");
+        }
+    }
+
+    /**** GET ALL STUDENTS FROM A GROUP *****/
+    public List<String> getGroupStudents(int groupId) throws SQLException {
+        List<String> students = new ArrayList<>();
+        String query = "SELECT username FROM group_permissions gp " +
+                "JOIN helpsystem_users u ON gp.username = u.username " +
+                "WHERE group_id = ? AND permission_type = 'VIEW' " +
+                "AND u.roles LIKE '%student%'";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, groupId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    students.add(rs.getString("username"));
+                }
+            }
+        }
+        return students;
+    }
+
+    /**** ADD ADMIN TO SPECIAL ACCESS GROUP *****/
+    public void addAdminToGroup(int groupId, String username) throws SQLException {
+        // Check if user already has admin permission
+        if (!hasAdminPermission(groupId, username)) {
+            addGroupPermission(groupId, username, "ADMIN");
+        }
+    }
+
+    /**** ADD VIEWER TO SPECIAL ACCESS GROUP *****/
+    public void addViewerToGroup(int groupId, String username) throws SQLException {
+        // Check if user already has view permission
+        if (!hasViewPermission(groupId, username)) {
+            addGroupPermission(groupId, username, "VIEW");
+        }
+    }
+
+    /**** REMOVE ADMIN TO SPECIAL ACCESS GROUP *****/
+    public void removeAdminFromGroup(int groupId, String username) throws SQLException {
+        String query = "DELETE FROM group_permissions WHERE group_id = ? AND username = ? AND permission_type = 'ADMIN'";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, groupId);
+            pstmt.setString(2, username);
+            pstmt.executeUpdate();
+        }
+    }
+
+    /**** REMOVE VIEWER FROM SPECIAL ACCESS GROUP *****/
+    public void removeViewerFromGroup(int groupId, String username) throws SQLException {
+        String query = "DELETE FROM group_permissions WHERE group_id = ? AND username = ? AND permission_type = 'VIEW'";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, groupId);
+            pstmt.setString(2, username);
+            pstmt.executeUpdate();
+        }
+    }
+
+    /**** CHECK IF USER HAS ADMIN PERMISSION *****/
+    public boolean hasAdminPermission(int groupId, String username) throws SQLException {
+        String query = "SELECT 1 FROM group_permissions WHERE group_id = ? AND username = ? AND permission_type = 'ADMIN'";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, groupId);
+            pstmt.setString(2, username);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
+    /**** GET ALL ADMINS FOR A GROUP *****/
+    public List<String> getGroupAdmins(int groupId) throws SQLException {
+        List<String> admins = new ArrayList<>();
+        String query = "SELECT username FROM group_permissions WHERE group_id = ? AND permission_type = 'ADMIN'";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, groupId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    admins.add(rs.getString("username"));
+                }
+            }
+        }
+        return admins;
+    }
+
+    /**** GET ALL VIEWERS FROM A GROUP *****/
+    public List<String> getGroupViewers(int groupId) throws SQLException {
+        List<String> viewers = new ArrayList<>();
+        String query = "SELECT username FROM group_permissions WHERE group_id = ? AND permission_type = 'VIEW'";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, groupId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    viewers.add(rs.getString("username"));
+                }
+            }
+        }
+        return viewers;
+    }
+
+    /**** GET ADMIN FOR ALL GROUP WHERE USER HAS ADMIN PERMISSION *****/
+    public List<Integer> getUserAdminGroups(String username) throws SQLException {
+        List<Integer> groups = new ArrayList<>();
+        String query = "SELECT group_id FROM group_permissions WHERE username = ? AND permission_type = 'ADMIN'";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setString(1, username);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    groups.add(rs.getInt("group_id"));
+                }
+            }
+        }
+        return groups;
+    }
+
+    /**** GET ADMIN FOR ALL GROUP WHERE USER HAS VIEW PERMISSION *****/
+    public List<Integer> getUserViewGroups(String username) throws SQLException {
+        List<Integer> groups = new ArrayList<>();
+        String query = "SELECT group_id FROM group_permissions WHERE username = ? AND permission_type = 'VIEW'";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setString(1, username);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    groups.add(rs.getInt("group_id"));
+                }
+            }
+        }
+        return groups;
+    }
+
+    /* Get all special access groups */
+    public List<Map<String, Object>> getAllSpecialAccessGroups() throws SQLException {
+        List<Map<String, Object>> groups = new ArrayList<>();
+        String query = "SELECT * FROM special_access_groups";
+
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+            while (rs.next()) {
+                Map<String, Object> group = new HashMap<>();
+                group.put("group_id", rs.getInt("group_id"));
+                group.put("group_name", rs.getString("group_name"));
+                group.put("created_by", rs.getString("created_by"));
+                group.put("created_at", rs.getTimestamp("created_at"));
+                groups.add(group);
+            }
+        }
+        return groups;
+    }
+
+
+    /**** GET ALL ARTICLES IN A GROUP *****/
+    public List<Integer> getGroupArticles(int groupId) throws SQLException {
+        List<Integer> articles = new ArrayList<>();
+        String query = "SELECT article_id FROM group_articles WHERE group_id = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, groupId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    articles.add(rs.getInt("article_id"));
+                }
+            }
+        }
+        return articles;
+    }
+
+    /**** REMOVE AN ARTICLE FROM A GROUP *****/
+    public void removeArticleFromGroup(int groupId, int articleId) throws SQLException {
+        String query = "DELETE FROM group_articles WHERE group_id = ? AND article_id = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, groupId);
+            pstmt.setInt(2, articleId);
+            pstmt.executeUpdate();
+        }
+    }
+
+    /**** DELETE A SPECIAL ACCESS GROUP *****/
+    public void deleteSpecialAccessGroup(int groupId) throws SQLException {
+        // First delete all permissions
+        String deletePermissions = "DELETE FROM group_permissions WHERE group_id = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(deletePermissions)) {
+            pstmt.setInt(1, groupId);
+            pstmt.executeUpdate();
+        }
+
+        // Then delete all articles
+        String deleteArticles = "DELETE FROM group_articles WHERE group_id = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(deleteArticles)) {
+            pstmt.setInt(1, groupId);
+            pstmt.executeUpdate();
+        }
+
+        // Finally delete the group
+        String deleteGroup = "DELETE FROM special_access_groups WHERE group_id = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(deleteGroup)) {
+            pstmt.setInt(1, groupId);
+            pstmt.executeUpdate();
+        }
+    }
+
+    /* Check if user is an instructor */
+    public boolean isInstructor(String username) throws SQLException {
+        String query = "SELECT roles FROM helpsystem_users WHERE username = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setString(1, username);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("roles").contains("instructor");
+                }
+            }
+        }
+        return false;
+    }
+
+    /**** CHECK IF A USER IS A STUDENT *****/
+    public boolean isStudent(String username) throws SQLException {
+        String query = "SELECT roles FROM helpsystem_users WHERE username = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setString(1, username);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("roles").contains("student");
+                }
+            }
+        }
+        return false;
+    }
 
     /**
      * Backup encrypted information into a file

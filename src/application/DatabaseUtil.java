@@ -565,6 +565,114 @@ public class DatabaseUtil {
         }
     }
 
+    /* Add admin to special access group */
+    public void addAdminToGroup(int groupId, String username) throws SQLException {
+        // Check if user already has admin permission
+        if (!hasAdminPermission(groupId, username)) {
+            addGroupPermission(groupId, username, "ADMIN");
+        }
+    }
+
+    /* Add viewer to special access group */
+    public void addViewerToGroup(int groupId, String username) throws SQLException {
+        // Check if user already has view permission
+        if (!hasViewPermission(groupId, username)) {
+            addGroupPermission(groupId, username, "VIEW");
+        }
+    }
+
+    /* Remove admin from special access group */
+    public void removeAdminFromGroup(int groupId, String username) throws SQLException {
+        String query = "DELETE FROM group_permissions WHERE group_id = ? AND username = ? AND permission_type = 'ADMIN'";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, groupId);
+            pstmt.setString(2, username);
+            pstmt.executeUpdate();
+        }
+    }
+
+    /* Remove viewer from special access group */
+    public void removeViewerFromGroup(int groupId, String username) throws SQLException {
+        String query = "DELETE FROM group_permissions WHERE group_id = ? AND username = ? AND permission_type = 'VIEW'";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, groupId);
+            pstmt.setString(2, username);
+            pstmt.executeUpdate();
+        }
+    }
+
+    /* Check if user has admin permission */
+    public boolean hasAdminPermission(int groupId, String username) throws SQLException {
+        String query = "SELECT 1 FROM group_permissions WHERE group_id = ? AND username = ? AND permission_type = 'ADMIN'";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, groupId);
+            pstmt.setString(2, username);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
+    /* Get all admins for a group */
+    public List<String> getGroupAdmins(int groupId) throws SQLException {
+        List<String> admins = new ArrayList<>();
+        String query = "SELECT username FROM group_permissions WHERE group_id = ? AND permission_type = 'ADMIN'";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, groupId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    admins.add(rs.getString("username"));
+                }
+            }
+        }
+        return admins;
+    }
+
+    /* Get all viewers for a group */
+    public List<String> getGroupViewers(int groupId) throws SQLException {
+        List<String> viewers = new ArrayList<>();
+        String query = "SELECT username FROM group_permissions WHERE group_id = ? AND permission_type = 'VIEW'";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, groupId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    viewers.add(rs.getString("username"));
+                }
+            }
+        }
+        return viewers;
+    }
+
+    /* Get all groups where user has admin permission */
+    public List<Integer> getUserAdminGroups(String username) throws SQLException {
+        List<Integer> groups = new ArrayList<>();
+        String query = "SELECT group_id FROM group_permissions WHERE username = ? AND permission_type = 'ADMIN'";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setString(1, username);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    groups.add(rs.getInt("group_id"));
+                }
+            }
+        }
+        return groups;
+    }
+
+    /* Get all groups where user has view permission */
+    public List<Integer> getUserViewGroups(String username) throws SQLException {
+        List<Integer> groups = new ArrayList<>();
+        String query = "SELECT group_id FROM group_permissions WHERE username = ? AND permission_type = 'VIEW'";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setString(1, username);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    groups.add(rs.getInt("group_id"));
+                }
+            }
+        }
+        return groups;
+    }
+
     /**
      * Backup encrypted information into a file
      */

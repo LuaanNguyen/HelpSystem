@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.security.SecureRandom;
+import java.util.Base64;
 import java.util.List;
 import java.util.ArrayList;
 import java.io.FileWriter;
@@ -111,7 +112,6 @@ public class DatabaseUtil {
                 + "code VARCHAR(255))";
         statement.execute(createTableQuery);
     }
-
 
     /* Create table for special access group */
     public void createSpecialAccessGroupTables() throws SQLException {
@@ -503,7 +503,67 @@ public class DatabaseUtil {
     }
 
 
+    public void addArticleToGroup(int groupId, int articleId, String content) throws Exception {
+        // Convert content to bytes and get IV
+        byte[] contentBytes = EncryptionUtils.toByteArray(content.toCharArray());
+        byte[] iv = EncryptionUtils.getInitializationVector(content.toCharArray());
 
+        // Encrypt the content using existing encryptionHelper
+        byte[] encryptedBytes = encryptionHelper.encrypt(contentBytes, iv);
+
+        // Store both IV and encrypted content in Base64 format
+        String encryptedContent = Base64.getEncoder().encodeToString(iv) +
+                ":" +
+                Base64.getEncoder().encodeToString(encryptedBytes);
+
+        String query = "INSERT INTO group_articles (article_id, group_id, encrypted_content) VALUES (?, ?, ?)";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, articleId);
+            pstmt.setInt(2, groupId);
+            pstmt.setString(3, encryptedContent);
+            pstmt.executeUpdate();
+        }
+    }
+
+    public String getGroupArticleContent(int groupId, int articleId, String username) throws Exception {
+        // First check if user has permission
+        if (!hasViewPermission(groupId, username)) {
+            throw new SecurityException("User does not have permission to view this article");
+        }
+
+        String query = "SELECT encrypted_content FROM group_articles WHERE group_id = ? AND article_id = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, groupId);
+            pstmt.setInt(2, articleId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    String encryptedContent = rs.getString("encrypted_content");
+
+                    // Split the stored string to get IV and encrypted content
+                    String[] parts = encryptedContent.split(":");
+                    byte[] iv = Base64.getDecoder().decode(parts[0]);
+                    byte[] encrypted = Base64.getDecoder().decode(parts[1]);
+
+                    // Decrypt using existing encryptionHelper
+                    byte[] decryptedBytes = encryptionHelper.decrypt(encrypted, iv);
+                    return new String(EncryptionUtils.toCharArray(decryptedBytes));
+                }
+            }
+        }
+        return null;
+    }
+
+    private boolean hasViewPermission(int groupId, String username) throws SQLException {
+        String query = "SELECT 1 FROM group_permissions WHERE group_id = ? AND username = ? "
+                + "AND permission_type = 'VIEW'";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, groupId);
+            pstmt.setString(2, username);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
 
     /**
      * Backup encrypted information into a file

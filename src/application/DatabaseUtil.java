@@ -65,6 +65,7 @@ public class DatabaseUtil {
             createUserTables();  // Create the necessary tables if they don't exist
             createInvitationsTable(); // Create the invitations table
             createHelpItemTable(); // Create the help items table
+            createSpecialAccessGroupTables();
             System.out.println("Database initialized successfully!");
         } catch (ClassNotFoundException e) {
             System.err.println("JDBC Driver not found: " + e.getMessage());
@@ -109,6 +110,67 @@ public class DatabaseUtil {
                 + "role VARCHAR(255), "
                 + "code VARCHAR(255))";
         statement.execute(createTableQuery);
+    }
+
+
+    /* Create table for special access group */
+    public void createSpecialAccessGroupTables() throws SQLException {
+        // Create the main special access groups table
+        String specialAccessGroupsTable = "CREATE TABLE IF NOT EXISTS special_access_groups ("
+                + "group_id INT AUTO_INCREMENT PRIMARY KEY, "
+                + "group_name VARCHAR(255) UNIQUE, "
+                + "created_by VARCHAR(255), "
+                + "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)";
+        statement.execute(specialAccessGroupsTable);
+
+        // Create table for encrypted articles in groups
+        String groupArticlesTable = "CREATE TABLE IF NOT EXISTS group_articles ("
+                + "article_id INT, "
+                + "group_id INT, "
+                + "encrypted_content TEXT, "
+                + "PRIMARY KEY (article_id, group_id), "
+                + "FOREIGN KEY (group_id) REFERENCES special_access_groups(group_id))";
+        statement.execute(groupArticlesTable);
+
+        // Create table for group permissions
+        String groupPermissionsTable = "CREATE TABLE IF NOT EXISTS group_permissions ("
+                + "group_id INT, "
+                + "username VARCHAR(255), "
+                + "permission_type VARCHAR(50), "  // 'ADMIN' or 'VIEW'
+                + "PRIMARY KEY (group_id, username, permission_type), "
+                + "FOREIGN KEY (group_id) REFERENCES special_access_groups(group_id))";
+        statement.execute(groupPermissionsTable);
+    }
+
+    /* Create a special access group */
+    public void createSpecialAccessGroup(String groupName, String creatorUsername) throws SQLException {
+        String query = "INSERT INTO special_access_groups (group_name, created_by) VALUES (?, ?)";
+        try (PreparedStatement pstmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+            pstmt.setString(1, groupName);
+            pstmt.setString(2, creatorUsername);
+            pstmt.executeUpdate();
+
+            // Get the generated group ID
+            try (ResultSet rs = pstmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    int groupId = rs.getInt(1);
+                    // Add creator as both admin and viewer
+                    addGroupPermission(groupId, creatorUsername, "ADMIN");
+                    addGroupPermission(groupId, creatorUsername, "VIEW");
+                }
+            }
+        }
+    }
+
+    /* Add permission to special access group*/
+    private void addGroupPermission(int groupId, String username, String permissionType) throws SQLException {
+        String query = "INSERT INTO group_permissions (group_id, username, permission_type) VALUES (?, ?, ?)";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, groupId);
+            pstmt.setString(2, username);
+            pstmt.setString(3, permissionType);
+            pstmt.executeUpdate();
+        }
     }
 
 

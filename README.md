@@ -102,10 +102,10 @@ Two screencasts must be provided.  The first is an internal technical screencast
   - [ ] Instructors with special group rights for a group may add, view, and delete students from that group. 
 - The admin role is enhanced with additional commands. 
   - [ ] Admins may create, delete, back up, and restore help articles. (They do not have the right to view or edit the body of any help system article.)
-  - [ ] Admins may be given admin rights over general article groups.  (See above about admin rights concerning general article groups.)
+  - [ x] Admins may be given admin rights over general article groups.  (See above about admin rights concerning general article groups.)
   - [ ] Admins may be given admin rights over special access article groups.  (See above about admin rights concerning special access article groups.)
-  - [ ] Admins may back up and restore articles, groups of articles, and special access groups of articles.
-  -  [ ] Admin may add, view, and remove students, instructors, and admins from general groups. (See the limitation above that requires at least one admin to have admin rights to every group or special access group.)
+  - [ x] Admins may back up and restore articles, groups of articles, and special access groups of articles.
+  -  [x ] Admin may add, view, and remove students, instructors, and admins from general groups. (See the limitation above that requires at least one admin to have admin rights to every group or special access group.)
 
 ## Phase Three Deliverables 🎁
 

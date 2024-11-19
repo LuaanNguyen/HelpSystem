@@ -523,7 +523,7 @@ public class MyJavaFXApp extends Application {
         adminGrid.setAlignment(Pos.CENTER);
 
         // Header
-        Label headerLabel = new Label("Admin Dashboard (General Group) \uD83E\uDDD1\uD83C\uDFFC\u200D\uD83D\uDCBB");
+        Label headerLabel = new Label("Admin Dashboard - General Group \uD83E\uDDD1\uD83C\uDFFC\u200D\uD83D\uDCBB");
         headerLabel.setAlignment((Pos.CENTER));
         headerLabel.getStyleClass().add("header-label");
         adminGrid.add(headerLabel, 0, 0, 2, 1);
@@ -825,7 +825,7 @@ public class MyJavaFXApp extends Application {
         instructorGrid.setAlignment(Pos.CENTER);
 
         // Header Label
-        Label headerLabel = new Label("Instructor Dashboard 🧑‍🏫");
+        Label headerLabel = new Label("Instructor Dashboard - General Group 🧑‍🏫");
         headerLabel.setAlignment(Pos.CENTER);
         instructorGrid.add(headerLabel, 0, 0, 2, 1);
 

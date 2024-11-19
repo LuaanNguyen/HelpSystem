@@ -523,7 +523,7 @@ public class MyJavaFXApp extends Application {
         adminGrid.setAlignment(Pos.CENTER);
 
         // Header
-        Label headerLabel = new Label("Admin Dashboard \uD83E\uDDD1\uD83C\uDFFC\u200D\uD83D\uDCBB");
+        Label headerLabel = new Label("Admin Dashboard (General Group) \uD83E\uDDD1\uD83C\uDFFC\u200D\uD83D\uDCBB");
         headerLabel.setAlignment((Pos.CENTER));
         headerLabel.getStyleClass().add("header-label");
         adminGrid.add(headerLabel, 0, 0, 2, 1);
@@ -541,8 +541,10 @@ public class MyJavaFXApp extends Application {
         Button inviteUserButton = new Button("Invite User");
         Button createHelpItemButton = new Button("Create Help Item");
         Button viewHelpItemsButton = new Button("View Help Items");
+        Button viewSpecialAccessButton = new Button("View Special Access  Items");
         Button logoutButton = new Button("Log Out");
         Button backupButton = new Button("Backup Articles");
+        Button backupSpecialAccessButton = new Button("Backup Special Access Articles");
 
 
         // Set preferred width for buttons
@@ -555,8 +557,8 @@ public class MyJavaFXApp extends Application {
         logoutButton.setPrefWidth(150);
 
         // Grouped button layout
-        VBox buttonGroup1 = new VBox(10, deleteUserButton, addRoleButton, removeRoleButton, logoutButton);
-        VBox buttonGroup2 = new VBox(10, inviteUserButton, createHelpItemButton, viewHelpItemsButton, backupButton);
+        VBox buttonGroup1 = new VBox(10, deleteUserButton, addRoleButton, removeRoleButton, logoutButton, backupButton);
+        VBox buttonGroup2 = new VBox(10, inviteUserButton, createHelpItemButton, viewHelpItemsButton,viewSpecialAccessButton , backupSpecialAccessButton);
         buttonGroup1.setAlignment(Pos.TOP_CENTER);
         buttonGroup2.setAlignment(Pos.TOP_CENTER);
 

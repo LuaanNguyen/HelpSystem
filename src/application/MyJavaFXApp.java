@@ -567,6 +567,7 @@ public class MyJavaFXApp extends Application {
         adminGrid.add(buttonGroup2, 1, 2);
 
         backupButton.setOnAction(e -> backupArticles());
+        backupSpecialAccessButton.setOnAction((e -> backupSpecialAccessArticles()));
         // Delete user button, prompts user to confirm deleting user
         deleteUserButton.setOnAction(e -> {
             String selectedUser = userListView.getSelectionModel().getSelectedItem();
@@ -1167,6 +1168,22 @@ public class MyJavaFXApp extends Application {
         dialog.showAndWait().ifPresent(fileName -> {
             try {
                 dbUtil.backupHelpItemsToFile(fileName.trim());
+                showAlert("Success", "Articles backed up to " + fileName);
+            } catch (Exception e) {
+                showAlert("Error", "Failed to backup articles: " + e.getMessage());
+            }
+        });
+    }
+
+    private void backupSpecialAccessArticles() {
+        TextInputDialog dialog = new TextInputDialog("backup.csv");
+        dialog.setTitle("Backup Special Access Articles");
+        dialog.setHeaderText("Enter the file name for the backup:");
+        dialog.setContentText("File Name:");
+
+        dialog.showAndWait().ifPresent(fileName -> {
+            try {
+                dbUtil.backupSpecialAccessItemsToFile(fileName.trim());
                 showAlert("Success", "Articles backed up to " + fileName);
             } catch (Exception e) {
                 showAlert("Error", "Failed to backup articles: " + e.getMessage());

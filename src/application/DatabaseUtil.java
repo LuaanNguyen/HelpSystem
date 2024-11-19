@@ -878,5 +878,28 @@ public class DatabaseUtil {
         }
     }
 
+    /**
+     * Backup specials  access items into a file
+     */
+    public void backupSpecialAccessItemsToFile(String fileName) throws SQLException, IOException, Exception {
+        String query = "SELECT * FROM group_articles";
+
+        try (ResultSet resultSet = statement.executeQuery(query);
+             FileWriter writer = new FileWriter(fileName)) {
+            while(resultSet.next()) {
+                String articleId = resultSet.getString("article_id");
+                String groupId = resultSet.getString("group_id");
+                String encryptedContent = resultSet.getString("encrypted_content");
+                writer.write(articleId + ",");
+                writer.write(groupId + ",");
+                writer.write(encryptedContent + ",");
+            }
+        }  catch (SQLException | IOException e) {
+            System.out.println("Error backing up articles.");
+            e.printStackTrace();
+        }
+
+    }
+
 }
 

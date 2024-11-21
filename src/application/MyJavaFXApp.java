@@ -808,6 +808,52 @@ public class MyJavaFXApp extends Application {
         studentSceneGrid.add(backToLoginButton, 0, 1);
         // Back to login button, returns to the login scene
         backToLoginButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
+        // Create a send help message button
+        Button sendHelpMessageButton = new Button("Send Help Message");
+        studentSceneGrid.add(sendHelpMessageButton, 0, 2);
+        // Send help message button, prompts user to send a help message, opens a new window with a text area, and a drop down to select generic help or specific help
+        sendHelpMessageButton.setOnAction(e -> {
+            Stage helpMessageStage = new Stage();
+            helpMessageStage.setTitle("Send Help Message");
+            GridPane helpMessageGrid = new GridPane();
+            helpMessageGrid.setPadding(new Insets(20, 20, 20, 20));
+            helpMessageGrid.setHgap(H_GAP);
+            helpMessageGrid.setVgap(V_GAP);
+            // Create a text area for the help message
+            TextArea helpMessageTextArea = new TextArea();
+            helpMessageTextArea.setPromptText("Enter your help message here");
+            helpMessageTextArea.setPrefRowCount(10);
+            helpMessageTextArea.setPrefColumnCount(50);
+            helpMessageGrid.add(helpMessageTextArea, 0, 0);
+            // Create a ComboBox to select generic help or specific help
+            ComboBox<String> helpTypeComboBox = new ComboBox<>();
+            helpTypeComboBox.getItems().addAll("Generic Help", "Specific Help");
+            helpTypeComboBox.setPromptText("Select help type");
+            helpMessageGrid.add(helpTypeComboBox, 0, 1);
+            // Create a send button to send the help message
+            Button sendButton = new Button("Send");
+            helpMessageGrid.add(sendButton, 0, 2);
+            // Send button, sends the help message
+            sendButton.setOnAction(event -> {
+                String helpMessage = helpMessageTextArea.getText();
+                String helpType = helpTypeComboBox.getValue();
+                if (helpMessage.isEmpty() || helpType == null) {
+                    System.out.println("Help message or help type cannot be empty!");
+                } else {
+                    System.out.println("Help message sent successfully");
+                    helpMessageStage.close();
+                }
+            });
+            // Add a back button to the help message window
+            Button backToStudentSceneButton = new Button("Back");
+            helpMessageGrid.add(backToStudentSceneButton, 0, 3);
+            // Back button, returns to the student scene
+            backToStudentSceneButton.setOnAction(event -> helpMessageStage.close());
+            // Set the scene and show the stage
+            Scene helpMessageScene = new Scene(helpMessageGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
+            helpMessageStage.setScene(helpMessageScene);
+            helpMessageStage.show();
+        });
         return new Scene(studentSceneGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
     }
 
@@ -1210,6 +1256,3 @@ public class MyJavaFXApp extends Application {
         launch(args);
     }
 }
-
-
-

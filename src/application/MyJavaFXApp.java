@@ -1085,6 +1085,11 @@ public class MyJavaFXApp extends Application {
         TextField searchBox = new TextField();
         searchBox.setPromptText("Search help items...");
 
+        // Create a dropdown box right under the search box, to filter by Title, Author or abstract
+        ComboBox<String> filterComboBox = new ComboBox<>();
+        filterComboBox.getItems().addAll("Title", "Author", "Abstract");
+        filterComboBox.setPromptText("Filter by");
+
         // ListView for displaying help items
         ListView<String> helpItemsListView = new ListView<>();
 
@@ -1124,7 +1129,7 @@ public class MyJavaFXApp extends Application {
         buttonBox.setAlignment(Pos.CENTER);
         buttonBox.setPadding(new Insets(10));
 
-        VBox listViewBox = new VBox(10, titleLabel, searchBox, helpItemsListView, buttonBox);
+        VBox listViewBox = new VBox(10, titleLabel, searchBox, filterComboBox, helpItemsListView, buttonBox);
         listViewBox.setPadding(new Insets(10));
         listViewBox.setStyle("-fx-border-color: #ddd; -fx-border-width: 1px; -fx-border-radius: 5px;");
         helpItemsGrid.add(listViewBox, 0, 0);

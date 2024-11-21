@@ -707,6 +707,10 @@ public class MyJavaFXApp extends Application {
             keywordsField.setPromptText("Enter keywords seperated by commas");
             TextField referencesField = new TextField();
             referencesField.setPromptText("Enter references seperated by commas");
+            TextField levelField = new TextField();
+            levelField.setPromptText("Enter level: Beginner, Intermediate, Advanced, Expert");
+            TextField categoryField = new TextField();
+            categoryField.setPromptText("Enter category: Math, Science, History, etc.");
 
             GridPane grid = new GridPane();
             grid.setHgap(10);
@@ -723,6 +727,11 @@ public class MyJavaFXApp extends Application {
             grid.add(keywordsField, 1, 3);
             grid.add(new Label("References:"), 0, 4);
             grid.add(referencesField, 1, 4);
+            grid.add(new Label("Level:"), 0, 5);
+            grid.add(levelField, 1, 5);
+            grid.add(new Label("Category:"), 0, 6);
+            grid.add(categoryField, 1, 6);
+
 
 
             // Enable/Disable the create button depending on whether a title was entered.
@@ -754,7 +763,10 @@ public class MyJavaFXApp extends Application {
                             shortDescription,
                             authorField.getText(),
                             keywordsField.getText(),
-                            referencesField.getText()
+                            referencesField.getText(),
+                            levelField.getText(),
+                            categoryField.getText()
+
                     );
                 } catch (Exception ex) {
                     System.out.println("Error creating help item");
@@ -798,6 +810,7 @@ public class MyJavaFXApp extends Application {
      */
 
     private Scene studentScene(Stage primaryStage) {
+        currentUser = "student";
         GridPane studentSceneGrid = new GridPane();
         studentSceneGrid.setPadding(new Insets(20, 20, 20, 20));
         studentSceneGrid.setHgap(H_GAP);
@@ -806,8 +819,63 @@ public class MyJavaFXApp extends Application {
         Button backToLoginButton = new Button("Back to login");
         studentSceneGrid.add(new Label("Student Scene"), 0, 0);
         studentSceneGrid.add(backToLoginButton, 0, 1);
+
         // Back to login button, returns to the login scene
         backToLoginButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
+        // Create view help items button
+        Button viewHelpItemsButton = new Button("View Help Items");
+        studentSceneGrid.add(viewHelpItemsButton, 1, 1);
+        // View help items button, prompts user to view all help items
+        viewHelpItemsButton.setOnAction(e -> {
+            System.out.println("Viewing help items...");
+            primaryStage.setScene(helpItemsScene(primaryStage));
+        });
+        // Create a send help message button
+        Button sendHelpMessageButton = new Button("Send Help Message");
+        studentSceneGrid.add(sendHelpMessageButton, 0, 2);
+        // Send help message button, prompts user to send a help message, opens a new window with a text area, and a drop down to select generic help or specific help
+        sendHelpMessageButton.setOnAction(e -> {
+            Stage helpMessageStage = new Stage();
+            helpMessageStage.setTitle("Send Help Message");
+            GridPane helpMessageGrid = new GridPane();
+            helpMessageGrid.setPadding(new Insets(20, 20, 20, 20));
+            helpMessageGrid.setHgap(H_GAP);
+            helpMessageGrid.setVgap(V_GAP);
+            // Create a text area for the help message
+            TextArea helpMessageTextArea = new TextArea();
+            helpMessageTextArea.setPromptText("Enter your help message here");
+            helpMessageTextArea.setPrefRowCount(10);
+            helpMessageTextArea.setPrefColumnCount(50);
+            helpMessageGrid.add(helpMessageTextArea, 0, 0);
+            // Create a ComboBox to select generic help or specific help
+            ComboBox<String> helpTypeComboBox = new ComboBox<>();
+            helpTypeComboBox.getItems().addAll("Generic Help", "Specific Help");
+            helpTypeComboBox.setPromptText("Select help type");
+            helpMessageGrid.add(helpTypeComboBox, 0, 1);
+            // Create a send button to send the help message
+            Button sendButton = new Button("Send");
+            helpMessageGrid.add(sendButton, 0, 2);
+            // Send button, sends the help message
+            sendButton.setOnAction(event -> {
+                String helpMessage = helpMessageTextArea.getText();
+                String helpType = helpTypeComboBox.getValue();
+                if (helpMessage.isEmpty() || helpType == null) {
+                    System.out.println("Help message or help type cannot be empty!");
+                } else {
+                    System.out.println("Help message sent successfully");
+                    helpMessageStage.close();
+                }
+            });
+            // Add a back button to the help message window
+            Button backToStudentSceneButton = new Button("Back");
+            helpMessageGrid.add(backToStudentSceneButton, 0, 3);
+            // Back button, returns to the student scene
+            backToStudentSceneButton.setOnAction(event -> helpMessageStage.close());
+            // Set the scene and show the stage
+            Scene helpMessageScene = new Scene(helpMessageGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
+            helpMessageStage.setScene(helpMessageScene);
+            helpMessageStage.show();
+        });
         return new Scene(studentSceneGrid, WINDOW_HEIGHT, WINDOW_WIDTH);
     }
 
@@ -818,6 +886,7 @@ public class MyJavaFXApp extends Application {
      * @return instructor scene after successfully login
      */
     private Scene instructorScene(Stage primaryStage) {
+        currentUser = "instructor";
         GridPane instructorGrid = new GridPane();
         instructorGrid.getStyleClass().add("root");
         instructorGrid.setPadding(new Insets(30, 30, 30, 30));
@@ -878,6 +947,10 @@ public class MyJavaFXApp extends Application {
             keywordsField.setPromptText("Enter keywords seperated by commas");
             TextField referencesField = new TextField();
             referencesField.setPromptText("Enter references seperated by commas");
+            TextField levelField = new TextField();
+            levelField.setPromptText("Enter level: Beginner, Intermediate, Advanced, Expert");
+            TextField categoryField = new TextField();
+            categoryField.setPromptText("Enter category: Math, Science, History, etc.");
 
             GridPane grid = new GridPane();
             grid.setHgap(10);
@@ -894,6 +967,9 @@ public class MyJavaFXApp extends Application {
             grid.add(keywordsField, 1, 3);
             grid.add(new Label("References:"), 0, 4);
             grid.add(referencesField, 1, 4);
+            grid.add(new Label("Level:"), 0, 5);
+            grid.add(levelField, 1, 5);
+            grid.add(new Label("Category:"), 0, 6);
 
 
             // Enable/Disable the create button depending on whether a title was entered.
@@ -925,7 +1001,9 @@ public class MyJavaFXApp extends Application {
                             shortDescription,
                             authorField.getText(),
                             keywordsField.getText(),
-                            referencesField.getText()
+                            referencesField.getText(),
+                            levelField.getText(),
+                            categoryField.getText()
                     );
                 } catch (Exception ex) {
                     System.out.println("Error creating help item");
@@ -1024,6 +1102,14 @@ public class MyJavaFXApp extends Application {
         TextField searchBox = new TextField();
         searchBox.setPromptText("Search help items...");
 
+        // Create a dropdown box right under the search box, to filter by Title, Author or abstract
+        ComboBox<String> filterComboBox = new ComboBox<>();
+        filterComboBox.getItems().addAll("Title", "Author", "Abstract");
+        filterComboBox.setPromptText("Title");
+        ComboBox<String> filterLevelBox = new ComboBox<>();
+        filterLevelBox.getItems().addAll("Beginner", "Intermediate", "Advanced", "Expert", "All Levels");
+        filterLevelBox.setPromptText("All Levels");
+
         // ListView for displaying help items
         ListView<String> helpItemsListView = new ListView<>();
 
@@ -1049,7 +1135,14 @@ public class MyJavaFXApp extends Application {
                     return true;
                 }
                 String lowerCaseFilter = newValue.toLowerCase();
-                return title.toLowerCase().contains(lowerCaseFilter); // Filter based on title
+                if (filterComboBox.getValue() == null || filterComboBox.getValue().equals("Title")) {
+                    return title.toLowerCase().contains(lowerCaseFilter); // Filter based on title
+                } else if (filterComboBox.getValue().equals("Author")) {
+                    return dbUtil.getHelpItem(title).getAuthors().toLowerCase().contains(lowerCaseFilter); // Filter based on author
+                } else if (filterComboBox.getValue().equals("Abstract")) {
+                    return dbUtil.getHelpItem(title).getShortDescription().toLowerCase().contains(lowerCaseFilter); // Filter based on abstract
+                }
+                return false; // Add this return statement to handle other cases
             });
         });
 
@@ -1063,7 +1156,7 @@ public class MyJavaFXApp extends Application {
         buttonBox.setAlignment(Pos.CENTER);
         buttonBox.setPadding(new Insets(10));
 
-        VBox listViewBox = new VBox(10, titleLabel, searchBox, helpItemsListView, buttonBox);
+        VBox listViewBox = new VBox(10, titleLabel, searchBox, filterComboBox, helpItemsListView, buttonBox);
         listViewBox.setPadding(new Insets(10));
         listViewBox.setStyle("-fx-border-color: #ddd; -fx-border-width: 1px; -fx-border-radius: 5px;");
         helpItemsGrid.add(listViewBox, 0, 0);
@@ -1077,12 +1170,25 @@ public class MyJavaFXApp extends Application {
         Label itemIDLabel = new Label("ID:");
         Label itemID = new Label(); // Display the ID here, non-editable
         TextField titleField = new TextField();
+        TextField levelField = new TextField();
         TextArea descriptionField = new TextArea();
         TextField authorsField = new TextField();
         TextField keywordsField = new TextField();
         TextField referencesField = new TextField();
+        TextField groupField = new TextField();
         Button saveButton = new Button("Save Changes");
         Label confirmationMessage = new Label();
+
+        if (!currentUser.equals("admin") && !currentUser.equals("instructor")) {
+            titleField.setEditable(false);
+            levelField.setEditable(false);
+            descriptionField.setEditable(false);
+            authorsField.setEditable(false);
+            keywordsField.setEditable(false);
+            referencesField.setEditable(false);
+            saveButton.setDisable(true);
+            saveButton.setStyle("-fx-background-color: grey;");
+        }
 
 
         itemDetailsBox.getChildren().addAll(
@@ -1092,6 +1198,8 @@ public class MyJavaFXApp extends Application {
                 new Label("Authors:"), authorsField,
                 new Label("Keywords:"), keywordsField,
                 new Label("References:"), referencesField,
+                new Label("Level:"), levelField,
+                new Label("Group:"), groupField,
                 saveButton, confirmationMessage
         );
         helpItemsGrid.add(itemDetailsBox, 1, 0);
@@ -1106,6 +1214,8 @@ public class MyJavaFXApp extends Application {
                 authorsField.setText(selectedHelpItem.getAuthors());
                 keywordsField.setText(selectedHelpItem.getKeywords());
                 referencesField.setText(selectedHelpItem.getReferences());
+                levelField.setText(selectedHelpItem.getLevel());
+                groupField.setText(selectedHelpItem.getGroup());
             }
         });
 
@@ -1121,7 +1231,10 @@ public class MyJavaFXApp extends Application {
                         shortDescription,
                         authorsField.getText(),
                         keywordsField.getText(),
-                        referencesField.getText()
+                        referencesField.getText(),
+                        levelField.getText(),
+                        groupField.getText()
+
                 );
                 try {
                     dbUtil.updateHelpItem(Integer.parseInt(itemID.getText()), updatedItem); // Update by ID
@@ -1210,6 +1323,3 @@ public class MyJavaFXApp extends Application {
         launch(args);
     }
 }
-
-
-

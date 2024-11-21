@@ -707,6 +707,8 @@ public class MyJavaFXApp extends Application {
             keywordsField.setPromptText("Enter keywords seperated by commas");
             TextField referencesField = new TextField();
             referencesField.setPromptText("Enter references seperated by commas");
+            TextField levelField = new TextField();
+            levelField.setPromptText("Enter level: Beginner, Intermediate, Advanced, Expert");
 
             GridPane grid = new GridPane();
             grid.setHgap(10);
@@ -754,7 +756,8 @@ public class MyJavaFXApp extends Application {
                             shortDescription,
                             authorField.getText(),
                             keywordsField.getText(),
-                            referencesField.getText()
+                            referencesField.getText(),
+                            levelField.getText()
                     );
                 } catch (Exception ex) {
                     System.out.println("Error creating help item");
@@ -924,6 +927,8 @@ public class MyJavaFXApp extends Application {
             keywordsField.setPromptText("Enter keywords seperated by commas");
             TextField referencesField = new TextField();
             referencesField.setPromptText("Enter references seperated by commas");
+            TextField levelField = new TextField();
+            levelField.setPromptText("Enter level: Beginner, Intermediate, Advanced, Expert");
 
             GridPane grid = new GridPane();
             grid.setHgap(10);
@@ -971,7 +976,8 @@ public class MyJavaFXApp extends Application {
                             shortDescription,
                             authorField.getText(),
                             keywordsField.getText(),
-                            referencesField.getText()
+                            referencesField.getText(),
+                            levelField.getText()
                     );
                 } catch (Exception ex) {
                     System.out.println("Error creating help item");
@@ -1123,6 +1129,7 @@ public class MyJavaFXApp extends Application {
         Label itemIDLabel = new Label("ID:");
         Label itemID = new Label(); // Display the ID here, non-editable
         TextField titleField = new TextField();
+        TextField levelField = new TextField();
         TextArea descriptionField = new TextArea();
         TextField authorsField = new TextField();
         TextField keywordsField = new TextField();
@@ -1138,6 +1145,7 @@ public class MyJavaFXApp extends Application {
                 new Label("Authors:"), authorsField,
                 new Label("Keywords:"), keywordsField,
                 new Label("References:"), referencesField,
+                new Label("Level:"), levelField,
                 saveButton, confirmationMessage
         );
         helpItemsGrid.add(itemDetailsBox, 1, 0);
@@ -1152,6 +1160,7 @@ public class MyJavaFXApp extends Application {
                 authorsField.setText(selectedHelpItem.getAuthors());
                 keywordsField.setText(selectedHelpItem.getKeywords());
                 referencesField.setText(selectedHelpItem.getReferences());
+                levelField.setText(selectedHelpItem.getLevel());
             }
         });
 
@@ -1167,7 +1176,8 @@ public class MyJavaFXApp extends Application {
                         shortDescription,
                         authorsField.getText(),
                         keywordsField.getText(),
-                        referencesField.getText()
+                        referencesField.getText(),
+                        levelField.getText()
                 );
                 try {
                     dbUtil.updateHelpItem(Integer.parseInt(itemID.getText()), updatedItem); // Update by ID

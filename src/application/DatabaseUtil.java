@@ -404,16 +404,16 @@ public class DatabaseUtil {
 
     /* Create table for all the help items */
     private void createHelpItemTable() throws SQLException {
-        String helpItemTableQuery = "CREATE TABLE IF NOT EXISTS helpsystem_helpitems ("
-                + "title VARCHAR(255), "
-                + "id BIGINT AUTO_INCREMENT PRIMARY KEY, "
-                + "description VARCHAR(255), "
-                + "short_description VARCHAR(255), "
-                + "authors VARCHAR(255), "
-                + "keywords VARCHAR(255), "
-                + "references VARCHAR(255))"
-                + "level VARCHAR(255)";
-        statement.execute(helpItemTableQuery);
+    String helpItemTableQuery = "CREATE TABLE IF NOT EXISTS helpsystem_helpitems ("
+            + "title VARCHAR(255), "
+            + "id BIGINT AUTO_INCREMENT PRIMARY KEY, "
+            + "description VARCHAR(255), "
+            + "short_description VARCHAR(255), "
+            + "authors VARCHAR(255), "
+            + "keywords VARCHAR(255), "
+            + "references VARCHAR(255), "
+            + "level VARCHAR(255))";
+    statement.execute(helpItemTableQuery);
     }
 
 

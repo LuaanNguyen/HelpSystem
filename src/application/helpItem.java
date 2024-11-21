@@ -10,6 +10,7 @@ public class helpItem {
     private String keywords;
     private String references;
     private String level;
+    private String group;
 
     /* Default Constructor */
     public helpItem() {
@@ -21,6 +22,7 @@ public class helpItem {
         this.keywords = "Default Keyword";
         this.references = "Default Reference";
         this.level = "Default Level";
+        this.group = "Default Group";
     }
 
     /* Constructor for creating new Help Item */
@@ -31,7 +33,8 @@ public class helpItem {
                     String author,
                     String keyword,
                     String reference,
-                    String level) {
+                    String level,
+                    String group) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -40,6 +43,7 @@ public class helpItem {
         this.keywords = keyword;
         this.references = reference;
         this.level = level;
+        this.group = group;
     }
 
     /* Get title */
@@ -82,11 +86,15 @@ public class helpItem {
         return level;
     }
 
+    /* Get Group */
+    public String getGroup() {
+        return group;
+    }
+
     /* Setter Methods */
     public void setTitle(String title) {
         this.title = title;
     }
-
 
     /* Set Description */
     public void setDescription(String description) {
@@ -118,6 +126,11 @@ public class helpItem {
         this.level = level;
     }
 
+    /* Set Group */
+    public void setGroup(String group) {
+        this.group = group;
+    }
+
     /* Add Methods */
     public void addAuthor(String author) {
         this.authors = author;
@@ -147,6 +160,8 @@ public class helpItem {
     public void removereference(String reference) {
         this.references = reference;
     }
+
+
 
     /* Delete Item */
     public void deleteItem() {

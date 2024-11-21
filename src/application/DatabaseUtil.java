@@ -404,18 +404,18 @@ public class DatabaseUtil {
 
     /* Create table for all the help items */
     private void createHelpItemTable() throws SQLException {
-    String helpItemTableQuery = "CREATE TABLE IF NOT EXISTS helpsystem_helpitems ("
-            + "title VARCHAR(255), "
-            + "id BIGINT AUTO_INCREMENT PRIMARY KEY, "
-            + "description VARCHAR(255), "
-            + "short_description VARCHAR(255), "
-            + "authors VARCHAR(255), "
-            + "keywords VARCHAR(255), "
-            + "references VARCHAR(255), "
-            + "level VARCHAR(255))";
-    statement.execute(helpItemTableQuery);
+        String helpItemTableQuery = "CREATE TABLE IF NOT EXISTS helpsystem_helpitems ("
+                + "title VARCHAR(255), "
+                + "id BIGINT AUTO_INCREMENT PRIMARY KEY, "
+                + "description VARCHAR(255), "
+                + "short_description VARCHAR(255), "
+                + "authors VARCHAR(255), "
+                + "keywords VARCHAR(255), "
+                + "references VARCHAR(255), "
+                + "level VARCHAR(255), "
+                + "group_name VARCHAR(255))";
+        statement.execute(helpItemTableQuery);
     }
-
 
     /* Get all help items */
     public List<helpItem> getAllHelpItems() throws SQLException {
@@ -433,7 +433,8 @@ public class DatabaseUtil {
                         rs.getString("authors"),
                         rs.getString("keywords"),
                         rs.getString("references"),
-                        rs.getString("level"));
+                        rs.getString("level"),
+                        rs.getString("group_name"));
                 helpItems.add(helpItem);
             }
         }
@@ -441,8 +442,8 @@ public class DatabaseUtil {
     }
 
     /* Add new help item */
-    public void addHelpItem(String title, String description, String shortDescription, String author, String keyword, String reference, String level) throws SQLException {
-        String query = "INSERT INTO helpsystem_helpitems (title, description, short_description, authors, keywords, references, level) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    public void addHelpItem(String title, String description, String shortDescription, String author, String keyword, String reference, String level, String group_name) throws SQLException {
+        String query = "INSERT INTO helpsystem_helpitems (title, description, short_description, authors, keywords, references, level, group_name) VALUES (?, ?, ?, ?, ?, ?, ?,?)";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
             pstmt.setString(1, title);
             pstmt.setString(2, description);
@@ -451,6 +452,7 @@ public class DatabaseUtil {
             pstmt.setString(5, keyword);
             pstmt.setString(6, reference);
             pstmt.setString(7, level);
+            pstmt.setString(8, group_name);
             pstmt.executeUpdate();
         }
     }
@@ -477,7 +479,8 @@ public class DatabaseUtil {
                             rs.getString("authors"),
                             rs.getString("keywords"),
                             rs.getString("references"),
-                            rs.getString("level"));
+                            rs.getString("level"),
+                            rs.getString("group_name"));
                 }
             }
         } catch (SQLException e) {
@@ -497,7 +500,7 @@ public class DatabaseUtil {
 
     /* Update item by id */
     public void updateHelpItem(Integer id, helpItem newItem) throws SQLException {
-        String query = "UPDATE helpsystem_helpitems SET title = ?, description = ?, short_description = ?, authors = ?, keywords = ?, references = ?, level = ? WHERE id = ?";
+        String query = "UPDATE helpsystem_helpitems SET title = ?, description = ?, short_description = ?, authors = ?, keywords = ?, references = ?, level = ?, group_name = ? WHERE id = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
             pstmt.setString(1, newItem.getTitle());
             pstmt.setString(2, newItem.getDescription());
@@ -506,7 +509,8 @@ public class DatabaseUtil {
             pstmt.setString(5, newItem.getKeywords());
             pstmt.setString(6, newItem.getReferences());
             pstmt.setString(7, newItem.getLevel());
-            pstmt.setInt(8, id);
+            pstmt.setString(8, newItem.getGroup());
+            pstmt.setInt(9, id);
             pstmt.executeUpdate();
         }
     }

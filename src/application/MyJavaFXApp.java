@@ -809,8 +809,17 @@ public class MyJavaFXApp extends Application {
         Button backToLoginButton = new Button("Back to login");
         studentSceneGrid.add(new Label("Student Scene"), 0, 0);
         studentSceneGrid.add(backToLoginButton, 0, 1);
+
         // Back to login button, returns to the login scene
         backToLoginButton.setOnAction(e -> primaryStage.setScene(createLoginScene(primaryStage)));
+        // Create view help items button
+        Button viewHelpItemsButton = new Button("View Help Items");
+        studentSceneGrid.add(viewHelpItemsButton, 1, 1);
+        // View help items button, prompts user to view all help items
+        viewHelpItemsButton.setOnAction(e -> {
+            System.out.println("Viewing help items...");
+            primaryStage.setScene(helpItemsScene(primaryStage));
+        });
         // Create a send help message button
         Button sendHelpMessageButton = new Button("Send Help Message");
         studentSceneGrid.add(sendHelpMessageButton, 0, 2);
@@ -1136,6 +1145,16 @@ public class MyJavaFXApp extends Application {
         TextField referencesField = new TextField();
         Button saveButton = new Button("Save Changes");
         Label confirmationMessage = new Label();
+
+        if (!currentUser.equals("admin") && !currentUser.equals("instructor")) {
+            titleField.setEditable(false);
+            levelField.setEditable(false);
+            descriptionField.setEditable(false);
+            authorsField.setEditable(false);
+            keywordsField.setEditable(false);
+            referencesField.setEditable(false);
+            saveButton.setDisable(true);
+        }
 
 
         itemDetailsBox.getChildren().addAll(

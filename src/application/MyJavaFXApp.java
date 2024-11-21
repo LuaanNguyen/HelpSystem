@@ -908,6 +908,8 @@ public class MyJavaFXApp extends Application {
         // Buttons
         Button createHelpItemButton = new Button("Create Help Item");
         Button viewHelpItemsButton = new Button("View Help Items");
+        Button viewSpecialAccessButton = new Button("View Special Access Items");
+        Button createSpecialAccessButton = new Button("Create Special Access Item");
         Button logoutButton = new Button("Log Out");
         Button backupButton = new Button("Backup Articles");
         backupButton.setOnAction(e -> backupArticles());
@@ -916,7 +918,7 @@ public class MyJavaFXApp extends Application {
         viewHelpItemsButton.setPrefWidth(150);
         logoutButton.setPrefWidth(150);
 
-        VBox buttonGroup = new VBox(10, createHelpItemButton, viewHelpItemsButton, logoutButton, backupButton);
+        VBox buttonGroup = new VBox(10, createHelpItemButton, viewHelpItemsButton, viewSpecialAccessButton, createSpecialAccessButton ,logoutButton, backupButton);
         instructorGrid.add(buttonGroup, 0, 2, 2, 1); // Corrected to span only 2 columns
 
         // Logout button action

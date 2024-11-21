@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="JAVA_MODULE" version="4">
   <component name="EclipseModuleManager">
+    <libelement value="file://$MODULE_DIR$/../ASU360_BinaryBabes/lib/h2-2.3.232.jar" />
     <conelement value="org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER" />
     <src_description expected_position="0">
       <src_folder value="file://$MODULE_DIR$/src" expected_position="0" />
@@ -14,6 +15,10 @@
     </content>
     <orderEntry type="jdk" jdkName="JavaSE-21" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="javafx-swt" level="project" />
+    <orderEntry type="library" name="org.eclipse.fx.ide.jdt.core.JAVAFX_CONTAINER" level="application" />
+    <orderEntry type="library" name="JavaFX21" level="project" />
+    <orderEntry type="library" name="javafx-swt" level="project" />
+    <orderEntry type="library" name="h2-2.3.232" level="project" />
+    <orderEntry type="library" name="bcprov-jdk18on-1.79" level="project" />
   </component>
 </module>

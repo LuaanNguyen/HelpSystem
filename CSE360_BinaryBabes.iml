@@ -20,5 +20,6 @@
     <orderEntry type="library" name="javafx-swt" level="project" />
     <orderEntry type="library" name="h2-2.3.232" level="project" />
     <orderEntry type="library" name="bcprov-jdk18on-1.79" level="project" />
+    <orderEntry type="library" name="junit" level="project" />
   </component>
 </module>

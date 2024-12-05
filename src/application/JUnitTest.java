@@ -73,6 +73,38 @@ public class JUnitTest {
         assertFalse(db.isValidInvitationCode(code2));
     }
 
+    /*
+        TEST: ADD HELP ITEM
+    */
+    @Test
+    public void testAddHelpItem() throws Exception {
+        String title = "Test Title";
+        String description = "Test Description";
+        String shortDescription = "Short Desc";
+        String author = "Author1";
+        String keyword = "Keyword1";
+        String reference = "Ref1";
+        String level = "Beginner";
+        String groupName = "Group1";
+
+        db.addHelpItem(title, description, shortDescription, author, keyword, reference, level, groupName);
+
+        assertNotNull("Help item should be retrievable", db.getHelpItem(title));
+    }
+
+    /*
+        TEST: DELETE HELP ITEM
+    */
+    @Test
+    public void testDeleteHelpItem() throws Exception {
+        String title = "Delete Title";
+        db.addHelpItem(title, "Desc", "Short Desc", "Author", "Keyword", "Ref", "Level", "Group");
+
+        db.deleteHelpItem(title);
+
+        assertNull("Help item should be deleted", db.getHelpItem(title));
+    }
+
      /*
         HELP ARTICLE ID ASSIGNMENT
      */

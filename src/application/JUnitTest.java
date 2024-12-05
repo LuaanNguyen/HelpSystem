@@ -31,7 +31,7 @@ public class JUnitTest {
         TEST: GENERATE INVITATION CODE
     */
     @Test
-    public void testInvitationCodeGeneration() throws SQLException {
+    public void testInvitationCodeGeneration() {
         String code1 = db.generateInvitationCode();
         String code2 = db.generateInvitationCode();
 
@@ -40,6 +40,25 @@ public class JUnitTest {
 
         //The invitation code should not be equal
         assertNotEquals(code1, code2);
+    }
+
+    /*
+        TEST: DELETE INVITATION CODE
+    */
+    @Test
+    public void testInvitationCodeInvalidation()  throws SQLException{
+        String code1 = db.generateInvitationCode();
+        String code2 = db.generateInvitationCode();
+
+        System.out.println("Code 1: " + code1 );
+        System.out.println("Code 2: " + code2 );
+
+        db.invalidateInvitationCode(code1);
+        db.invalidateInvitationCode(code1);
+
+        //The invitation code should be invalid
+        assertFalse(db.isValidInvitationCode(code1));
+        assertFalse(db.isValidInvitationCode(code2));
     }
 
      /*

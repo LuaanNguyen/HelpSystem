@@ -18,7 +18,7 @@ import java.util.List;
 
 public class JUnitTest {
     private DatabaseUtil db;
-    
+
     /* DB SETUP  (reset DB before testing) */
     @Before
     public void setup() throws Exception {
@@ -27,7 +27,20 @@ public class JUnitTest {
         db.resetHelpItemDatabase();
     }
 
+    /*
+        TEST: GENERATE INVITATION CODE
+    */
+    @Test
+    public void testInvitationCodeGeneration() throws SQLException {
+        String code1 = db.generateInvitationCode();
+        String code2 = db.generateInvitationCode();
 
+        System.out.println("Code 1: " + code1);
+        System.out.println("Code 2: " + code2);
+
+        //The invitation code should not be equal
+        assertNotEquals(code1, code2);
+    }
 
      /*
         HELP ARTICLE ID ASSIGNMENT

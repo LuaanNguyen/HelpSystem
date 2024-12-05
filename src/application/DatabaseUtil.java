@@ -13,10 +13,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
 import java.util.HashMap;
-
-
 import Encryption.EncryptionHelper;
 import Encryption.EncryptionUtils;
+
 /**
  * <p> DatabaseUtil </p>
  *

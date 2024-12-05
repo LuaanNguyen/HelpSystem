@@ -1,22 +1,190 @@
 package application;
 
 import org.junit.Before;
+import org.junit.After;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import java.sql.SQLException;
 import java.util.List;
 
+import java.util.List;
+import java.util.Map;
+/**
+ * <p> JUnitTest</p>
+ *
+ * <p> Description:   Automated testing as done in HW#5 of all non-user-interface classes. </p>
+ * <p> Copyright: Lynn Robert Carter © 2024 </p>
+ *
+ * @author Luan Nguyen, Smit Devrukhkar, Gabriel Clark, Meadow Kubanski, Isabella Paschal
+ * @version 1.00
+ */
+
 public class JUnitTest {
     private DatabaseUtil db;
 
+    /* DB SETUP  (reset DB before testing) */
     @Before
     public void setup() throws Exception {
         db = new DatabaseUtil();
         db.connectToDatabase();
         db.resetHelpItemDatabase();
     }
+    @After
+    public void tearDown() {
+        db.closeConnection();
+    }
+
+    /*
+        TEST: DB CONNECTION
+    */
+    @Test
+    public void testDatabaseConnection() {
+        try {
+            assertNotNull("Database connection should not be null", db);
+        } catch (Exception e) {
+            fail("Exception occurred while testing database connection: " + e.getMessage());
+        }
+    }
+
+    /*
+        TEST: GENERATE INVITATION CODE
+    */
+    @Test
+    public void testInvitationCodeGeneration() {
+        String code1 = db.generateInvitationCode();
+        String code2 = db.generateInvitationCode();
+
+        System.out.println("Code 1: " + code1);
+        System.out.println("Code 2: " + code2);
+
+        //The invitation code should not be equal
+        assertNotEquals(code1, code2);
+    }
+
+    /*
+        TEST: DELETE INVITATION CODE
+    */
+    @Test
+    public void testInvitationCodeInvalidation()  throws SQLException{
+        String code1 = db.generateInvitationCode();
+        String code2 = db.generateInvitationCode();
+
+        System.out.println("Code 1: " + code1 );
+        System.out.println("Code 2: " + code2 );
+
+        db.invalidateInvitationCode(code1);
+        db.invalidateInvitationCode(code1);
+
+        //The invitation code should be invalid
+        assertFalse(db.isValidInvitationCode(code1));
+        assertFalse(db.isValidInvitationCode(code2));
+    }
+
+    /*
+        TEST:  INVITE USER
+    */
+    @Test
+    public void testInviteUser() throws Exception {
+        String code = db.generateInvitationCode();
+
+        db.inviteUser(code, "Admin");
+
+        assertTrue("Invitation code should be valid after being added", db.isValidInvitationCode(code));
+
+        db.invalidateInvitationCode(code);
+
+        assertFalse("Invitation code should be invalid after being invalidated", db.isValidInvitationCode(code));
+    }
+
+    /*
+        TEST: ADD HELP ITEM
+    */
+    @Test
+    public void testAddHelpItem() throws Exception {
+        String title = "Test Title";
+        String description = "Test Description";
+        String shortDescription = "Short Desc";
+        String author = "Author1";
+        String keyword = "Keyword1";
+        String reference = "Ref1";
+        String level = "Beginner";
+        String groupName = "Group1";
+
+        db.addHelpItem(title, description, shortDescription, author, keyword, reference, level, groupName);
+
+        assertNotNull("Help item should be retrievable", db.getHelpItem(title));
+    }
+
+    /*
+        TEST: DELETE HELP ITEM
+    */
+    @Test
+    public void testDeleteHelpItem() throws Exception {
+        String title = "Delete Title";
+        db.addHelpItem(title, "Desc", "Short Desc", "Author", "Keyword", "Ref", "Level", "Group");
+
+        db.deleteHelpItem(title);
+
+        assertNull("Help item should be deleted", db.getHelpItem(title));
+    }
+
+    /*
+        TEST: REGISTER AND LOGIN
+    */
+    @Test
+    public void testRegisterAndLoginUser() throws Exception {
+        String username = "testUser";
+        String password = "password123";
+        String role = "admin";
+
+        db.register(username, password, role);
+        assertTrue("User should be able to log in with correct credentials", db.login(username, password));
+        assertFalse("User should not log in with incorrect credentials", db.login(username, "wrongPassword"));
+    }
+
+    /*
+        TEST: ADMIN FUNCTION
+    */
+    @Test
+    public void testAddAndRemoveGroupPermission() throws Exception {
+        String groupName = "Test Group";
+        String username = "user1";
+
+        db.register(username, "password", "viewer");
+        db.createSpecialAccessGroup(groupName, username);
+
+        int groupId = (int) db.getAllSpecialAccessGroups().get(0).get("group_id");
+
+        db.addAdminToGroup(groupId, username);
+        assertTrue("User should have admin permission", db.hasAdminPermission(groupId, username));
+
+        db.removeAdminFromGroup(groupId, username);
+        assertFalse("User should no longer have admin permission", db.hasAdminPermission(groupId, username));
+    }
+
+    /*
+        TEST: ADD AND RETRIEVE HELP ITEMS
+    */
+    @Test
+    public void testAddAndRetrieveHelpItem() throws Exception {
+        String title = "Help Item 1";
+        String description = "Description of Help Item 1";
+        String shortDescription = "Short Description";
+        String author = "Author1";
+        String keyword = "Keyword1";
+        String reference = "Ref1";
+        String level = "Beginner";
+        String groupName = "Group1";
+
+        db.addHelpItem(title, description, shortDescription, author, keyword, reference, level, groupName);
+
+        helpItem retrievedItem = db.getHelpItem(title);
+        assertNotNull("Help item should be retrievable", retrievedItem);
+        assertEquals("Retrieved help item title should match", title, retrievedItem.getTitle());
+    }
+
      /*
-        HELP ARTICLE ID ASSIGNMENT
+        TEST: HELP ARTICLE ID ASSIGNMENT
      */
     @Test
     public void testUniqueArticleIdAssignment() throws SQLException {
@@ -35,7 +203,7 @@ public class JUnitTest {
     }
 
     /*
-    HELP ARTICLE STRUCTURE VALIDATION
+         TEST: HELP ARTICLE STRUCTURE VALIDATION
      */
     @Test
     public void testArticleStructureValidation() throws SQLException {
@@ -61,7 +229,7 @@ public class JUnitTest {
     }
 
     /*
-    TEST ARTICLE CONTENT VALIDATION
+        TEST: ARTICLE CONTENT VALIDATION
      */
     @Test
     public void testArticleContentValidation() throws SQLException {
@@ -85,6 +253,7 @@ public class JUnitTest {
         assertEquals(formattedShortDesc, item.getShortDescription());
     }
 
+
     @Test
     public void testUnicodeContentHandling() throws SQLException {
         String unicodeShortDesc = "Short desc with accents: é è ê ë ñ ü ö";
@@ -107,6 +276,10 @@ public class JUnitTest {
         assertEquals(unicodeShortDesc, item.getShortDescription());
     }
 
+
+    /*
+       TEST: BACK UP HELP ITEMS
+  */
     @Test
     public void testContentBoundaries() throws SQLException {
         String emptyContent = "";
@@ -125,5 +298,28 @@ public class JUnitTest {
         assertNotNull(item);
         assertEquals(maxLengthContent, item.getDescription());
         assertEquals(emptyContent, item.getShortDescription());
+    }
+
+    /*
+        TEST: BACK UP HELP ITEMS
+   */
+    @Test
+    public void testBackupHelpItemsToFile() throws Exception {
+        String fileName = "helpItemsBackup.txt";
+
+        // Add help items to database
+        db.addHelpItem("Title1", "Desc1", "ShortDesc1", "Author1", "Keyword1", "Ref1", "Beginner", "Group1");
+
+        // Backup to file
+        try {
+            db.backupHelpItemsToFile(fileName);
+            assertTrue("Backup file should be created successfully", true); // No exceptions thrown
+            // Further validation can include checking file content if needed.
+
+            System.out.println("Backup completed successfully.");
+
+        } catch (Exception e) {
+            fail("Error backup");
+        }
     }
 }

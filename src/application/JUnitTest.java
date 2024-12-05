@@ -143,6 +143,26 @@ public class JUnitTest {
     }
 
     /*
+        TEST: ADMIN FUNCTION
+    */
+    @Test
+    public void testAddAndRemoveGroupPermission() throws Exception {
+        String groupName = "Test Group";
+        String username = "user1";
+
+        db.register(username, "password", "viewer");
+        db.createSpecialAccessGroup(groupName, username);
+
+        int groupId = (int) db.getAllSpecialAccessGroups().get(0).get("group_id");
+
+        db.addAdminToGroup(groupId, username);
+        assertTrue("User should have admin permission", db.hasAdminPermission(groupId, username));
+
+        db.removeAdminFromGroup(groupId, username);
+        assertFalse("User should no longer have admin permission", db.hasAdminPermission(groupId, username));
+    }
+
+    /*
         TEST: ADD AND RETRIEVE HELP ITEMS
     */
     @Test

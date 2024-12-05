@@ -1,5 +1,17 @@
+# macOS system file
 .DS_Store
+
+# JetBrains IDEs
 .idea
+
+# Eclipse IDE Files
 .metadata/
 .settings/
+.classpath
+.project
+
+# Build output dir
 bin/
+
+# VSCode IDE
+.vscode/

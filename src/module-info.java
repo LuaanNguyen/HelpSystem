@@ -3,6 +3,9 @@ module CSE360_BinaryBabes {
     requires com.h2database;
     requires org.bouncycastle.provider;
     requires java.sql;
+    requires org.junit.jupiter.api;
+    requires junit;
 
-    opens application to javafx.graphics, javafx.fxml;
+    exports application;
+    opens application to javafx.graphics, javafx.fxml, junit;
 }

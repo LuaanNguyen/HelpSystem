@@ -1,11 +1,14 @@
 package application;
 
 import org.junit.Before;
+import org.junit.After;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import java.sql.SQLException;
 import java.util.List;
 
+import java.util.List;
+import java.util.Map;
 /**
  * <p> JUnitTest</p>
  *
@@ -25,6 +28,10 @@ public class JUnitTest {
         db = new DatabaseUtil();
         db.connectToDatabase();
         db.resetHelpItemDatabase();
+    }
+    @After
+    public void tearDown() {
+        db.closeConnection();
     }
 
     /*
@@ -120,7 +127,42 @@ public class JUnitTest {
 
         assertNull("Help item should be deleted", db.getHelpItem(title));
     }
-    
+
+    /*
+        TEST: REGISTER AND LOGIN
+    */
+    @Test
+    public void testRegisterAndLoginUser() throws Exception {
+        String username = "testUser";
+        String password = "password123";
+        String role = "admin";
+
+        db.register(username, password, role);
+        assertTrue("User should be able to log in with correct credentials", db.login(username, password));
+        assertFalse("User should not log in with incorrect credentials", db.login(username, "wrongPassword"));
+    }
+
+    /*
+        TEST: ADD AND RETRIEVE HELP ITEMS
+    */
+    @Test
+    public void testAddAndRetrieveHelpItem() throws Exception {
+        String title = "Help Item 1";
+        String description = "Description of Help Item 1";
+        String shortDescription = "Short Description";
+        String author = "Author1";
+        String keyword = "Keyword1";
+        String reference = "Ref1";
+        String level = "Beginner";
+        String groupName = "Group1";
+
+        db.addHelpItem(title, description, shortDescription, author, keyword, reference, level, groupName);
+
+        helpItem retrievedItem = db.getHelpItem(title);
+        assertNotNull("Help item should be retrievable", retrievedItem);
+        assertEquals("Retrieved help item title should match", title, retrievedItem.getTitle());
+    }
+
      /*
         HELP ARTICLE ID ASSIGNMENT
      */

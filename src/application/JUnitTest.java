@@ -28,6 +28,18 @@ public class JUnitTest {
     }
 
     /*
+        TEST: DB CONNECTION
+    */
+    @Test
+    public void testDatabaseConnection() {
+        try {
+            assertNotNull("Database connection should not be null", db);
+        } catch (Exception e) {
+            fail("Exception occurred while testing database connection: " + e.getMessage());
+        }
+    }
+
+    /*
         TEST: GENERATE INVITATION CODE
     */
     @Test

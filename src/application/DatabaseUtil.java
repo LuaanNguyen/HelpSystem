@@ -43,7 +43,7 @@ public class DatabaseUtil {
     private static final SecureRandom RANDOM = new SecureRandom();
 
     private Connection connection = null;
-    private Statement statement = null;
+    Statement statement = null;
 
     private EncryptionHelper encryptionHelper;
 
@@ -78,7 +78,7 @@ public class DatabaseUtil {
     }
 
     /* Create table for all the users */
-    private void createUserTables() throws SQLException {
+    public  void createUserTables() throws SQLException {
         String userTableQuery = "CREATE TABLE IF NOT EXISTS helpsystem_users ("
                 + "id INT AUTO_INCREMENT PRIMARY KEY, "
                 + "email VARCHAR(255) UNIQUE, "
@@ -167,7 +167,7 @@ public class DatabaseUtil {
     }
 
     /* Add permission to special access group*/
-    private void addGroupPermission(int groupId, String username, String permissionType) throws SQLException {
+    public  void addGroupPermission(int groupId, String username, String permissionType) throws SQLException {
         String query = "INSERT INTO group_permissions (group_id, username, permission_type) VALUES (?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
             pstmt.setInt(1, groupId);
@@ -241,7 +241,7 @@ public class DatabaseUtil {
     }
 
     /* Delete invitation code */
-    private void deleteInvitationCode(String code) throws SQLException {
+    public void deleteInvitationCode(String code) throws SQLException {
         String query = "DELETE FROM invitations WHERE code = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
             pstmt.setString(1, code);
@@ -403,7 +403,7 @@ public class DatabaseUtil {
 
 
     /* Create table for all the help items */
-    private void createHelpItemTable() throws SQLException {
+    public void createHelpItemTable() throws SQLException {
         String helpItemTableQuery = "CREATE TABLE IF NOT EXISTS helpsystem_helpitems ("
                 + "title VARCHAR(255), "
                 + "id BIGINT AUTO_INCREMENT PRIMARY KEY, "
@@ -593,7 +593,7 @@ public class DatabaseUtil {
     }
 
     /**** CHECK IF A USER HAS VIEW PERMISSION *****/
-    private boolean hasViewPermission(int groupId, String username) throws SQLException {
+    public  boolean hasViewPermission(int groupId, String username) throws SQLException {
         String query = "SELECT 1 FROM group_permissions WHERE group_id = ? AND username = ? "
                 + "AND permission_type = 'VIEW'";
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {

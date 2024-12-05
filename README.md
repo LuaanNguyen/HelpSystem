@@ -68,10 +68,10 @@ Two screencasts must be provided.  The first is a technical screencast.  It expl
 ## Phase Three Requirements  ✅
 ## Phase Four Requirements (In Progress)
 
-- [ ] JUnit Testing
+- [x] JUnit Testing
 - [ ] User Interface
-- [ ] Previous Feedbacks:
-  - [ ] Automated testing as done in HW#5 of all non-user-interface classes. (E.g., Do not try to test GUI or command line classes). 
+- [x] Previous Feedbacks:
+  - [x] Automated testing as done in HW#5 of all non-user-interface classes. (E.g., Do not try to test GUI or command line classes). 
 
 ## Phase 4 Deliverables 🎁
 

@@ -6,15 +6,29 @@ import static org.junit.Assert.*;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * <p> JUnitTest</p>
+ *
+ * <p> Description:   Automated testing as done in HW#5 of all non-user-interface classes. </p>
+ * <p> Copyright: Lynn Robert Carter © 2024 </p>
+ *
+ * @author Luan Nguyen, Smit Devrukhkar, Gabriel Clark, Meadow Kubanski, Isabella Paschal
+ * @version 1.00
+ */
+
 public class JUnitTest {
     private DatabaseUtil db;
-
+    
+    /* DB SETUP  (reset DB before testing) */
     @Before
     public void setup() throws Exception {
         db = new DatabaseUtil();
         db.connectToDatabase();
         db.resetHelpItemDatabase();
     }
+
+
+
      /*
         HELP ARTICLE ID ASSIGNMENT
      */

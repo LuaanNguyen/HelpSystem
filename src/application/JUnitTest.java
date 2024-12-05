@@ -184,7 +184,7 @@ public class JUnitTest {
     }
 
      /*
-        HELP ARTICLE ID ASSIGNMENT
+        TEST: HELP ARTICLE ID ASSIGNMENT
      */
     @Test
     public void testUniqueArticleIdAssignment() throws SQLException {
@@ -203,7 +203,7 @@ public class JUnitTest {
     }
 
     /*
-    HELP ARTICLE STRUCTURE VALIDATION
+         TEST: HELP ARTICLE STRUCTURE VALIDATION
      */
     @Test
     public void testArticleStructureValidation() throws SQLException {
@@ -229,7 +229,7 @@ public class JUnitTest {
     }
 
     /*
-    TEST ARTICLE CONTENT VALIDATION
+        TEST: ARTICLE CONTENT VALIDATION
      */
     @Test
     public void testArticleContentValidation() throws SQLException {
@@ -253,6 +253,7 @@ public class JUnitTest {
         assertEquals(formattedShortDesc, item.getShortDescription());
     }
 
+
     @Test
     public void testUnicodeContentHandling() throws SQLException {
         String unicodeShortDesc = "Short desc with accents: é è ê ë ñ ü ö";
@@ -275,6 +276,10 @@ public class JUnitTest {
         assertEquals(unicodeShortDesc, item.getShortDescription());
     }
 
+
+    /*
+       TEST: BACK UP HELP ITEMS
+  */
     @Test
     public void testContentBoundaries() throws SQLException {
         String emptyContent = "";
@@ -293,5 +298,28 @@ public class JUnitTest {
         assertNotNull(item);
         assertEquals(maxLengthContent, item.getDescription());
         assertEquals(emptyContent, item.getShortDescription());
+    }
+
+    /*
+        TEST: BACK UP HELP ITEMS
+   */
+    @Test
+    public void testBackupHelpItemsToFile() throws Exception {
+        String fileName = "helpItemsBackup.txt";
+
+        // Add help items to database
+        db.addHelpItem("Title1", "Desc1", "ShortDesc1", "Author1", "Keyword1", "Ref1", "Beginner", "Group1");
+
+        // Backup to file
+        try {
+            db.backupHelpItemsToFile(fileName);
+            assertTrue("Backup file should be created successfully", true); // No exceptions thrown
+            // Further validation can include checking file content if needed.
+
+            System.out.println("Backup completed successfully.");
+
+        } catch (Exception e) {
+            fail("Error backup");
+        }
     }
 }

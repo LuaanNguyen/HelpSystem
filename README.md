@@ -55,59 +55,25 @@ The user interface was responsible for security and privacy in the previous two 
 
 Two screencasts must be provided.  The first is an internal technical screencast.  It explains the flow from the requirements through design to the working code.  The second is a how-to-use screencast targeting students, admins, and instructional team members.
 
-### The Fourth Phase (TBD)
+### The Fourth Phase 4️⃣
+
+The fourth phase refines the requirements, architecture, design, code (and internal documentation), and test suites. The goal is to make it clear that they align and flow gracefully from one to another.  Feedback from the previous phases must be addressed.  Additional functions and user interface elements must be provided, as needed, to convince potential users about the value and ease of use that has been designed into the system, carefully implemented, and thoroughly tested.
+
+Any issues identified in your previous submissions must be addressed and resolved.  There are no new functional requirements for this phase.
+
+Two screencasts must be provided.  The first is a technical screencast.  It explains the flow from the requirements through to the working application.  The second is a how-to-use screencast.  It is aimed at three groups: students, admins, and instructional team members.
 
 ## Phase One Requirements ✅
 ## Phase Two Requirements  ✅
-## Phase Three Requirements  ( In Progress )
+## Phase Three Requirements  ✅
+## Phase Four Requirements (In Progress)
 
-- [ ] This phase builds on, extends, and may require minor implementation refinements to the first two phases.  All the requirements for Phases One and Two continue into this phase. Any changes in requirements will be explicitly described in this assignment.
-- [ x ] No role has the right to remove admin rights if that means no one will have admin rights for the whole help system, a general group, or a special access group.
-- The system supports special access groups consisting of: (Needs Front-End Work)
-  - [ x ] A list of articles in the group where the body of the article is encrypted and decrypted access is limited.  (E.g., A collection of help articles that contains proprietary, private, or other kinds of sensitive information.
-  - [ x ] A list of admins given admin rights to create, read, update, and delete access rights to this group.  (Admins do not automatically have admin rights to special access groups and do not have the right to view the bodies of articles in this group.)
-  - [ x ] The first instructor added to a special access group is given the right to view the bodies of articles in the group and admin rights for this group.
-  - [ x ] The default rights for new instructors added to this group do not include admin rights for this group.
-  - [ x ] A list of instructors who have been given rights to view the decrypted bodies of articles in this group.
-  - [ x ] A list of instructors given admin rights for this group.
-  - [  x ] A list of students given viewing rights to the decrypted bodies of articles in the group.
-- The student role is enhanced with additional commands:
-  - [ ] Students may always perform a set of actions, including quitting the application, sending a generic message to the help system, and sending a specific message to the help system.  Generic messages are used to express confusion about how to use the tool.  Specific messages are those where the student cannot find the help information they need.  In this last case, the student specifies what they need and cannot find.  The system adds a list of the search requests the student has made.  This information can be used to identify new help articles that need to be created and added to the system.
-  Set the content level of the articles to be returned (e.g., beginner, intermediate, advanced, expert).  The student may also specify an "all" level to see all the articles independent of the level.  The default is "all".
-  Specify a group of articles to limit returned articles to just those items in a group (e.g., a group may be help articles for a particular assignment). The student may request a list of the currently active group, specify which group to use, or "all".
-  Searching uses words, names, or phrases in the title, author, or abstract.  Searching for words or phrases in the body of the help articles is currently not supported.  In addition, a search can be performed using the unique long identifier.  Search can be limited to a specific group of papers.
-  When a search is performed, the system will display the following.
-  - [ ] The first line displayed specifies the group that is currently active,
-  - [ ] The number of articles that match each level,
-  - [ ] A list of articles matching the search criteria in a short form.  The short form includes a sequence number (1 - n), the title, the author(s), and the abstract.
-  - After a search, the student can perform the following:
-    - [ ] a different search
-    - [ ] a request to view an entire article in detail using the sequence number,
-    - [ ] one of the actions that are always available.
-  - After viewing a specific article, the student can perform the following:
-    - [ ] a different search,
-    - [ ] a request to view an entire article in detail using the sequence number,
-    - [ ] one of the actions that are always available.
-  - [ ] Students may not create, edit, or delete help articles.
-- The instructor role is enhanced with additional commands.
-  - The instructor is provided the same set of search and view commands as a student.
-    - [ ] Instructors may specify a group or a special access group to reduce the length of returned items
-    - [ ] Instructors may specify content levels to reduce the length of returned items.
-    - [ ] Instructors may view the details of a help article from the returned list of items.
-  - [ ] Instructors may create, view, edit, and delete help articles.
-  - [ ]  Instructors may create, view, edit, and delete general article groups.  (See above about instructors' rights concerning general groups.)
-  - [ ] Instructors may create, view, edit, and delete special access article groups.  (See above about instructor's rights concerning special access groups.)
-  - [ ] Instructors may back up and restore articles and groups of articles. 
-  - [ ] Instructors may add, view, and delete students from the help system and general groups. 
-  - [ ] Instructors with special group rights for a group may add, view, and delete students from that group. 
-- The admin role is enhanced with additional commands. 
-  - [ ] Admins may create, delete, back up, and restore help articles. (They do not have the right to view or edit the body of any help system article.)
-  - [ x] Admins may be given admin rights over general article groups.  (See above about admin rights concerning general article groups.)
-  - [ ] Admins may be given admin rights over special access article groups.  (See above about admin rights concerning special access article groups.)
-  - [ x] Admins may back up and restore articles, groups of articles, and special access groups of articles.
-  -  [x ] Admin may add, view, and remove students, instructors, and admins from general groups. (See the limitation above that requires at least one admin to have admin rights to every group or special access group.)
+- [ ] JUnit Testing
+- [ ] User Interface
+- [ ] Previous Feedbacks:
+  - [ ] Automated testing as done in HW#5 of all non-user-interface classes. (E.g., Do not try to test GUI or command line classes). 
 
-## Phase Three Deliverables 🎁
+## Phase 4 Deliverables 🎁
 
 A GitHub repository must be established, and a private project in that repository must include all the code required to build and test the application.  All the members of the team, a specified member of the grading team, must be given access to the repository.  If a Grader must ask for access after the deadline, 5% will be deducted from the project grade.
 

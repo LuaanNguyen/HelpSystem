@@ -15,3 +15,6 @@ bin/
 
 # VSCode IDE
 .vscode/
+
+#JavaFX Build
+build.fxbuild

@@ -74,6 +74,22 @@ public class JUnitTest {
     }
 
     /*
+        TEST:  INVITE USER
+    */
+    @Test
+    public void testInviteUser() throws Exception {
+        String code = db.generateInvitationCode();
+
+        db.inviteUser(code, "Admin");
+
+        assertTrue("Invitation code should be valid after being added", db.isValidInvitationCode(code));
+
+        db.invalidateInvitationCode(code);
+
+        assertFalse("Invitation code should be invalid after being invalidated", db.isValidInvitationCode(code));
+    }
+
+    /*
         TEST: ADD HELP ITEM
     */
     @Test
@@ -104,7 +120,7 @@ public class JUnitTest {
 
         assertNull("Help item should be deleted", db.getHelpItem(title));
     }
-
+    
      /*
         HELP ARTICLE ID ASSIGNMENT
      */

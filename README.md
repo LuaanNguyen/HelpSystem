@@ -1,4 +1,4 @@
-# CSE360 Project: Help System for ASU Students 🧑‍🏫
+Help System for ASU Students 🧑‍🏫
 
 ## Overview 🚀
 The ASU `CSE 360 Help System` is designed to provide personalized and relevant support for students, instructors, and administrators. It delivers tailored resources, respects user privacy, and ensures smooth information delivery through a user-friendly JavaFX interface.

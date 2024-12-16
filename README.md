@@ -1,4 +1,4 @@
-Help System for ASU Students 🧑‍🏫
+# Help System for ASU Students 🧑‍🏫
 
 ## Overview 🚀
 The ASU `CSE 360 Help System` is designed to provide personalized and relevant support for students, instructors, and administrators. It delivers tailored resources, respects user privacy, and ensures smooth information delivery through a user-friendly JavaFX interface.
@@ -35,3 +35,9 @@ Include the javafx-sdk-{version}/lib directory in your classpath for JavaFX depe
 ### License 📝
 This project is licensed under the [MIT License](https://opensource.org/license/mit).
 
+### Contributors 
+<a href="https://github.com/LuaanNguyen/HelpSystem/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=LuaanNguyen/HelpSystem" />
+</a>
+
+Made with [contrib.rocks](https://contrib.rocks).
